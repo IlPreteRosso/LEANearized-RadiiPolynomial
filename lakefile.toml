@@ -1,6 +1,5 @@
 name = "RadiiPolynomial"
 version = "0.1.0"
-defaultTargets = ["radiipolynomial"]
 
 [[lean_lib]]
 name = "RadiiPolynomial"
