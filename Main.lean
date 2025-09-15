@@ -1,4 +1,5 @@
--- import RadiiPolynomial
+import RadiiPolynomial
 
--- def main : IO Unit :=
---   IO.println s!"Hello, {hello}!"
+def main : IO Unit :=
+  -- IO.println s!"Hello, {hello}!"
+  pure ()
