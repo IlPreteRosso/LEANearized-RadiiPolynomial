@@ -12,8 +12,10 @@
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RadiiPolynomial</title>
-<link rel="next" href="sec-notations.html" title="Notations" />
+<title>RadiiPolynomial: Notations</title>
+<link rel="next" href="sec-chapter1.html" title="Chapter 1" />
+<link rel="prev" href="index.html" title="RadiiPolynomial" />
+<link rel="up" href="index.html" title="RadiiPolynomial" />
 <link rel="stylesheet" href="styles/theme-white.css" />
 <link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/showmore.css" />
@@ -24,12 +26,13 @@
 <body>
 <header>
 <svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">RadiiPolynomial</a></h1>
 </header>
 
 <div class="wrapper">
 <nav class="toc">
 <ul class="sub-toc-0">
-<li class="">
+<li class=" active current">
   <a href="sec-notations.html"><span class="toc_ref">1</span> <span class="toc_entry">Notations</span></a>
  </li>
 <li class="">
@@ -67,48 +70,37 @@
 
 
 <div class="main-text">
-<div class="titlepage">
-<h1>RadiiPolynomial</h1>
-<p class="authors">
-<span class="author">IlPreteRosso</span>
-</p>
+<h1 id="sec:notations">1 Notations</h1>
+<p> Given \(x, y \in \mathbb {R}^{n}\), </p>
+<div class="displaymath" id="a0000000002">
+  \[  x \ll y \text{ if and only if } x_{k} \leq y_{k} \text{ for all } k=1, \ldots , n  \]
 </div>
-<div class="abstract"> An attempt to formalize the finite dimensional radii-polynomial theorem in Lean. The formalization is based on the book <em>Ordinary Diﬀerential Equations: A Constructive Approach</em> by J.B. van den Berg, M. Gameiro, J.-P. Lessard, J.D. Mireles James, and K. Mischaikow </div>
-
+<p>The default norm on \(\mathbb {R}^{n}\) is the 2 -norm: </p>
+<div class="displaymath" id="a0000000003">
+  \[  \| x\|  \stackrel{\text{ def }}{=} \sqrt{\sum _{k=1}^{n}\left|x_{k}\right|^{2}} .  \]
+</div>
+<p>Let \(\| \cdot \| _{X}\) denote a norm on a space \(X\). Then </p>
+<div class="displaymath" id="a0000000004">
+  \[  \overline{B_{\epsilon }\left(x_{0}\right)} \stackrel{\text{ def }}{=}\left\{ x \in X \mid \left\| x-x_{0}\right\| _{X} \leq \epsilon \right\}   \]
+</div>
+<p>Let \(J\) be an interval and \(\alpha : J \rightarrow X\) where \(X\) is a normed space with norm \(\| \cdot \| _{X}\). The \(C^{0}\) norm of \(\alpha \) is given by </p>
+<div class="displaymath" id="a0000000005">
+  \[  \| \alpha \| _{C^{0}(J)} \stackrel{\text{ def }}{=} \sup \left\{ \| \alpha (t)\| _{X} \mid t \in J\right\}  .  \]
+</div>
+<p>Let \(M_{n}(\mathbb {R})\) the set a \(n \times n\) matrices with real coefficients and \(M_{n}(\mathbb {C})\) the set a \(n \times n\) matrices with complex coefficients. </p>
+<p>Given a matrix \(A=\left\{ a_{i, j}\right\} _{i, j}\) and a vector \(v=\left\{ v_{i}\right\} _{i}\) (real or complex valued), then the elementwise absolute value is represented by \(|A|=\left\{ \left|a_{i, j}\right|\right\} _{i, j}\) and \(|v|=\left\{ \left|v_{i}\right|\right\} _{i}\), where \(|\cdot |\) denotes the absolute value. </p>
+<p>The sup norm on \(\mathbb {R}^{n}\) is defined as follows. Given \(x=\left(x_{1}, \ldots , x_{n}\right) \in \mathbb {R}^{n}\) </p>
+<div class="displaymath" id="a0000000006">
+  \[  \| x\| _{\infty } \stackrel{\text{ def }}{=} \max _{k=1, \ldots , n}\left\{ \left|x_{k}\right|\right\}  .  \]
+</div>
+<p>Given a matrix \(A\), the matrix norm induced by \(\| \cdot \| _{\infty }\) is defined to be </p>
+<div class="displaymath" id="a0000000007">
+  \[  \| A\| _{\infty }=\max _{\| x\| _{\infty } \leq 1}\| A x\| _{\infty } .  \]
+</div>
+<p>If \(T: X \rightarrow X\), then its \(n\)-th iterate \(T^{n}\) is recursively defined by \(T^{n}(x)=T\left(T^{n-1}(x)\right)\).  </p>
 <p><br /></p>
 
 </div> <!--main-text -->
-<nav class=local_toc>
-<ul>
-  <li>	
-  <a href="sec-notations.html"><span class="toc_ref">1</span> <span class="toc_entry">Notations</span></a>
-  </li>
-  <li>	
-  <a href="sec-chapter1.html"><span class="toc_ref">2</span> <span class="toc_entry">Chapter 1</span></a>
-	<ul>
-		   <li>	
-  <a href="sec-chapter1.html#subsec:contraction_mapping"><span class="toc_ref">2.1</span> <span class="toc_entry">Contraction mapping theorem</span></a>
-	<ul>
-		   <li>	
-  <a href="sec-chapter1.html#a0000000008"><span class="toc_ref"></span> <span class="toc_entry">Auxiliary bounds</span></a>
-  </li>
-  <li>	
-  <a href="sec-chapter1.html#a0000000009"><span class="toc_ref"></span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
-  </li>
-
-	</ul>
-  </li>
-  <li>	
-  <a href="sec-chapter1.html#sec:radii-poly-fd"><span class="toc_ref">2.2</span> <span class="toc_entry">Radii polynomials in finite dimensions</span></a>
-  </li>
-  <li>	
-  <a href="sec-chapter1.html#a0000000010"><span class="toc_ref"></span> <span class="toc_entry">Newton-like setting and radii polynomials (Section 2.4)</span></a>
-  </li>
-
-	</ul>
-  </li>
-</ul>
-</nav>
 </div> <!-- content-wrapper -->
 </div> <!-- content -->
 </div> <!-- wrapper -->
@@ -118,7 +110,11 @@
 
   <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
 
-  <a href="sec-notations.html" title="Notations"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+  <a href="index.html" title="RadiiPolynomial"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="RadiiPolynomial"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sec-chapter1.html" title="Chapter 1"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>
 </nav>
 

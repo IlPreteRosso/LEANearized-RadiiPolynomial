@@ -1,4 +1,5 @@
 default:
+	mamba activate leanblueprint
 	lake clean
 	lake build
 	lake exe checkdecls blueprint/lean_decls
