@@ -1,0 +1,82 @@
+\subsection{Contraction mapping theorem}\label{subsec:contraction_mapping}
+
+\begin{definition}[Metric space]\label{def:MetricSpace}
+  \lean{RP.MetricSpace}
+  A metric space is a pair $(X,d)$ where $X$ is a set and $d:X\times X\to[0,\infty)$
+  satisfies: (i) $d(x,y)=0\iff x=y$; (ii) $d(x,y)=d(y,x)$; (iii) $d(x,z)\le d(x,y)+d(y,z)$.
+\end{definition}
+
+\begin{definition}[Complete metric space]\label{def:Complete}
+  \lean{RP.Complete}
+  A metric space $(X,d)$ is \emph{complete} if every Cauchy sequence $(x_n)$ in $X$
+  converges to a limit $x\in X$.
+\end{definition}
+
+\begin{definition}[Lipschitz map and contraction]\label{def:LipschitzContraction}
+  \lean{RP.Lipschitz}
+  \lean{RP.Contraction}
+  Let $(X,d)$ be a metric space. A map $T:X\to X$ is \emph{Lipschitz} with constant $L\ge 0$
+  if $d(Tx,Ty)\le L\,d(x,y)$ for all $x,y\in X$. It is a \emph{contraction} if it is
+  Lipschitz with some $L<1$.
+\end{definition}
+
+\begin{definition}[Picard iterates]\label{def:Picard}
+  \lean{RP.PicardIterates}
+  Given $T:X\to X$ and $x_0\in X$, define the iterates $x_{n+1}:=T(x_n)$ for $n\ge 0$.
+\end{definition}
+
+\subsubsection*{Auxiliary bounds}
+
+\begin{lemma}[Geometric series bound]\label{lem:Geometric}
+  \lean{RP.GeometricSeriesBound}
+  If $0\le L<1$ then for all $n\ge 1$,
+  \[
+    \sum_{k=0}^{n-1} L^k \;\le\; \frac{1}{1-L}.
+  \]
+\end{lemma}
+
+\begin{lemma}[Cauchy estimate for Picard iterates]\label{lem:PicardCauchy}
+  \lean{RP.PicardIsCauchy}
+  \uses{def:LipschitzContraction,def:Picard,lem:Geometric}
+  Let $(X,d)$ be a metric space and $T:X\to X$ be Lipschitz with constant $L<1$.
+  For any $x_0\in X$ and $m>n\ge 0$,
+  \[
+    d(x_m,x_n) \;\le\; \sum_{k=n}^{m-1} L^{\,k-n}\, d(x_{n+1},x_n)
+    \;\le\; \frac{L^{\,n}}{1-L}\, d(x_1,x_0),
+  \]
+  hence $(x_n)$ is Cauchy.
+\end{lemma}
+
+\begin{lemma}[Uniqueness of fixed points for contractions]\label{lem:Unique}
+  \lean{RP.FixedPointUnique}
+  \uses{def:LipschitzContraction}
+  If $T:X\to X$ is a contraction with constant $L<1$, then $T$ has at most one fixed point:
+  if $Tx^\ast=x^\ast$ and $Ty^\ast=y^\ast$, then
+  \[
+    d(x^\ast,y^\ast)=d(Tx^\ast,Ty^\ast)\le L\,d(x^\ast,y^\ast) \;\Rightarrow\; x^\ast=y^\ast.
+  \]
+\end{lemma}
+
+\subsubsection{Contraction Mapping Theorem}
+
+\begin{theorem}[Contraction Mapping Theorem]\label{thm:Contraction}
+  \lean{RP.ContractionMapping}
+  \uses{def:Complete,def:LipschitzContraction,def:Picard,lem:PicardCauchy,lem:Unique}
+  Let $(X,d)$ be a complete metric space and let $T:X\to X$ be a contraction with constant $L<1$.
+  Then:
+  \begin{enumerate}
+    \item[(i)] For any $x_0\in X$, the Picard iterates $x_{n+1}=T(x_n)$ converge to a limit $x^\ast\in X$.
+    \item[(ii)] The point $x^\ast$ is the unique fixed point of $T$.
+    \item[(iii)] \emph{A priori rate:} for all $n\ge 0$,
+      \[
+        d(x_n,x^\ast)\;\le\; \frac{L^{\,n}}{1-L}\, d(x_1,x_0).
+      \]
+  \end{enumerate}
+\end{theorem}
+
+\begin{proof}
+  By Lemma~\ref{lem:PicardCauchy}, $(x_n)$ is Cauchy. Completeness (Definition~\ref{def:Complete})
+  yields a limit $x^\ast\in X$. Continuity of $T$ (implied by Lipschitz) and $x_{n+1}=T(x_n)$ give
+  $x^\ast=T(x^\ast)$, proving existence. Uniqueness follows from Lemma~\ref{lem:Unique}.
+  The estimate in (iii) is the tail bound from Lemma~\ref{lem:PicardCauchy}.
+\end{proof}

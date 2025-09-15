@@ -3,6 +3,8 @@
   referenced by \lean{...} in the blueprint. Replace each with
   your real statements/proofs as you formalize.
 -/
+import RadiiPolynomial.ContractionMapping
+
 namespace RP
 
 /-- Closed ball (placeholder). -/
@@ -16,9 +18,6 @@ theorem MeanValueTheorem : True := True.intro
 
 /-- Mean value inequality (placeholder). -/
 theorem MeanValueIneq : True := True.intro
-
-/-- Contraction Mapping Theorem (placeholder). -/
-theorem ContractionMapping : True := True.intro
 
 /-- Data (placeholder). -/
 def Data : Prop := True

@@ -1,8 +1,16 @@
+RP.MetricSpace
+RP.Complete
+RP.Lipschitz
+RP.Contraction
+RP.PicardIterates
+RP.GeometricSeriesBound
+RP.PicardIsCauchy
+RP.FixedPointUnique
+RP.ContractionMapping
 RP.Ball
 RP.OperatorNorm
 RP.MeanValueTheorem
 RP.MeanValueIneq
-RP.ContractionMapping
 RP.Data
 RP.T
 RP.Bounds

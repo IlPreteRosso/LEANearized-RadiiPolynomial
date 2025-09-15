@@ -4,6 +4,7 @@ defaultTargets = ["RadiiPolynomial"]
 
 [[lean_lib]]
 name = "RadiiPolynomial"
+srcDir = "LEAN-modules"
 
 [[require]]
 name = "checkdecls"

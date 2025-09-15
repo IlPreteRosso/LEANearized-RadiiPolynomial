@@ -14,9 +14,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RadiiPolynomial</title>
 <link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/showmore.css" />
 <link rel="stylesheet" href="styles/blueprint.css" />
-<link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/extra_styles.css" />
 </head>
 
@@ -35,18 +35,496 @@
 <span class="author">IlPreteRosso</span>
 </p>
 </div>
-<div class="abstract"> </div>
+<div class="abstract"> An attempt to formalize the finite dimensional radii-polynomial theorem in Lean. The formalization is based on the book <em>Ordinary Diﬀerential Equations: A Constructive Approach</em> by J.B. van den Berg, M. Gameiro, J.-P. Lessard, J.D. Mireles James, and K. Mischaikow </div>
 
 <p><br /></p>
-<h1 id="sec:radii-poly-fd">0.1 Radii polynomials in finite dimensions</h1>
+<h1 id="a0000000002">Notations</h1>
+<p> Given \(x, y \in \mathbb {R}^{n}\), </p>
+<div class="displaymath" id="a0000000003">
+  \[  x \ll y \text{ if and only if } x_{k} \leq y_{k} \text{ for all } k=1, \ldots , n  \]
+</div>
+<p>The default norm on \(\mathbb {R}^{n}\) is the 2 -norm: </p>
+<div class="displaymath" id="a0000000004">
+  \[  \| x\|  \stackrel{\text{ def }}{=} \sqrt{\sum _{k=1}^{n}\left|x_{k}\right|^{2}} .  \]
+</div>
+<p>Let \(\| \cdot \| _{X}\) denote a norm on a space \(X\). Then </p>
+<div class="displaymath" id="a0000000005">
+  \[  \overline{B_{\epsilon }\left(x_{0}\right)} \stackrel{\text{ def }}{=}\left\{ x \in X \mid \left\| x-x_{0}\right\| _{X} \leq \epsilon \right\}   \]
+</div>
+<p>Let \(J\) be an interval and \(\alpha : J \rightarrow X\) where \(X\) is a normed space with norm \(\| \cdot \| _{X}\). The \(C^{0}\) norm of \(\alpha \) is given by </p>
+<div class="displaymath" id="a0000000006">
+  \[  \| \alpha \| _{C^{0}(J)} \stackrel{\text{ def }}{=} \sup \left\{ \| \alpha (t)\| _{X} \mid t \in J\right\}  .  \]
+</div>
+<p>Let \(M_{n}(\mathbb {R})\) the set a \(n \times n\) matrices with real coefficients and \(M_{n}(\mathbb {C})\) the set a \(n \times n\) matrices with complex coefficients. </p>
+<p>Given a matrix \(A=\left\{ a_{i, j}\right\} _{i, j}\) and a vector \(v=\left\{ v_{i}\right\} _{i}\) (real or complex valued), then the elementwise absolute value is represented by \(|A|=\left\{ \left|a_{i, j}\right|\right\} _{i, j}\) and \(|v|=\left\{ \left|v_{i}\right|\right\} _{i}\), where \(|\cdot |\) denotes the absolute value. </p>
+<p>The sup norm on \(\mathbb {R}^{n}\) is defined as follows. Given \(x=\left(x_{1}, \ldots , x_{n}\right) \in \mathbb {R}^{n}\) </p>
+<div class="displaymath" id="a0000000007">
+  \[  \| x\| _{\infty } \stackrel{\text{ def }}{=} \max _{k=1, \ldots , n}\left\{ \left|x_{k}\right|\right\}  .  \]
+</div>
+<p>Given a matrix \(A\), the matrix norm induced by \(\| \cdot \| _{\infty }\) is defined to be </p>
+<div class="displaymath" id="a0000000008">
+  \[  \| A\| _{\infty }=\max _{\| x\| _{\infty } \leq 1}\| A x\| _{\infty } .  \]
+</div>
+<p>If \(T: X \rightarrow X\), then its \(n\)-th iterate \(T^{n}\) is recursively defined by \(T^{n}(x)=T\left(T^{n-1}(x)\right)\).  </p>
+<p><br /></p>
+<h1 id="sec:chapter1">0.1 Chapter 1</h1>
 
-<h2 id="a0000000002">Upstream tools (Sections 2.1–2.2)</h2>
-<p><div class="definition_thmwrapper " id="dfn:Ball">
+<h2 id="subsec:contraction_mapping">0.1.1 Contraction mapping theorem</h2>
+
+<div class="definition_thmwrapper theorem-style-plain" id="def:MetricSpace">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">0.1.1</span>
+    <span class="definition_thmtitle">Metric space</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#def:MetricSpace">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.MetricSpace" class="lean_decl">RP.MetricSpace</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  A metric space is a pair \((X,d)\) where \(X\) is a set and \(d:X\times X\to [0,\infty )\) satisfies: (i) \(d(x,y)=0\iff x=y\); (ii) \(d(x,y)=d(y,x)\); (iii) \(d(x,z)\le d(x,y)+d(y,z)\). </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:Complete">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">0.1.2</span>
+    <span class="definition_thmtitle">Complete metric space</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#def:Complete">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.Complete" class="lean_decl">RP.Complete</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  A metric space \((X,d)\) is <em>complete</em> if every Cauchy sequence \((x_n)\) in \(X\) converges to a limit \(x\in X\). </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:LipschitzContraction">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">0.1.3</span>
+    <span class="definition_thmtitle">Lipschitz map and contraction</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#def:LipschitzContraction">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.Contraction" class="lean_decl">RP.Contraction</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   Let \((X,d)\) be a metric space. A map \(T:X\to X\) is <em>Lipschitz</em> with constant \(L\ge 0\) if \(d(Tx,Ty)\le L\, d(x,y)\) for all \(x,y\in X\). It is a <em>contraction</em> if it is Lipschitz with some \(L{\lt}1\). </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:Picard">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">0.1.4</span>
+    <span class="definition_thmtitle">Picard iterates</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#def:Picard">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.PicardIterates" class="lean_decl">RP.PicardIterates</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  Given \(T:X\to X\) and \(x_0\in X\), define the iterates \(x_{n+1}:=T(x_n)\) for \(n\ge 0\). </p>
+
+  </div>
+</div>
+<h3 id="a0000000009">Auxiliary bounds</h3>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:Geometric">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">0.1.5</span>
+    <span class="lemma_thmtitle">Geometric series bound</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#lem:Geometric">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.GeometricSeriesBound" class="lean_decl">RP.GeometricSeriesBound</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  If \(0\le L{\lt}1\) then for all \(n\ge 1\), </p>
+<div class="displaymath" id="a0000000010">
+  \[  \sum _{k=0}^{n-1} L^k \; \le \;  \frac{1}{1-L}.  \]
+</div>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:PicardCauchy">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">0.1.6</span>
+    <span class="lemma_thmtitle">Cauchy estimate for Picard iterates</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#lem:PicardCauchy">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#def:LipschitzContraction">Definition 0.1.3</a></li>
+          
+          <li><a href="index.html#def:Picard">Definition 0.1.4</a></li>
+          
+          <li><a href="index.html#lem:Geometric">Lemma 0.1.5</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.PicardIsCauchy" class="lean_decl">RP.PicardIsCauchy</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   Let \((X,d)\) be a metric space and \(T:X\to X\) be Lipschitz with constant \(L{\lt}1\). For any \(x_0\in X\) and \(m{\gt}n\ge 0\), </p>
+<div class="displaymath" id="a0000000011">
+  \[  d(x_m,x_n) \; \le \;  \sum _{k=n}^{m-1} L^{\, k-n}\,  d(x_{n+1},x_n) \; \le \;  \frac{L^{\, n}}{1-L}\,  d(x_1,x_0),  \]
+</div>
+<p> hence \((x_n)\) is Cauchy. </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:Unique">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">0.1.7</span>
+    <span class="lemma_thmtitle">Uniqueness of fixed points for contractions</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#lem:Unique">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#def:LipschitzContraction">Definition 0.1.3</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.FixedPointUnique" class="lean_decl">RP.FixedPointUnique</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   If \(T:X\to X\) is a contraction with constant \(L{\lt}1\), then \(T\) has at most one fixed point: if \(Tx^\ast =x^\ast \) and \(Ty^\ast =y^\ast \), then </p>
+<div class="displaymath" id="a0000000012">
+  \[  d(x^\ast ,y^\ast )=d(Tx^\ast ,Ty^\ast )\le L\, d(x^\ast ,y^\ast ) \; \Rightarrow \;  x^\ast =y^\ast .  \]
+</div>
+
+  </div>
+</div>
+<h3 id="a0000000013">Contraction Mapping Theorem</h3>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:Contraction">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">0.1.8</span>
+    <span class="theorem_thmtitle">Contraction Mapping Theorem</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="index.html#thm:Contraction">#</a>
+    
+    <a class="icon proof" href="index.html#a0000000014"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="index.html#def:Complete">Definition 0.1.2</a></li>
+          
+          <li><a href="index.html#def:LipschitzContraction">Definition 0.1.3</a></li>
+          
+          <li><a href="index.html#def:Picard">Definition 0.1.4</a></li>
+          
+          <li><a href="index.html#lem:PicardCauchy">Lemma 0.1.6</a></li>
+          
+          <li><a href="index.html#lem:Unique">Lemma 0.1.7</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.ContractionMapping" class="lean_decl">RP.ContractionMapping</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   Let \((X,d)\) be a complete metric space and let \(T:X\to X\) be a contraction with constant \(L{\lt}1\). Then: </p>
+<ol class="enumerate">
+  <li><p>For any \(x_0\in X\), the Picard iterates \(x_{n+1}=T(x_n)\) converge to a limit \(x^\ast \in X\). </p>
+</li>
+  <li><p>The point \(x^\ast \) is the unique fixed point of \(T\). </p>
+</li>
+  <li><p><em>A priori rate:</em> for all \(n\ge 0\), </p>
+<div class="displaymath" id="a0000000015">
+  \[  d(x_n,x^\ast )\; \le \;  \frac{L^{\, n}}{1-L}\,  d(x_1,x_0).  \]
+</div>
+</li>
+</ol>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000014">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>By Lemma&#160;<a href="index.html#lem:PicardCauchy">0.1.6</a>, \((x_n)\) is Cauchy. Completeness (Definition&#160;<a href="index.html#def:Complete">0.1.2</a>) yields a limit \(x^\ast \in X\). Continuity of \(T\) (implied by Lipschitz) and \(x_{n+1}=T(x_n)\) give \(x^\ast =T(x^\ast )\), proving existence. Uniqueness follows from Lemma&#160;<a href="index.html#lem:Unique">0.1.7</a>. The estimate in (iii) is the tail bound from Lemma&#160;<a href="index.html#lem:PicardCauchy">0.1.6</a>. </p>
+
+  </div>
+</div>
+<h2 id="sec:radii-poly-fd">0.1.2 Radii polynomials in finite dimensions</h2>
+
+<div class="definition_thmwrapper theorem-style-plain" id="dfn:Ball">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">0.1.9</span>
     <span class="definition_thmtitle">Closed ball</span>
     <div class="thm_header_extras">
 
@@ -82,13 +560,13 @@
   <p>  For \(x\in \mathbb R^n\) and \(r{\gt}0\), the closed ball is \(B_r(x)=\{ y:\| y-x\| \le r\} \). </p>
 
   </div>
-</div> </p>
-<p><div class="definition_thmwrapper " id="dfn:OpNorm">
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="dfn:OpNorm">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">0.1.2</span>
+    <span class="definition_thmlabel">0.1.10</span>
     <span class="definition_thmtitle">Operator norm</span>
     <div class="thm_header_extras">
 
@@ -124,13 +602,13 @@
   <p>  For a matrix \(M\in M_n(\mathbb R)\), \(\| M\| :=\sup _{\| v\| =1}\| Mv\| \). </p>
 
   </div>
-</div> </p>
-<p><div class="theorem_thmwrapper " id="thm:MVT">
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:MVT">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">0.1.3</span>
+    <span class="theorem_thmlabel">0.1.11</span>
     <span class="theorem_thmtitle">Mean Value Theorem</span>
     <div class="thm_header_extras">
 
@@ -164,18 +642,18 @@
   </div>
   <div class="theorem_thmcontent">
   <p>  Let \(g:\mathbb R^n\to \mathbb R\) be \(C^1\). For all \(x,y\in \mathbb R^n\) there exists \(t\in (0,1)\) such that </p>
-<div class="displaymath" id="a0000000003">
+<div class="displaymath" id="a0000000016">
   \[  g(x)-g(y)=\nabla g\bigl(y+t(x-y)\bigr)\cdot (x-y).  \]
 </div>
 
   </div>
-</div> </p>
-<p><div class="lemma_thmwrapper " id="lem:MVI">
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:MVI">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">0.1.4</span>
+    <span class="lemma_thmlabel">0.1.12</span>
     <span class="lemma_thmtitle">Mean value inequality</span>
     <div class="thm_header_extras">
 
@@ -197,9 +675,9 @@
         
         <ul class="uses">
           
-          <li><a href="index.html#dfn:OpNorm">Definition 0.1.2</a></li>
+          <li><a href="index.html#dfn:OpNorm">Definition 0.1.10</a></li>
           
-          <li><a href="index.html#thm:MVT">Theorem 0.1.3</a></li>
+          <li><a href="index.html#thm:MVT">Theorem 0.1.11</a></li>
           
         </ul>
     
@@ -231,61 +709,19 @@
   </div>
   <div class="lemma_thmcontent">
   <p>   Let \(T:\mathbb R^n\to \mathbb R^n\) be \(C^1\). Then for all \(x,y\), </p>
-<div class="displaymath" id="a0000000004">
+<div class="displaymath" id="a0000000017">
   \[  \| T(x)-T(y)\| \le \sup _{0\le t\le 1}\, \| DT\bigl(y+t(x-y)\bigr)\| \, \| x-y\| .  \]
 </div>
 
   </div>
-</div> </p>
-<p><div class="theorem_thmwrapper " id="thm:Contraction">
-  <div class="theorem_thmheading">
-    <span class="theorem_thmcaption">
-    Theorem
-    </span>
-    <span class="theorem_thmlabel">0.1.5</span>
-    <span class="theorem_thmtitle">Contraction Mapping Theorem</span>
-    <div class="thm_header_extras">
-
-        </div>
-    <div class="thm_header_hidden_extras">
-
-    <a class="icon proof" href="index.html#thm:Contraction">#</a>
-    
-    
-    
-    <button class="modal lean">L∃∀N</button>
-        <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Lean declarations</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-        
-        <ul class="uses">
-          
-          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.ContractionMapping" class="lean_decl">RP.ContractionMapping</a></li>
-          
-        </ul>
-    
-      </div>
-    </div>
-
-    
-        </div>
-  </div>
-  <div class="theorem_thmcontent">
-  <p>  Let \((X,d)\) be complete and \(T:X\to X\) be \(L\)-Lipschitz with \(L{\lt}1\). Then \(T\) has a unique fixed point \(x^\ast \in X\), and the iterates \(x_{k+1}=T(x_k)\) converge to \(x^\ast \) for every \(x_0\in X\). </p>
-
-  </div>
-</div> </p>
-<h2 id="a0000000005">Newton-like setting and radii polynomials (Section 2.4)</h2>
-<p><div class="definition_thmwrapper " id="dfn:Data">
+</div>
+<h2 id="a0000000018">Newton-like setting and radii polynomials (Section 2.4)</h2>
+<div class="definition_thmwrapper theorem-style-plain" id="dfn:Data">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">0.1.6</span>
+    <span class="definition_thmlabel">0.1.13</span>
     <span class="definition_thmtitle">Data</span>
     <div class="thm_header_extras">
 
@@ -321,13 +757,13 @@
   <p>  Fix a norm on \(\mathbb R^n\) (or \(\mathbb C^n\)). Let \(f:\mathbb R^n\to \mathbb R^n\) be \(C^1\), choose an approximate zero \(\bar x\in \mathbb R^n\), and a matrix \(A\in M_n(\mathbb R)\) (typically \(A\approx Df(\bar x)^{-1}\)). </p>
 
   </div>
-</div> </p>
-<p><div class="definition_thmwrapper " id="dfn:T">
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="dfn:T">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">0.1.7</span>
+    <span class="definition_thmlabel">0.1.14</span>
     <span class="definition_thmtitle">Newton-like map</span>
     <div class="thm_header_extras">
 
@@ -349,7 +785,7 @@
         
         <ul class="uses">
           
-          <li><a href="index.html#dfn:Data">Definition 0.1.6</a></li>
+          <li><a href="index.html#dfn:Data">Definition 0.1.13</a></li>
           
         </ul>
     
@@ -383,13 +819,13 @@
   <p>   Define \(T(x)=x-Af(x)\). </p>
 
   </div>
-</div> </p>
-<p><div class="definition_thmwrapper " id="dfn:Bounds">
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="dfn:Bounds">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">0.1.8</span>
+    <span class="definition_thmlabel">0.1.15</span>
     <span class="definition_thmtitle">A priori bounds</span>
     <div class="thm_header_extras">
 
@@ -411,11 +847,11 @@
         
         <ul class="uses">
           
-          <li><a href="index.html#dfn:Data">Definition 0.1.6</a></li>
+          <li><a href="index.html#dfn:Data">Definition 0.1.13</a></li>
           
-          <li><a href="index.html#dfn:T">Definition 0.1.7</a></li>
+          <li><a href="index.html#dfn:T">Definition 0.1.14</a></li>
           
-          <li><a href="index.html#dfn:OpNorm">Definition 0.1.2</a></li>
+          <li><a href="index.html#dfn:OpNorm">Definition 0.1.10</a></li>
           
         </ul>
     
@@ -447,18 +883,18 @@
   </div>
   <div class="definition_thmcontent">
   <p>   Choose nonnegative numbers \(Y_0,Z_0\) and a nonnegative function \(Z_2:(0,\infty )\to [0,\infty )\) such that for all \(r{\gt}0\) and all \(c\in B_r(\bar x)\), </p>
-<div class="displaymath" id="a0000000006">
+<div class="displaymath" id="a0000000019">
   \[  \| A f(\bar x)\| \le Y_0,\qquad \| I-ADf(\bar x)\| \le Z_0,\qquad \| A\bigl(Df(c)-Df(\bar x)\bigr)\| \le Z_2(r)\, r.  \]
 </div>
 
   </div>
-</div> </p>
-<p><div class="definition_thmwrapper " id="dfn:RPoly">
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="dfn:RPoly">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">0.1.9</span>
+    <span class="definition_thmlabel">0.1.16</span>
     <span class="definition_thmtitle">Radii polynomial</span>
     <div class="thm_header_extras">
 
@@ -480,7 +916,7 @@
         
         <ul class="uses">
           
-          <li><a href="index.html#dfn:Bounds">Definition 0.1.8</a></li>
+          <li><a href="index.html#dfn:Bounds">Definition 0.1.15</a></li>
           
         </ul>
     
@@ -512,18 +948,18 @@
   </div>
   <div class="definition_thmcontent">
   <p>   For \(r{\gt}0\), set </p>
-<div class="displaymath" id="a0000000007">
+<div class="displaymath" id="a0000000020">
   \[  p(r):=Z_2(r)\, r^2-(1-Z_0)\, r+Y_0.  \]
 </div>
 
   </div>
-</div> </p>
-<p><div class="lemma_thmwrapper " id="lem:DTbound">
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:DTbound">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">0.1.10</span>
+    <span class="lemma_thmlabel">0.1.17</span>
     <span class="lemma_thmtitle">Derivative bound</span>
     <div class="thm_header_extras">
 
@@ -545,9 +981,9 @@
         
         <ul class="uses">
           
-          <li><a href="index.html#dfn:T">Definition 0.1.7</a></li>
+          <li><a href="index.html#dfn:T">Definition 0.1.14</a></li>
           
-          <li><a href="index.html#dfn:Bounds">Definition 0.1.8</a></li>
+          <li><a href="index.html#dfn:Bounds">Definition 0.1.15</a></li>
           
         </ul>
     
@@ -579,18 +1015,18 @@
   </div>
   <div class="lemma_thmcontent">
   <p>   For every \(c\in B_r(\bar x)\), </p>
-<div class="displaymath" id="a0000000008">
+<div class="displaymath" id="a0000000021">
   \[  DT(c)=I-ADf(c), \qquad \| DT(c)\| \le Z_0+Z_2(r)\, r =: Z(r).  \]
 </div>
 
   </div>
-</div> </p>
-<p><div class="lemma_thmwrapper " id="lem:FixedPointRadii">
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:FixedPointRadii">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">0.1.11</span>
+    <span class="lemma_thmlabel">0.1.18</span>
     <span class="lemma_thmtitle">Fixed-point radii</span>
     <div class="thm_header_extras">
 
@@ -612,13 +1048,13 @@
         
         <ul class="uses">
           
-          <li><a href="index.html#lem:MVI">Lemma 0.1.4</a></li>
+          <li><a href="index.html#lem:MVI">Lemma 0.1.12</a></li>
           
-          <li><a href="index.html#lem:DTbound">Lemma 0.1.10</a></li>
+          <li><a href="index.html#lem:DTbound">Lemma 0.1.17</a></li>
           
-          <li><a href="index.html#dfn:Ball">Definition 0.1.1</a></li>
+          <li><a href="index.html#dfn:Ball">Definition 0.1.9</a></li>
           
-          <li><a href="index.html#thm:Contraction">Theorem 0.1.5</a></li>
+          <li><a href="index.html#thm:Contraction">Theorem 0.1.8</a></li>
           
         </ul>
     
@@ -652,13 +1088,13 @@
   <p>   Let \(r{\gt}0\). Assume \(\| T(\bar x)-\bar x\| \le Y_0\) and \(\sup _{c\in B_r(\bar x)}\| DT(c)\| \le Z(r)\). If \((Z(r)-1)r+Y_0{\lt}0\), then \(T(B_r(\bar x))\subseteq B_r(\bar x)\) and \(T\) is a contraction on \(B_r(\bar x)\) with Lipschitz constant \(\le Z(r){\lt}1\). </p>
 
   </div>
-</div> </p>
-<p><div class="lemma_thmwrapper " id="lem:Neumann">
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:Neumann">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">0.1.12</span>
+    <span class="lemma_thmlabel">0.1.19</span>
     <span class="lemma_thmtitle">Neumann-series invertibility</span>
     <div class="thm_header_extras">
 
@@ -694,13 +1130,13 @@
   <p>  If \(\| I-B\| {\lt}1\) for a matrix \(B\), then \(B\) is invertible (and \(B^{-1}=\sum _{k\ge 0}(I-B)^k\)). </p>
 
   </div>
-</div> </p>
-<p><div class="theorem_thmwrapper " id="thm:RadiiPolyFD">
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:RadiiPolyFD">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">0.1.13</span>
+    <span class="theorem_thmlabel">0.1.20</span>
     <span class="theorem_thmtitle">Radii polynomials in finite dimensions</span>
     <div class="thm_header_extras">
 
@@ -709,7 +1145,7 @@
 
     <a class="icon proof" href="index.html#thm:RadiiPolyFD">#</a>
     
-    <a class="icon proof" href="index.html#a0000000009"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="index.html#a0000000022"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -725,15 +1161,15 @@
         
         <ul class="uses">
           
-          <li><a href="index.html#dfn:RPoly">Definition 0.1.9</a></li>
+          <li><a href="index.html#dfn:RPoly">Definition 0.1.16</a></li>
           
-          <li><a href="index.html#lem:DTbound">Lemma 0.1.10</a></li>
+          <li><a href="index.html#lem:DTbound">Lemma 0.1.17</a></li>
           
-          <li><a href="index.html#lem:FixedPointRadii">Lemma 0.1.11</a></li>
+          <li><a href="index.html#lem:FixedPointRadii">Lemma 0.1.18</a></li>
           
-          <li><a href="index.html#lem:Neumann">Lemma 0.1.12</a></li>
+          <li><a href="index.html#lem:Neumann">Lemma 0.1.19</a></li>
           
-          <li><a href="index.html#thm:Contraction">Theorem 0.1.5</a></li>
+          <li><a href="index.html#thm:Contraction">Theorem 0.1.8</a></li>
           
         </ul>
     
@@ -775,8 +1211,8 @@
 </ol>
 
   </div>
-</div> </p>
-<div class="proof_wrapper" id="a0000000009">
+</div>
+<div class="proof_wrapper" id="a0000000022">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -784,7 +1220,7 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p>From \(p(r_0){\lt}0\) we get \(Z(r_0)=Z_0+Z_2(r_0)r_0{\lt}1\) and \((Z(r_0)-1)r_0+Y_0{\lt}0\). Apply Lemma&#160;<a href="index.html#lem:FixedPointRadii">0.1.11</a> with \(r=r_0\) to obtain (i) and (ii); the existence and uniqueness follow from Theorem&#160;<a href="index.html#thm:Contraction">0.1.5</a>. Then \(T(\tilde x)=\tilde x\) implies \(A f(\tilde x)=0\), hence \(f(\tilde x)=0\) (since \(A\) is injective); finally \(\| I-ADf(\tilde x)\| {\lt}1\) implies \(Df(\tilde x)\) is invertible by Lemma&#160;<a href="index.html#lem:Neumann">0.1.12</a>. </p>
+  <p>From \(p(r_0){\lt}0\) we get \(Z(r_0)=Z_0+Z_2(r_0)r_0{\lt}1\) and \((Z(r_0)-1)r_0+Y_0{\lt}0\). Apply Lemma&#160;<a href="index.html#lem:FixedPointRadii">0.1.18</a> with \(r=r_0\) to obtain (i) and (ii); the existence and uniqueness follow from Theorem&#160;<a href="index.html#thm:Contraction">0.1.8</a>. Then \(T(\tilde x)=\tilde x\) implies \(A f(\tilde x)=0\), hence \(f(\tilde x)=0\) (since \(A\) is injective); finally \(\| I-ADf(\tilde x)\| {\lt}1\) implies \(Df(\tilde x)\) is invertible by Lemma&#160;<a href="index.html#lem:Neumann">0.1.19</a>. </p>
 
   </div>
 </div>

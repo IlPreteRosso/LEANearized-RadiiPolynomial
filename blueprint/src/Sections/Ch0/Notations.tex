@@ -1,0 +1,41 @@
+Given $x, y \in \mathbb{R}^{n}$,
+
+$$
+x \ll y \text { if and only if } x_{k} \leq y_{k} \text { for all } k=1, \ldots, n
+$$
+
+The default norm on $\mathbb{R}^{n}$ is the 2 -norm:
+
+$$
+\|x\| \stackrel{\text { def }}{=} \sqrt{\sum_{k=1}^{n}\left|x_{k}\right|^{2}} .
+$$
+
+Let $\|\cdot\|_{X}$ denote a norm on a space $X$. Then
+
+$$
+\overline{B_{\epsilon}\left(x_{0}\right)} \stackrel{\text { def }}{=}\left\{x \in X \mid\left\|x-x_{0}\right\|_{X} \leq \epsilon\right\}
+$$
+
+Let $J$ be an interval and $\alpha: J \rightarrow X$ where $X$ is a normed space with norm $\|\cdot\|_{X}$. The $C^{0}$ norm of $\alpha$ is given by
+
+$$
+\|\alpha\|_{C^{0}(J)} \stackrel{\text { def }}{=} \sup \left\{\|\alpha(t)\|_{X} \mid t \in J\right\} .
+$$
+
+Let $M_{n}(\mathbb{R})$ the set a $n \times n$ matrices with real coefficients and $M_{n}(\mathbb{C})$ the set a $n \times n$ matrices with complex coefficients.
+
+Given a matrix $A=\left\{a_{i, j}\right\}_{i, j}$ and a vector $v=\left\{v_{i}\right\}_{i}$ (real or complex valued), then the elementwise absolute value is represented by $|A|=\left\{\left|a_{i, j}\right|\right\}_{i, j}$ and $|v|=\left\{\left|v_{i}\right|\right\}_{i}$, where $|\cdot|$ denotes the absolute value.
+
+The sup norm on $\mathbb{R}^{n}$ is defined as follows. Given $x=\left(x_{1}, \ldots, x_{n}\right) \in \mathbb{R}^{n}$
+
+$$
+\|x\|_{\infty} \stackrel{\text { def }}{=} \max _{k=1, \ldots, n}\left\{\left|x_{k}\right|\right\} .
+$$
+
+Given a matrix $A$, the matrix norm induced by $\|\cdot\|_{\infty}$ is defined to be
+
+$$
+\|A\|_{\infty}=\max _{\|x\|_{\infty} \leq 1}\|A x\|_{\infty} .
+$$
+
+If $T: X \rightarrow X$, then its $n$-th iterate $T^{n}$ is recursively defined by $T^{n}(x)=T\left(T^{n-1}(x)\right)$.

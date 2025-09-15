@@ -1,6 +1,6 @@
 % content.tex — dependencies for the finite-dimensional radii-polynomial theorem
 
-\subsection*{Upstream tools (Sections 2.1–2.2)}
+\subsection{Radii polynomials in finite dimensions}\label{sec:radii-poly-fd}
 
 \begin{definition}[Closed ball]\label{dfn:Ball}
   \lean{RP.Ball}
@@ -29,11 +29,11 @@
   \]
 \end{lemma}
 
-\begin{theorem}[Contraction Mapping Theorem]\label{thm:Contraction}
-  \lean{RP.ContractionMapping}
-  Let $(X,d)$ be complete and $T:X\to X$ be $L$-Lipschitz with $L<1$.
-  Then $T$ has a unique fixed point $x^\ast\in X$, and the iterates $x_{k+1}=T(x_k)$ converge to $x^\ast$ for every $x_0\in X$.
-\end{theorem}
+% \begin{theorem}[Contraction Mapping Theorem]\label{thm:Contraction}
+%   \lean{RP.ContractionMapping}
+%   Let $(X,d)$ be complete and $T:X\to X$ be $L$-Lipschitz with $L<1$.
+%   Then $T$ has a unique fixed point $x^\ast\in X$, and the iterates $x_{k+1}=T(x_k)$ converge to $x^\ast$ for every $x_0\in X$.
+% \end{theorem}
 
 \subsection*{Newton-like setting and radii polynomials (Section 2.4)}
 
