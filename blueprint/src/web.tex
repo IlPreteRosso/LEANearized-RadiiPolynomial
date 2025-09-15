@@ -9,8 +9,14 @@
 \usepackage{amssymb, amsthm, amsmath}
 \usepackage{hyperref}
 \usepackage{enumitem}
-\usepackage[showmore, dep_graph]{blueprint}
 
+\usepackage[showmore, dep_graph, thms=definition+lemma+proposition+theorem+corollary]{blueprint}
+
+\makeatletter
+\@ifpackageloaded{blueprint}{%
+  \renewcommand{\uses}[1]{\par\small\textbf{Uses: }#1\par}%
+}{}
+\makeatother
 
 \input{macros/common}
 \input{macros/web}
@@ -24,5 +30,7 @@
 
 \begin{document}
 \maketitle
+\tableofcontents
+\pagebreak
 \input{content}
 \end{document}

@@ -21,6 +21,8 @@
 
 \usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
 
+\usepackage[showmore, dep_graph, thms=definition+lemma+proposition+theorem+corollary]{blueprint}
+
 \input{macros/common}
 \input{macros/print}
 
@@ -29,5 +31,7 @@
 
 \begin{document}
 \maketitle
+\tableofcontents
+\pagebreak
 \input{content}
 \end{document}
