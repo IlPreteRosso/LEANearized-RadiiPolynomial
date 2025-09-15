@@ -24,12 +24,6 @@
 
 \usepackage[showmore, dep_graph, thms=definition+lemma+proposition+theorem+corollary]{blueprint}
 
-\makeatletter
-\@ifpackageloaded{blueprint}{%
-  \renewcommand{\uses}[1]{\par\small\textbf{Uses: }#1\par}%
-}{}
-\makeatother
-
 \input{macros/common}
 \input{macros/print}
 
