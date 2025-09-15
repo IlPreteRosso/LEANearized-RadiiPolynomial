@@ -1,4 +1,3 @@
-
 # LEANearized Radii Polynomial — Blueprint (Lean + `leanblueprint`)
 
 This repository contains a **Lean blueprint** for the
@@ -6,6 +5,11 @@ This repository contains a **Lean blueprint** for the
 
 > Proof flow at a glance:  
 > data → Newton map \(T = x - A f(x)\) → a‑priori bounds \((Y_0, Z_0, Z_2)\) → radii polynomial \(p(r)\) → derivative bound → fixed‑point radii lemma → main theorem (existence, uniqueness, nondegeneracy).
+
+---
+
+**How to modify *.tex*+*.lean***
+> run make in the root directory before committing
 
 ---
 
