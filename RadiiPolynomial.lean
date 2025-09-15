@@ -22,7 +22,7 @@ def Bounds : Prop := True
 def RadiiPolynomial : Prop := True
 
 /-- Derivative bound lemma (placeholder). -/
-theorem DT_bound : True := True.intro
+theorem DTBound : True := True.intro
 
 /-- Fixed-point radii lemma (placeholder). -/
 theorem FixedPointRadii : True := True.intro
