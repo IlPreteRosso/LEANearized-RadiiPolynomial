@@ -1,11 +1,8 @@
 
 # LEANearized Radii Polynomial — Blueprint (Lean + `leanblueprint`)
 
-This repository contains a compact **Lean blueprint** for the theorem often called
-**Radii polynomials in finite dimensions** (Section 2.4). It is organized so that
-Patrick Massot’s `leanblueprint` can render (i) a human‑readable web version of the LaTeX
-and (ii) an **interactive dependency‑graph flowchart** that mirrors the proof plan via
-`\uses{...}` annotations.
+This repository contains a **Lean blueprint** for the
+**Radii polynomials in finite dimensions**.
 
 > Proof flow at a glance:  
 > data → Newton map \(T = x - A f(x)\) → a‑priori bounds \((Y_0, Z_0, Z_2)\) → radii polynomial \(p(r)\) → derivative bound → fixed‑point radii lemma → main theorem (existence, uniqueness, nondegeneracy).
