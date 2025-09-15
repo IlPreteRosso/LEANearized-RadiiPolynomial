@@ -1,31 +1,45 @@
--- This module serves as the root of the `RadiiPolynomial` library.
--- Import modules here that should be built as part of the library.
--- import RadiiPolynomial.Basic
 /-
-  Blueprint placeholder declarations.
-  These just create the names that the blueprint references via \lean{…}.
-  Replace each with the real statement/proof when ready.
+  Placeholder declarations so `checkdecls` finds the names
+  referenced by \lean{...} in the blueprint. Replace each with
+  your real statements/proofs as you formalize.
 -/
-
 namespace RP
 
-/-- Finite-dimensional data (placeholder). -/
+/-- Closed ball (placeholder). -/
+def Ball : Prop := True
+
+/-- Operator norm (placeholder). -/
+def OperatorNorm : Prop := True
+
+/-- Mean Value Theorem (placeholder). -/
+theorem MeanValueTheorem : True := True.intro
+
+/-- Mean value inequality (placeholder). -/
+theorem MeanValueIneq : True := True.intro
+
+/-- Contraction Mapping Theorem (placeholder). -/
+theorem ContractionMapping : True := True.intro
+
+/-- Data (placeholder). -/
 def Data : Prop := True
 
 /-- Newton-like map (placeholder). -/
 def T : Prop := True
 
-/-- Bounds (Y₀, Z₀, Z₂) (placeholder). -/
+/-- A priori bounds (placeholder). -/
 def Bounds : Prop := True
 
-/-- Radii polynomial p(r) (placeholder). -/
+/-- Radii polynomial (placeholder). -/
 def RadiiPolynomial : Prop := True
 
-/-- Derivative bound lemma (placeholder). -/
-theorem DTBound : True := True.intro
+/-- Derivative bound (placeholder). -/
+theorem DT_bound : True := True.intro
 
 /-- Fixed-point radii lemma (placeholder). -/
 theorem FixedPointRadii : True := True.intro
+
+/-- Neumann-series invertibility (placeholder). -/
+theorem NeumannInvertible : True := True.intro
 
 /-- Radii polynomials in finite dimensions (placeholder). -/
 theorem RadiiPolynomialFiniteDim : True := True.intro
