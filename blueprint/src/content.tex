@@ -78,7 +78,7 @@
 \end{proof}
 
 %----------------------------------------------------
-\begin{thm}[Radii polynomials in finite dimensions]\label{thm:radii-poly-fd}
+\begin{theorem}[Radii polynomials in finite dimensions]\label{thm:radii-poly-fd}
   \lean{RP.RadiiPolynomialFiniteDim}
   \uses{def:rpoly,lem:DT-bound,lem:fixed-point-radii}
   If there exists $r_0>0$ with $p(r_0)<0$, then:
@@ -87,7 +87,7 @@
     \item there exists a unique $\tilde x\in B_{r_0}(\bar x)$ with $T(\tilde x)=\tilde x$;
     \item $f(\tilde x)=0$, and $\|I-ADf(\tilde x)\|<1$ hence $Df(\tilde x)$ is invertible.
   \end{enumerate}
-\end{thm}
+\end{theorem}
 \begin{proof}
   \leanok
   From $p(r_0)<0$ we get $Z(r_0)<1$ and $(Z(r_0)-1)r_0+Y_0<0$.
