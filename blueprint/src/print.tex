@@ -12,17 +12,20 @@
 
 \documentclass[a4paper]{report}
 
-\usepackage{geometry}
+\usepackage[a4paper]{geometry}
 
 \usepackage{expl3}
 
-\usepackage{amssymb, amsthm, mathtools}
+\usepackage{amssymb, amsthm, amsmath, mathtools}
+\usepackage{hyperref}
 % \usepackage{enumitem}
-\usepackage[unicode,colorlinks=true,linkcolor=blue,urlcolor=magenta, citecolor=blue]{hyperref}
+
+% \usepackage[showmore, dep_graph, thms=definition+lemma+proposition+theorem+corollary]{blueprint}
+\usepackage[showmore, dep_graph]{blueprint}
+% \usepackage{enumitem}
+% \usepackage[unicode,colorlinks=true,linkcolor=blue,urlcolor=magenta, citecolor=blue]{hyperref}
 
 \usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
-
-\usepackage[showmore, dep_graph]{blueprint}
 
 \input{macros/common}
 \input{macros/print}
