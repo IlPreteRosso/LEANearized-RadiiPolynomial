@@ -15,16 +15,16 @@
 %----------------------------------------------------
 \begin{definition}[Finite-dimensional data]\label{def:data}
   \lean{RP.Data}
-  Fix a norm $\|\cdot\|$ on $\Bbb R^n$ (or $\Bbb C^n$). Let $f:\Bbb R^n\to\Bbb R^n$ be $C^1$,
-  $\bar x\in\Bbb R^n$ a numerical approximation to a zero of $f$, and
-  $A\in M_n(\Bbb R)$ (typically $A\approx Df(\bar x)^{-1}$).
+  Fix a norm $\|\cdot\|$ on $\mathbb R^n$ (or $\mathbb C^n$). Let $f:\mathbb R^n\to\mathbb R^n$ be $C^1$,
+  $\bar x\in\mathbb R^n$ a numerical approximation to a zero of $f$, and
+  $A\in M_n(\mathbb R)$ (typically $A\approx Df(\bar x)^{-1}$).
 \end{definition}
 
 %----------------------------------------------------
 \begin{definition}[Newton-like map]\label{def:T}
   \lean{RP.T}
   \uses{def:data}
-  Define $T:\Bbb R^n\to\Bbb R^n$ by $T(x)=x-A f(x)$.
+  Define $T:\mathbb R^n\to\mathbb R^n$ by $T(x)=x-A f(x)$.
 \end{definition}
 
 %----------------------------------------------------
