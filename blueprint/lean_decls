@@ -1,7 +1,13 @@
+RP.Ball
+RP.OperatorNorm
+RP.MeanValueTheorem
+RP.MeanValueIneq
+RP.ContractionMapping
 RP.Data
 RP.T
 RP.Bounds
 RP.RadiiPolynomial
 RP.DT_bound
 RP.FixedPointRadii
+RP.NeumannInvertible
 RP.RadiiPolynomialFiniteDim

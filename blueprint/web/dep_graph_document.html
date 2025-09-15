@@ -63,25 +63,55 @@
 <div id="statements">
 
     
-    <div class="dep-modal-container" id="def:bounds_modal">
+    <div class="dep-modal-container" id="dfn:Ball_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
 <svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         
-  <div class="thm" id="def:bounds" style="display: none">
+  <div class="thm" id="dfn:Ball" style="display: none">
     <div class="thm_thmheading">
       <span class="definition_thmcaption">
       Definition
       </span>
-      <span class="definition_thmlabel">0.1.3</span><span class="definition_thmtitle">A priori bounds \(Y_0,Z_0,Z_2\)</span></div>
-    <div class="thm_thmcontent"><p>   Choose nonnegative \(Y_0,Z_0\) and a function \(Z_2:(0,\infty )\to [0,\infty )\) such that for all \(r{\gt}0\) and all \(c\in B_r(\bar x)\), </p>
-<div class="displaymath" id="a0000000002">
-  \[  \| A f(\bar x)\| \le Y_0,\qquad \| I-ADf(\bar x)\| \le Z_0,\qquad \| A(Df(c)-Df(\bar x))\| \le Z_2(r)\, r.  \]
+      <span class="definition_thmlabel">0.1.1</span><span class="definition_thmtitle">Closed ball</span></div>
+    <div class="thm_thmcontent"><p>  For \(x\in \mathbb R^n\) and \(r{\gt}0\), the closed ball is \(B_r(x)=\{ y:\| y-x\| \le r\} \). </p>
+</div>
+
+    <a class="latex_link" href="index.html#dfn:Ball">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.Ball">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="dfn:Bounds_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="dfn:Bounds" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">0.1.8</span><span class="definition_thmtitle">A priori bounds</span></div>
+    <div class="thm_thmcontent"><p>   Choose nonnegative numbers \(Y_0,Z_0\) and a nonnegative function \(Z_2:(0,\infty )\to [0,\infty )\) such that for all \(r{\gt}0\) and all \(c\in B_r(\bar x)\), </p>
+<div class="displaymath" id="a0000000006">
+  \[  \| A f(\bar x)\| \le Y_0,\qquad \| I-ADf(\bar x)\| \le Z_0,\qquad \| A\bigl(Df(c)-Df(\bar x)\bigr)\| \le Z_2(r)\, r.  \]
 </div>
 </div>
 
-    <a class="latex_link" href="index.html#def:bounds">LaTeX</a>
+    <a class="latex_link" href="index.html#dfn:Bounds">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.Bounds">Lean</a>
@@ -96,22 +126,22 @@
 
 
     
-    <div class="dep-modal-container" id="def:data_modal">
+    <div class="dep-modal-container" id="dfn:Data_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
 <svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         
-  <div class="thm" id="def:data" style="display: none">
+  <div class="thm" id="dfn:Data" style="display: none">
     <div class="thm_thmheading">
       <span class="definition_thmcaption">
       Definition
       </span>
-      <span class="definition_thmlabel">0.1.1</span><span class="definition_thmtitle">Finite-dimensional data</span></div>
-    <div class="thm_thmcontent"><p>  Fix a norm \(\| \cdot \| \) on \(\mathbb R^n\) (or \(\mathbb C^n\)). Let \(f:\mathbb R^n\to \mathbb R^n\) be \(C^1\), \(\bar x\in \mathbb R^n\) a numerical approximation to a zero of \(f\), and \(A\in M_n(\mathbb R)\) (typically \(A\approx Df(\bar x)^{-1}\)). </p>
+      <span class="definition_thmlabel">0.1.6</span><span class="definition_thmtitle">Data</span></div>
+    <div class="thm_thmcontent"><p>  Fix a norm on \(\mathbb R^n\) (or \(\mathbb C^n\)). Let \(f:\mathbb R^n\to \mathbb R^n\) be \(C^1\), choose an approximate zero \(\bar x\in \mathbb R^n\), and a matrix \(A\in M_n(\mathbb R)\) (typically \(A\approx Df(\bar x)^{-1}\)). </p>
 </div>
 
-    <a class="latex_link" href="index.html#def:data">LaTeX</a>
+    <a class="latex_link" href="index.html#dfn:Data">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.Data">Lean</a>
@@ -126,25 +156,55 @@
 
 
     
-    <div class="dep-modal-container" id="def:rpoly_modal">
+    <div class="dep-modal-container" id="dfn:OpNorm_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
 <svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         
-  <div class="thm" id="def:rpoly" style="display: none">
+  <div class="thm" id="dfn:OpNorm" style="display: none">
     <div class="thm_thmheading">
       <span class="definition_thmcaption">
       Definition
       </span>
-      <span class="definition_thmlabel">0.1.4</span><span class="definition_thmtitle">Radii polynomial</span></div>
+      <span class="definition_thmlabel">0.1.2</span><span class="definition_thmtitle">Operator norm</span></div>
+    <div class="thm_thmcontent"><p>  For a matrix \(M\in M_n(\mathbb R)\), \(\| M\| :=\sup _{\| v\| =1}\| Mv\| \). </p>
+</div>
+
+    <a class="latex_link" href="index.html#dfn:OpNorm">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.OperatorNorm">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="dfn:RPoly_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="dfn:RPoly" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">0.1.9</span><span class="definition_thmtitle">Radii polynomial</span></div>
     <div class="thm_thmcontent"><p>   For \(r{\gt}0\), set </p>
-<div class="displaymath" id="a0000000003">
+<div class="displaymath" id="a0000000007">
   \[  p(r):=Z_2(r)\, r^2-(1-Z_0)\, r+Y_0.  \]
 </div>
 </div>
 
-    <a class="latex_link" href="index.html#def:rpoly">LaTeX</a>
+    <a class="latex_link" href="index.html#dfn:RPoly">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.RadiiPolynomial">Lean</a>
@@ -159,22 +219,22 @@
 
 
     
-    <div class="dep-modal-container" id="def:T_modal">
+    <div class="dep-modal-container" id="dfn:T_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
 <svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         
-  <div class="thm" id="def:T" style="display: none">
+  <div class="thm" id="dfn:T" style="display: none">
     <div class="thm_thmheading">
       <span class="definition_thmcaption">
       Definition
       </span>
-      <span class="definition_thmlabel">0.1.2</span><span class="definition_thmtitle">Newton-like map</span></div>
-    <div class="thm_thmcontent"><p>   Define \(T:\mathbb R^n\to \mathbb R^n\) by \(T(x)=x-A f(x)\). </p>
+      <span class="definition_thmlabel">0.1.7</span><span class="definition_thmtitle">Newton-like map</span></div>
+    <div class="thm_thmcontent"><p>   Define \(T(x)=x-Af(x)\). </p>
 </div>
 
-    <a class="latex_link" href="index.html#def:T">LaTeX</a>
+    <a class="latex_link" href="index.html#dfn:T">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.T">Lean</a>
@@ -189,25 +249,25 @@
 
 
     
-    <div class="dep-modal-container" id="lem:DT-bound_modal">
+    <div class="dep-modal-container" id="lem:DTbound_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
 <svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         
-  <div class="thm" id="lem:DT-bound" style="display: none">
+  <div class="thm" id="lem:DTbound" style="display: none">
     <div class="thm_thmheading">
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">0.1.5</span><span class="lemma_thmtitle">Derivative bound</span></div>
+      <span class="lemma_thmlabel">0.1.10</span><span class="lemma_thmtitle">Derivative bound</span></div>
     <div class="thm_thmcontent"><p>   For every \(c\in B_r(\bar x)\), </p>
-<div class="displaymath" id="a0000000005">
-  \[  DT(c)=I-ADf(c),\qquad \| DT(c)\| \le Z_0+Z_2(r)\, r =: Z(r).  \]
+<div class="displaymath" id="a0000000008">
+  \[  DT(c)=I-ADf(c), \qquad \| DT(c)\| \le Z_0+Z_2(r)\, r =: Z(r).  \]
 </div>
 </div>
 
-    <a class="latex_link" href="index.html#lem:DT-bound">LaTeX</a>
+    <a class="latex_link" href="index.html#lem:DTbound">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.DT_bound">Lean</a>
@@ -222,22 +282,22 @@
 
 
     
-    <div class="dep-modal-container" id="lem:fixed-point-radii_modal">
+    <div class="dep-modal-container" id="lem:FixedPointRadii_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
 <svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         
-  <div class="thm" id="lem:fixed-point-radii" style="display: none">
+  <div class="thm" id="lem:FixedPointRadii" style="display: none">
     <div class="thm_thmheading">
       <span class="lemma_thmcaption">
       Lemma
       </span>
-      <span class="lemma_thmlabel">0.1.6</span><span class="lemma_thmtitle">Ball invariance and contraction criterion</span></div>
-    <div class="thm_thmcontent"><p>   If \(r{\gt}0\) satisfies \((Z(r)-1)r+Y_0{\lt}0\), then \(T(B_r(\bar x))\subseteq B_r(\bar x)\) and \(T\) is a contraction on \(B_r(\bar x)\) with Lipschitz constant \(\le Z(r){\lt}1\). </p>
+      <span class="lemma_thmlabel">0.1.11</span><span class="lemma_thmtitle">Fixed-point radii</span></div>
+    <div class="thm_thmcontent"><p>   Let \(r{\gt}0\). Assume \(\| T(\bar x)-\bar x\| \le Y_0\) and \(\sup _{c\in B_r(\bar x)}\| DT(c)\| \le Z(r)\). If \((Z(r)-1)r+Y_0{\lt}0\), then \(T(B_r(\bar x))\subseteq B_r(\bar x)\) and \(T\) is a contraction on \(B_r(\bar x)\) with Lipschitz constant \(\le Z(r){\lt}1\). </p>
 </div>
 
-    <a class="latex_link" href="index.html#lem:fixed-point-radii">LaTeX</a>
+    <a class="latex_link" href="index.html#lem:FixedPointRadii">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.FixedPointRadii">Lean</a>
@@ -252,22 +312,156 @@
 
 
     
-    <div class="dep-modal-container" id="thm:radii-poly-fd_modal">
+    <div class="dep-modal-container" id="lem:MVI_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
 <svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         
-  <div class="thm" id="thm:radii-poly-fd" style="display: none">
+  <div class="thm" id="lem:MVI" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">0.1.4</span><span class="lemma_thmtitle">Mean value inequality</span></div>
+    <div class="thm_thmcontent"><p>   Let \(T:\mathbb R^n\to \mathbb R^n\) be \(C^1\). Then for all \(x,y\), </p>
+<div class="displaymath" id="a0000000004">
+  \[  \| T(x)-T(y)\| \le \sup _{0\le t\le 1}\, \| DT\bigl(y+t(x-y)\bigr)\| \, \| x-y\| .  \]
+</div>
+</div>
+
+    <a class="latex_link" href="index.html#lem:MVI">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.MeanValueIneq">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:Neumann_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:Neumann" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">0.1.12</span><span class="lemma_thmtitle">Neumann-series invertibility</span></div>
+    <div class="thm_thmcontent"><p>  If \(\| I-B\| {\lt}1\) for a matrix \(B\), then \(B\) is invertible (and \(B^{-1}=\sum _{k\ge 0}(I-B)^k\)). </p>
+</div>
+
+    <a class="latex_link" href="index.html#lem:Neumann">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.NeumannInvertible">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:Contraction_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:Contraction" style="display: none">
     <div class="thm_thmheading">
       <span class="theorem_thmcaption">
       Theorem
       </span>
-      <span class="theorem_thmlabel">0.1.7</span><span class="theorem_thmtitle">Radii polynomials in finite dimensions</span></div>
-    <div class="thm_thmcontent"><p>   If there exists \(r_0{\gt}0\) with \(p(r_0){\lt}0\), then: </p>
+      <span class="theorem_thmlabel">0.1.5</span><span class="theorem_thmtitle">Contraction Mapping Theorem</span></div>
+    <div class="thm_thmcontent"><p>  Let \((X,d)\) be complete and \(T:X\to X\) be \(L\)-Lipschitz with \(L{\lt}1\). Then \(T\) has a unique fixed point \(x^\ast \in X\), and the iterates \(x_{k+1}=T(x_k)\) converge to \(x^\ast \) for every \(x_0\in X\). </p>
 </div>
 
-    <a class="latex_link" href="index.html#thm:radii-poly-fd">LaTeX</a>
+    <a class="latex_link" href="index.html#thm:Contraction">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.ContractionMapping">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:MVT_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:MVT" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">0.1.3</span><span class="theorem_thmtitle">Mean Value Theorem</span></div>
+    <div class="thm_thmcontent"><p>  Let \(g:\mathbb R^n\to \mathbb R\) be \(C^1\). For all \(x,y\in \mathbb R^n\) there exists \(t\in (0,1)\) such that </p>
+<div class="displaymath" id="a0000000003">
+  \[  g(x)-g(y)=\nabla g\bigl(y+t(x-y)\bigr)\cdot (x-y).  \]
+</div>
+</div>
+
+    <a class="latex_link" href="index.html#thm:MVT">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.MeanValueTheorem">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:RadiiPolyFD_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:RadiiPolyFD" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">0.1.13</span><span class="theorem_thmtitle">Radii polynomials in finite dimensions</span></div>
+    <div class="thm_thmcontent"><p>   If there exists \(r_0{\gt}0\) with \(p(r_0){\lt}0\), then: </p>
+<ol class="enumerate">
+  <li><p>\(T\) maps \(B_{r_0}(\bar x)\) into itself and is a contraction there; </p>
+</li>
+  <li><p>there exists a unique \(\tilde x\in B_{r_0}(\bar x)\) with \(T(\tilde x)=\tilde x\); </p>
+</li>
+  <li><p>\(f(\tilde x)=0\), and \(\| I-ADf(\tilde x)\| {\lt}1\), hence \(Df(\tilde x)\) is invertible. </p>
+</li>
+</ol>
+</div>
+
+    <a class="latex_link" href="index.html#thm:RadiiPolyFD">LaTeX</a>
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/RP.RadiiPolynomialFiniteDim">Lean</a>
@@ -298,7 +492,7 @@ graphContainer.graphviz({useWorker: true})
     .width(width)
     .height(height)
     .fit(true)
-    .renderDot(`strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	"lem:DT-bound"	[fillcolor="#1CAC78",		label="DT-bound",		shape=ellipse,		style=filled];	"lem:fixed-point-radii"	[fillcolor="#1CAC78",		label="fixed-point-radii",		shape=ellipse,		style=filled];	"lem:DT-bound" -> "lem:fixed-point-radii"	[style=dashed];	"thm:radii-poly-fd"	[fillcolor="#1CAC78",		label="radii-poly-fd",		shape=ellipse,		style=filled];	"lem:fixed-point-radii" -> "thm:radii-poly-fd"	[style=dashed];	"def:bounds"	[label=bounds,		shape=box];	"def:bounds" -> "lem:DT-bound"	[style=dashed];	"def:rpoly"	[label=rpoly,		shape=box];	"def:bounds" -> "def:rpoly"	[style=dashed];	"def:rpoly" -> "thm:radii-poly-fd"	[style=dashed];	"def:data"	[color=blue,		fillcolor="#A3D6FF",		label=data,		shape=box,		style=filled];	"def:T"	[label=T,		shape=box];	"def:data" -> "def:T"	[style=dashed];	"def:T" -> "def:bounds"	[style=dashed];}`)
+    .renderDot(`strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	"dfn:T"	[label=T,		shape=box];	"dfn:Bounds"	[label=Bounds,		shape=box];	"dfn:T" -> "dfn:Bounds"	[style=dashed];	"lem:DTbound"	[label=DTbound,		shape=ellipse];	"dfn:Bounds" -> "lem:DTbound"	[style=dashed];	"dfn:RPoly"	[label=RPoly,		shape=box];	"dfn:Bounds" -> "dfn:RPoly"	[style=dashed];	"lem:FixedPointRadii"	[label=FixedPointRadii,		shape=ellipse];	"lem:DTbound" -> "lem:FixedPointRadii"	[style=dashed];	"thm:RadiiPolyFD"	[fillcolor="#9CEC8B",		label=RadiiPolyFD,		shape=ellipse,		style=filled];	"dfn:RPoly" -> "thm:RadiiPolyFD"	[style=dashed];	"lem:FixedPointRadii" -> "thm:RadiiPolyFD"	[style=dashed];	"dfn:Data"	[color=blue,		fillcolor="#A3D6FF",		label=Data,		shape=box,		style=filled];	"dfn:Data" -> "dfn:T"	[style=dashed];	"thm:MVT"	[color=blue,		label=MVT,		shape=ellipse];	"lem:MVI"	[label=MVI,		shape=ellipse];	"thm:MVT" -> "lem:MVI"	[style=dashed];	"lem:MVI" -> "lem:FixedPointRadii"	[style=dashed];	"dfn:Ball"	[color=blue,		fillcolor="#A3D6FF",		label=Ball,		shape=box,		style=filled];	"dfn:Ball" -> "lem:FixedPointRadii"	[style=dashed];	"dfn:OpNorm"	[color=blue,		fillcolor="#A3D6FF",		label=OpNorm,		shape=box,		style=filled];	"dfn:OpNorm" -> "dfn:Bounds"	[style=dashed];	"dfn:OpNorm" -> "lem:MVI"	[style=dashed];	"lem:Neumann"	[color=blue,		label=Neumann,		shape=ellipse];	"lem:Neumann" -> "thm:RadiiPolyFD"	[style=dashed];	"thm:Contraction"	[color=blue,		label=Contraction,		shape=ellipse];	"thm:Contraction" -> "lem:FixedPointRadii"	[style=dashed];}`)
     .on("end", interactive);
 
 latexLabelEscaper = function(label) {
