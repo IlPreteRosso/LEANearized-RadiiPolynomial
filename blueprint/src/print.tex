@@ -17,11 +17,18 @@
 \usepackage{expl3}
 
 \usepackage{amssymb, amsthm, mathtools}
+\usepackage{enumitem}
 \usepackage[unicode,colorlinks=true,linkcolor=blue,urlcolor=magenta, citecolor=blue]{hyperref}
 
 \usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
 
 \usepackage[showmore, dep_graph, thms=definition+lemma+proposition+theorem+corollary]{blueprint}
+
+\makeatletter
+\@ifpackageloaded{blueprint}{%
+  \renewcommand{\uses}[1]{\par\small\textbf{Uses: }#1\par}%
+}{}
+\makeatother
 
 \input{macros/common}
 \input{macros/print}
