@@ -6,91 +6,91 @@
 % the current file can be a simple sequence of \input. Otherwise It
 % can start with a \section or \chapter for instance.
 
-\tableofcontents
-\pagebreak
+% \tableofcontents
+% \pagebreak
 
-\section{Radii polynomials in finite dimensions}\label{sec:radii-poly-fd}
+% \section{Radii polynomials in finite dimensions}\label{sec:radii-poly-fd}
 
-%----------------------------------------------------
-\begin{definition}[Finite-dimensional data]\label{def:data}
-  \lean{RP.Data}
-  Fix a norm $\|\cdot\|$ on $\mathbb R^n$ (or $\mathbb C^n$). Let $f:\mathbb R^n\to\mathbb R^n$ be $C^1$,
-  $\bar x\in\mathbb R^n$ a numerical approximation to a zero of $f$, and
-  $A\in M_n(\mathbb R)$ (typically $A\approx Df(\bar x)^{-1}$).
-\end{definition}
+% %----------------------------------------------------
+% \begin{definition}[Finite-dimensional data]\label{def:data}
+%   \lean{RP.Data}
+%   Fix a norm $\|\cdot\|$ on $\mathbb R^n$ (or $\mathbb C^n$). Let $f:\mathbb R^n\to\mathbb R^n$ be $C^1$,
+%   $\bar x\in\mathbb R^n$ a numerical approximation to a zero of $f$, and
+%   $A\in M_n(\mathbb R)$ (typically $A\approx Df(\bar x)^{-1}$).
+% \end{definition}
 
-%----------------------------------------------------
-\begin{definition}[Newton-like map]\label{def:T}
-  \lean{RP.T}
-  \uses{def:data}
-  Define $T:\mathbb R^n\to\mathbb R^n$ by $T(x)=x-A f(x)$.
-\end{definition}
+% %----------------------------------------------------
+% \begin{definition}[Newton-like map]\label{def:T}
+%   \lean{RP.T}
+%   \uses{def:data}
+%   Define $T:\mathbb R^n\to\mathbb R^n$ by $T(x)=x-A f(x)$.
+% \end{definition}
 
-%----------------------------------------------------
-\begin{definition}[A priori bounds $Y_0,Z_0,Z_2$]\label{def:bounds}
-  \lean{RP.Bounds}
-  \uses{def:data,def:T}
-  Choose nonnegative $Y_0,Z_0$ and a function $Z_2:(0,\infty)\to[0,\infty)$ such that
-  for all $r>0$ and all $c\in B_r(\bar x)$,
-  \[
-    \|A f(\bar x)\|\le Y_0,\qquad
-    \|I-ADf(\bar x)\|\le Z_0,\qquad
-    \|A(Df(c)-Df(\bar x))\|\le Z_2(r)\,r.
-  \]
-\end{definition}
+% %----------------------------------------------------
+% \begin{definition}[A priori bounds $Y_0,Z_0,Z_2$]\label{def:bounds}
+%   \lean{RP.Bounds}
+%   \uses{def:data,def:T}
+%   Choose nonnegative $Y_0,Z_0$ and a function $Z_2:(0,\infty)\to[0,\infty)$ such that
+%   for all $r>0$ and all $c\in B_r(\bar x)$,
+%   \[
+%     \|A f(\bar x)\|\le Y_0,\qquad
+%     \|I-ADf(\bar x)\|\le Z_0,\qquad
+%     \|A(Df(c)-Df(\bar x))\|\le Z_2(r)\,r.
+%   \]
+% \end{definition}
 
-%----------------------------------------------------
-\begin{definition}[Radii polynomial]\label{def:rpoly}
-  \lean{RP.RadiiPolynomial}
-  \uses{def:bounds}
-  For $r>0$, set
-  \[
-    p(r):=Z_2(r)\,r^2-(1-Z_0)\,r+Y_0.
-  \]
-\end{definition}
+% %----------------------------------------------------
+% \begin{definition}[Radii polynomial]\label{def:rpoly}
+%   \lean{RP.RadiiPolynomial}
+%   \uses{def:bounds}
+%   For $r>0$, set
+%   \[
+%     p(r):=Z_2(r)\,r^2-(1-Z_0)\,r+Y_0.
+%   \]
+% \end{definition}
 
-%----------------------------------------------------
-\begin{lemma}[Derivative bound]\label{lem:DT-bound}
-  \lean{RP.DT_bound}
-  \uses{def:T,def:bounds}
-  For every $c\in B_r(\bar x)$,
-  \[
-    DT(c)=I-ADf(c),\qquad
-    \|DT(c)\|\le Z_0+Z_2(r)\,r =: Z(r).
-  \]
-\end{lemma}
-\begin{proof}
-  \leanok % (mark proof as fully formalized once ported)
-  Immediate from $DT=I-ADf$ and the $Z_0,Z_2$ hypotheses.
-\end{proof}
+% %----------------------------------------------------
+% \begin{lemma}[Derivative bound]\label{lem:DT-bound}
+%   \lean{RP.DT_bound}
+%   \uses{def:T,def:bounds}
+%   For every $c\in B_r(\bar x)$,
+%   \[
+%     DT(c)=I-ADf(c),\qquad
+%     \|DT(c)\|\le Z_0+Z_2(r)\,r =: Z(r).
+%   \]
+% \end{lemma}
+% \begin{proof}
+%   \leanok % (mark proof as fully formalized once ported)
+%   Immediate from $DT=I-ADf$ and the $Z_0,Z_2$ hypotheses.
+% \end{proof}
 
-%----------------------------------------------------
-\begin{lemma}[Ball invariance and contraction criterion]\label{lem:fixed-point-radii}
-  \lean{RP.FixedPointRadii}
-  \uses{def:T,lem:DT-bound}
-  If $r>0$ satisfies $(Z(r)-1)r+Y_0<0$, then $T(B_r(\bar x))\subseteq B_r(\bar x)$ and
-  $T$ is a contraction on $B_r(\bar x)$ with Lipschitz constant $\le Z(r)<1$.
-\end{lemma}
-\begin{proof}
-  \leanok
-  Use the mean value inequality for $T$ together with $\|T(\bar x)-\bar x\|\le Y_0$ and $\sup_{c\in B_r}\|DT(c)\|\le Z(r)$.
-\end{proof}
+% %----------------------------------------------------
+% \begin{lemma}[Ball invariance and contraction criterion]\label{lem:fixed-point-radii}
+%   \lean{RP.FixedPointRadii}
+%   \uses{def:T,lem:DT-bound}
+%   If $r>0$ satisfies $(Z(r)-1)r+Y_0<0$, then $T(B_r(\bar x))\subseteq B_r(\bar x)$ and
+%   $T$ is a contraction on $B_r(\bar x)$ with Lipschitz constant $\le Z(r)<1$.
+% \end{lemma}
+% \begin{proof}
+%   \leanok
+%   Use the mean value inequality for $T$ together with $\|T(\bar x)-\bar x\|\le Y_0$ and $\sup_{c\in B_r}\|DT(c)\|\le Z(r)$.
+% \end{proof}
 
-%----------------------------------------------------
-\begin{theorem}[Radii polynomials in finite dimensions]\label{thm:radii-poly-fd}
-  \lean{RP.RadiiPolynomialFiniteDim}
-  \uses{def:rpoly,lem:DT-bound,lem:fixed-point-radii}
-  If there exists $r_0>0$ with $p(r_0)<0$, then:
-  \begin{enumerate}[label=(\roman*)]
-    \item $T$ maps $B_{r_0}(\bar x)$ into itself and is a contraction there;
-    \item there exists a unique $\tilde x\in B_{r_0}(\bar x)$ with $T(\tilde x)=\tilde x$;
-    \item $f(\tilde x)=0$, and $\|I-ADf(\tilde x)\|<1$ hence $Df(\tilde x)$ is invertible.
-  \end{enumerate}
-\end{theorem}
-\begin{proof}
-  \leanok
-  From $p(r_0)<0$ we get $Z(r_0)<1$ and $(Z(r_0)-1)r_0+Y_0<0$.
-  Apply Lemma~\ref{lem:fixed-point-radii} with $r=r_0$ to obtain (i) and (ii) by the contraction mapping theorem.
-  Then $T(\tilde x)=\tilde x$ implies $A f(\tilde x)=0$, hence $f(\tilde x)=0$ since $A$ is injective.
-  Finally $\|I-ADf(\tilde x)\|<1$ implies $Df(\tilde x)$ invertible (Neumann series).
-\end{proof}
+% %----------------------------------------------------
+% \begin{theorem}[Radii polynomials in finite dimensions]\label{thm:radii-poly-fd}
+%   \lean{RP.RadiiPolynomialFiniteDim}
+%   \uses{def:rpoly,lem:DT-bound,lem:fixed-point-radii}
+%   If there exists $r_0>0$ with $p(r_0)<0$, then:
+%   \begin{enumerate}[label=(\roman*)]
+%     \item $T$ maps $B_{r_0}(\bar x)$ into itself and is a contraction there;
+%     \item there exists a unique $\tilde x\in B_{r_0}(\bar x)$ with $T(\tilde x)=\tilde x$;
+%     \item $f(\tilde x)=0$, and $\|I-ADf(\tilde x)\|<1$ hence $Df(\tilde x)$ is invertible.
+%   \end{enumerate}
+% \end{theorem}
+% \begin{proof}
+%   \leanok
+%   From $p(r_0)<0$ we get $Z(r_0)<1$ and $(Z(r_0)-1)r_0+Y_0<0$.
+%   Apply Lemma~\ref{lem:fixed-point-radii} with $r=r_0$ to obtain (i) and (ii) by the contraction mapping theorem.
+%   Then $T(\tilde x)=\tilde x$ implies $A f(\tilde x)=0$, hence $f(\tilde x)=0$ since $A$ is injective.
+%   Finally $\|I-ADf(\tilde x)\|<1$ implies $Df(\tilde x)$ invertible (Neumann series).
+% \end{proof}
