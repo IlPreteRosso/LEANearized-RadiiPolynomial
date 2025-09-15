@@ -14,10 +14,7 @@ and (ii) an **interactive dependency‑graph flowchart** that mirrors the proof 
 
 ## Live blueprint pages
 
-- **Blueprint (HTML):** https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/blueprint/  
-- **Dependency graph (flowchart):** https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/blueprint/dep_graph.html  
-- **PDF:** https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/blueprint.pdf  
-- **(Optional) API docs:** https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/
+- **Blueprint (HTML):** https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial  
 
 ## Acknowledgments
 
