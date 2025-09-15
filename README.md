@@ -19,6 +19,5 @@ and (ii) an **interactive dependency‑graph flowchart** that mirrors the proof 
 ## Acknowledgments
 
 Built with [`leanblueprint`](https://github.com/PatrickMassot/leanblueprint), a plasTeX plugin for planning and tracking Lean formalization projects.
-The proof‑plan here follows the standard “radii polynomials in finite dimensions” framework (Section 2.4).
 
 ---
