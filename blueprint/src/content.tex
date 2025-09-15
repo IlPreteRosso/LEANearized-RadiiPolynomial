@@ -13,22 +13,22 @@
 \section{Radii polynomials in finite dimensions}\label{sec:radii-poly-fd}
 
 %----------------------------------------------------
-\begin{dfn}[Finite-dimensional data]\label{def:data}
+\begin{definition}[Finite-dimensional data]\label{def:data}
   \lean{RP.Data}
   Fix a norm $\|\cdot\|$ on $\Bbb R^n$ (or $\Bbb C^n$). Let $f:\Bbb R^n\to\Bbb R^n$ be $C^1$,
   $\bar x\in\Bbb R^n$ a numerical approximation to a zero of $f$, and
   $A\in M_n(\Bbb R)$ (typically $A\approx Df(\bar x)^{-1}$).
-\end{dfn}
+\end{definition}
 
 %----------------------------------------------------
-\begin{dfn}[Newton-like map]\label{def:T}
+\begin{definition}[Newton-like map]\label{def:T}
   \lean{RP.T}
   \uses{def:data}
   Define $T:\Bbb R^n\to\Bbb R^n$ by $T(x)=x-A f(x)$.
-\end{dfn}
+\end{definition}
 
 %----------------------------------------------------
-\begin{dfn}[A priori bounds $Y_0,Z_0,Z_2$]\label{def:bounds}
+\begin{definition}[A priori bounds $Y_0,Z_0,Z_2$]\label{def:bounds}
   \lean{RP.Bounds}
   \uses{def:data,def:T}
   Choose nonnegative $Y_0,Z_0$ and a function $Z_2:(0,\infty)\to[0,\infty)$ such that
@@ -38,20 +38,20 @@
     \|I-ADf(\bar x)\|\le Z_0,\qquad
     \|A(Df(c)-Df(\bar x))\|\le Z_2(r)\,r.
   \]
-\end{dfn}
+\end{definition}
 
 %----------------------------------------------------
-\begin{dfn}[Radii polynomial]\label{def:rpoly}
+\begin{definition}[Radii polynomial]\label{def:rpoly}
   \lean{RP.RadiiPolynomial}
   \uses{def:bounds}
   For $r>0$, set
   \[
     p(r):=Z_2(r)\,r^2-(1-Z_0)\,r+Y_0.
   \]
-\end{dfn}
+\end{definition}
 
 %----------------------------------------------------
-\begin{lem}[Derivative bound]\label{lem:DT-bound}
+\begin{lemma}[Derivative bound]\label{lem:DT-bound}
   \lean{RP.DT_bound}
   \uses{def:T,def:bounds}
   For every $c\in B_r(\bar x)$,
@@ -59,19 +59,19 @@
     DT(c)=I-ADf(c),\qquad
     \|DT(c)\|\le Z_0+Z_2(r)\,r =: Z(r).
   \]
-\end{lem}
+\end{lemma}
 \begin{proof}
   \leanok % (mark proof as fully formalized once ported)
   Immediate from $DT=I-ADf$ and the $Z_0,Z_2$ hypotheses.
 \end{proof}
 
 %----------------------------------------------------
-\begin{lem}[Ball invariance and contraction criterion]\label{lem:fixed-point-radii}
+\begin{lemma}[Ball invariance and contraction criterion]\label{lem:fixed-point-radii}
   \lean{RP.FixedPointRadii}
   \uses{def:T,lem:DT-bound}
   If $r>0$ satisfies $(Z(r)-1)r+Y_0<0$, then $T(B_r(\bar x))\subseteq B_r(\bar x)$ and
   $T$ is a contraction on $B_r(\bar x)$ with Lipschitz constant $\le Z(r)<1$.
-\end{lem}
+\end{lemma}
 \begin{proof}
   \leanok
   Use the mean value inequality for $T$ together with $\|T(\bar x)-\bar x\|\le Y_0$ and $\sup_{c\in B_r}\|DT(c)\|\le Z(r)$.
