@@ -1,7 +1,7 @@
-# LEANearized Radii Polynomial — Blueprint (Lean + `leanblueprint`)
+# LEANearized Radii Polynomial — Blueprint (![LEAN](./assets/lean_logo.svg) + `leanblueprint`)
 
-This repository contains a **Lean blueprint** for the
-**Radii polynomials in finite dimensions**.
+This repository contains a **Lean blueprint** for the theorem
+**Radii Polynomials in Finite Dimensions**.
 
 > Proof flow at a glance:  
 > data → Newton map \(T = x - A f(x)\) → a‑priori bounds \((Y_0, Z_0, Z_2)\) → radii polynomial \(p(r)\) → derivative bound → fixed‑point radii lemma → main theorem (existence, uniqueness, nondegeneracy).
@@ -9,7 +9,7 @@ This repository contains a **Lean blueprint** for the
 ---
 
 **How to modify *.tex*+*.lean***
-> run make in the root directory before committing
+> run `make` in the root directory before committing
 
 ---
 
