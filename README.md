@@ -2,7 +2,7 @@
 
 # LEANearized Radii Polynomial — A LEAN Blueprint 
 
-## Live blueprint page
+### Live blueprint page
 
 - https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial  
 
