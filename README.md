@@ -1,4 +1,4 @@
-<img src="assets/lean_logo.svg" alt="LEAN" style="vertical-align:middle;"> 
+<img src="assets/lean_logo.svg" alt="LEAN"> 
 
 # LEANearized Radii Polynomial — A LEAN Blueprint 
 
