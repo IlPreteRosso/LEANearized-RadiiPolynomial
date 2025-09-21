@@ -1,4 +1,4 @@
-# LEANearized Radii Polynomial — <img src="assets/lean_logo.png" alt="LEAN" style="vertical-align:middle; transform:translateY(-0.5em);"> Blueprint 
+# LEANearized Radii Polynomial — <img src="assets/lean_logo.png" alt="LEAN" style="vertical-align:middle; transform:translateY(-5em);"> Blueprint 
 
 This repository contains a **Lean blueprint** for the theorem
 **Radii Polynomials in Finite Dimensions**.
