@@ -4,7 +4,7 @@
 
 ## Live blueprint page
 
-- **Blueprint (HTML):** https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial  
+- https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial  
 
 This repository contains a **Lean blueprint** for the theorem
 **Radii Polynomials in Finite Dimensions**.
