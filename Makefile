@@ -1,6 +1,6 @@
+# leanblueprint web updates blueprint/lean_decls
 default:
-	mamba activate leanblueprint
 	lake clean
 	lake build
-	lake exe checkdecls blueprint/lean_decls
 	leanblueprint web
+	lake exe checkdecls blueprint/lean_decls

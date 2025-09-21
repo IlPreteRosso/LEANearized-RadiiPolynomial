@@ -43,7 +43,7 @@ Reusable LaTeX macros live in `blueprint/src/macros`. These define commands and 
 
 ## LaTeX ↔ LEAN workflow
 
-When writing the blueprint `.tex` files you link LaTeX statements (theorems, definitions, lemmas, etc.) to Lean objects using the `\lean{}` handle. The handle must name an existing *true* declaration in LEAN so `leanblueprint` can build the dependency graph.
+When writing the blueprint `.tex` files you link LaTeX statements (theorems, definitions, lemmas, etc.) to LEAN declaration using the `\lean{}` handle. The handle must name an existing *true* declaration in LEAN so the `checkdecls` in `leanblueprint` can build the dependency graph.
 
 Example
 
@@ -78,6 +78,16 @@ Rules and best practices
 If you ever need help locating the Lean declaration for a LaTeX handle, search the `LEAN-modules/` folder for the name (e.g. `grep -R "MeanValueTheorem" LEAN-modules`).
 
 ---
+
+### InfoView setup
+
+Configure the the LEAN version for VS Code Lean extension (InfoView), to check required version (in currently installed toolchains) run:
+
+```sh
+cat .lake/packages/mathlib/lean-toolchain
+```
+
+Set the VS Code Lean toolchain to that version (for example `4.24.0-rc1`) in the extension settings or via the InfoView selector. 
 
 ## Acknowledgments
 

@@ -1,12 +1,8 @@
-RP.MetricSpace
-RP.Complete
-RP.Lipschitz
-RP.Contraction
-RP.PicardIterates
-RP.GeometricSeriesBound
-RP.PicardIsCauchy
-RP.FixedPointUnique
-RP.ContractionMapping
+RP.CM_Complete
+RP.CM_Contraction
+RP.CM_PicardIter
+ContractingWith.exists_fixedPoint
+ContractingWith.apriori_edist_iterate_efixedPoint_le
 RP.Ball
 RP.OperatorNorm
 RP.MeanValueTheorem
