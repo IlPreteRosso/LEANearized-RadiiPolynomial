@@ -2,6 +2,10 @@
 
 # LEANearized Radii Polynomial — A LEAN Blueprint 
 
+## Live blueprint page
+
+- **Blueprint (HTML):** https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial  
+
 This repository contains a **Lean blueprint** for the theorem
 **Radii Polynomials in Finite Dimensions**.
 
@@ -39,11 +43,6 @@ Reusable LaTeX macros live in `blueprint/src/macros`. These define commands and 
 - `blueprint/src/macros/common.tex` — shared macros and notation used across web/print versions. 
 - `blueprint/src/macros/print.tex` — rules and commands used when producing printable/PDF outputs. In usual cases, this file should be minimal.
 - `blueprint/src/macros/web.tex` — web-specific tweaks for the HTML blueprint pages. In usual cases, this file should be minimal.
-
-
-## Live blueprint page
-
-- **Blueprint (HTML):** https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial  
 
 ## Acknowledgments
 
