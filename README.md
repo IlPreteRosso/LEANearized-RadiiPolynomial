@@ -14,11 +14,6 @@ This repository contains a **Lean blueprint** for the theorem
 
 ---
 
-**How to modify *.tex*+*.lean***
-> run `make` in the root directory before committing
-
----
-
 ## TeX file structure 
 ### Where to edit
 
