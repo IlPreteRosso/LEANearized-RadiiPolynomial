@@ -29,7 +29,7 @@
   \]
 \end{lemma}
 
-% \begin{theorem}[Contraction Mapping Theorem]\label{thm:Contraction}
+% \begin{theorem}[Contraction Mapping Theorem]\label{thm:CM_existsUnique}
 %   \lean{RP.ContractionMapping}
 %   Let $(X,d)$ be complete and $T:X\to X$ be $L$-Lipschitz with $L<1$.
 %   Then $T$ has a unique fixed point $x^\ast\in X$, and the iterates $x_{k+1}=T(x_k)$ converge to $x^\ast$ for every $x_0\in X$.
@@ -82,7 +82,7 @@
 
 \begin{lemma}[Fixed-point radii]\label{lem:FixedPointRadii}
   \lean{RP.FixedPointRadii}
-  \uses{lem:MVI,lem:DTbound,dfn:Ball,thm:Contraction}
+  \uses{lem:MVI,lem:DTbound,dfn:Ball,thm:CM_existsUnique}
   Let $r>0$. Assume $\|T(\bar x)-\bar x\|\le Y_0$ and $\sup_{c\in B_r(\bar x)}\|DT(c)\|\le Z(r)$.
   If $(Z(r)-1)r+Y_0<0$, then $T(B_r(\bar x))\subseteq B_r(\bar x)$ and
   $T$ is a contraction on $B_r(\bar x)$ with Lipschitz constant $\le Z(r)<1$.
@@ -95,7 +95,7 @@
 
 \begin{theorem}[Radii polynomials in finite dimensions]\label{thm:RadiiPolyFD}
   \lean{RP.RadiiPolynomialFiniteDim}
-  \uses{dfn:RPoly,lem:DTbound,lem:FixedPointRadii,lem:Neumann,thm:Contraction}
+  \uses{dfn:RPoly,lem:DTbound,lem:FixedPointRadii,lem:Neumann,thm:CM_existsUnique}
   If there exists $r_0>0$ with $p(r_0)<0$, then:
   \begin{enumerate}
     \item[(i)] $T$ maps $B_{r_0}(\bar x)$ into itself and is a contraction there;
@@ -107,7 +107,7 @@
 \begin{proof}
   \leanok
   From $p(r_0)<0$ we get $Z(r_0)=Z_0+Z_2(r_0)r_0<1$ and $(Z(r_0)-1)r_0+Y_0<0$.
-  Apply Lemma~\ref{lem:FixedPointRadii} with $r=r_0$ to obtain (i) and (ii); the existence and uniqueness follow from Theorem~\ref{thm:Contraction}.
+  Apply Lemma~\ref{lem:FixedPointRadii} with $r=r_0$ to obtain (i) and (ii); the existence and uniqueness follow from Theorem~\ref{thm:CM_existsUnique}.
   Then $T(\tilde x)=\tilde x$ implies $A f(\tilde x)=0$, hence $f(\tilde x)=0$ (since $A$ is injective);
   finally $\|I-ADf(\tilde x)\|<1$ implies $Df(\tilde x)$ is invertible by Lemma~\ref{lem:Neumann}.
 \end{proof}

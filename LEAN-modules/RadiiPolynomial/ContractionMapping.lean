@@ -24,22 +24,53 @@ open scoped BigOperators
 namespace RP
 
 /-- Completeness as a Prop alias so `checkdecls` finds `RP.CM_Complete`. -/
-abbrev CM_Complete (X : Type*) [MetricSpace X] : Prop := CompleteSpace X
+abbrev CM_Complete (X : Type*) [EMetricSpace X] : Prop := CompleteSpace X
 
 
 /-- `RP.CM_Contraction κ T` delegates to mathlib's `ContractingWith κ T`. -/
-abbrev CM_Contraction {X : Type*} [MetricSpace X] (κ : NNReal) (T : X → X) : Prop :=
+abbrev CM_Contraction {X : Type*} [EMetricSpace X] (κ : NNReal) (T : X → X) : Prop :=
   ContractingWith κ T
 
 /-- Picard iterates (n-fold iterate of `T` at `x0`). -/
 abbrev CM_PicardIter {X : Type*} (T : X → X) (n : ℕ) (x0 : X) : X :=
   (Nat.iterate T n) x0
 
-
-#check ContractingWith.exists_fixedPoint
-#check ContractingWith.apriori_edist_iterate_efixedPoint_le
+-- Silent sanity checks: will fail to compile if the names disappear/rename,
+-- but won’t print anything during `lake build`.
+private def _cm_name_check_1 := @ContractingWith.exists_fixedPoint
+private def _cm_name_check_2 := @ContractingWith.apriori_edist_iterate_efixedPoint_le
 
 /- Thin wrappers delegating to mathlib so blueprint can reference RP.* names. -/
+
+section WrappersEMetric
+
+variable {α : Type*} [EMetricSpace α] {K : NNReal} {f : α → α} [CompleteSpace α]
+
+/-- RP alias for mathlib's `ContractingWith.efixedPoint` (EMetric version). -/
+abbrev CM_efixedPoint (f : α → α) (hf : CM_Contraction K f) (x : α)
+    (hx : edist x (f x) ≠ ⊤) : α :=
+  ContractingWith.efixedPoint f hf x hx
+
+/-- Existence of a fixed point and convergence of Picard iteration (wrapper).
+    Delegates to `ContractingWith.exists_fixedPoint`. -/
+theorem CM_existsFixedPoint
+    (hf : CM_Contraction K f) (x : α) (hx : edist x (f x) ≠ ⊤) :
+    ∃ y,
+      Function.IsFixedPt f y ∧
+        Filter.Tendsto (fun n => f^[n] x) Filter.atTop (nhds y) ∧
+          ∀ n : ℕ, edist (f^[n] x) y ≤ edist x (f x) * (↑K) ^ n / (1 - (↑K)) := by
+  simpa using (ContractingWith.exists_fixedPoint (K:=K) (f:=f) hf x hx)
+
+/-- A priori estimate to the canonical fixed point (wrapper).
+    Delegates to `ContractingWith.apriori_edist_iterate_efixedPoint_le`. -/
+theorem CM_apriori_edist_iterate_efixedPoint_le
+    (hf : CM_Contraction K f) {x : α} (hx : edist x (f x) ≠ ⊤) (n : ℕ) :
+    edist (f^[n] x) (CM_efixedPoint (f:=f) hf x hx) ≤
+      edist x (f x) * (↑K) ^ n / (1 - (↑K)) := by
+  simpa using
+    (ContractingWith.apriori_edist_iterate_efixedPoint_le (K:=K) (f:=f) hf hx n)
+
+end WrappersEMetric
 
 /- Wrapper TODOs for this snapshot:
    • CM_existsUnique should delegate to the mathlib lemma on contractions
