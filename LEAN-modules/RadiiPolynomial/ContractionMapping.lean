@@ -2,9 +2,12 @@
   §2.1 Contraction Mapping — wrappers delegating to mathlib.
   We expose RP.* names used by the blueprint while reusing mathlib’s `ContractingWith`.
 -/
-import Mathlib.Topology.MetricSpace.Contracting
 import Mathlib.Topology.MetricSpace.Basic
+import Mathlib.Topology.MetricSpace.Contracting
 import Mathlib.Data.NNReal.Basic
+
+
+-- import Mathlib
 
 
 /-
@@ -23,8 +26,13 @@ open scoped BigOperators
 
 namespace RP
 
+
+
+
 /-- Completeness as a Prop alias so `checkdecls` finds `RP.CM_Complete`. -/
 abbrev CM_Complete (X : Type*) [EMetricSpace X] : Prop := CompleteSpace X
+
+#check MetricSpace
 
 
 /-- `RP.CM_Contraction κ T` delegates to mathlib's `ContractingWith κ T`. -/
