@@ -4,8 +4,6 @@
 -/
 import Mathlib.Topology.MetricSpace.Basic
 import Mathlib.Topology.MetricSpace.Contracting
-import Mathlib.Data.NNReal.Basic
-
 
 -- import Mathlib
 
