@@ -1,3 +1,32 @@
+I am experimenting with ways to use computer assistance to help convert informal mathematical proofs into formal Lean proofs. 
+
+
+
+In the attachment I provide you with the informal proof. I would like you to generate a Lean file that tries to formalize this proof into Lean to the extent that you are able to. Thus, the output should be a Lean file with comments drawn from the informal proof, and each comment followed by a suitable translation into Lean. If you are uncertain as to how to formalize a given step, do the best u can, and add "sorry" to any step that you were unable to formalize; I will then manually try to fill any sorries and fix any other issues.
+
+
+
+Lean (version 4.24.0-rc1, arm64-apple-darwin23.6.0, commit 919e297292280cdb27598edd4e03437be5850221, Release)
+
+Lake version 5.0.0-src+919e297 (Lean version 4.24.0-rc1)
+
+
+
+The explicit norms or computational techniques are not important. Keep the proof in an abstract sense (for instance, L1, L2 or L infinity norms are not important, just use the fact that we have norm axioms and the metric space is complete, i.e. an abstract Banach space. 
+
+
+
+Be aware that the codebase for the contraction mapping theorem uses extended reals, extended norms and extended metric space. In our informal proof we assume standard reals, norms and metric space. You need to find a way to work this around.
+
+
+
+
+
+So far I've gotten these 
+
+
+
+
 /-
 Lean 4.24.0-rc1 (arm64-apple-darwin), Mathlib4 (commit near 919e2972…)
 Tip: run `lake exe cache get` once to prefetch Mathlib artifacts.
@@ -143,11 +172,10 @@ section NeumannSeries
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E] [Nontrivial E]
 
-
-
 omit [CompleteSpace E] in
 /--
-First lemma: nth powers norm submultiplicativity
+First fundamental lemma: The norm of the nth power of an operator is bounded by
+the nth power of its norm. This is proved by induction using the submultiplicativity
 of the operator norm.
 -/
 lemma norm_pow_le_pow_norm (X : E →L[ℝ] E) (n : ℕ) :
@@ -176,8 +204,6 @@ lemma norm_pow_le_pow_norm (X : E →L[ℝ] E) (n : ℕ) :
       _ = ‖X‖ ^ (m + 1) := by
         rw [pow_succ]
 
-
-
 omit [CompleteSpace E] in
 /--
 Second lemma: If ‖X‖ < 1, then the series ∑ ‖X^n‖ is summable.
@@ -198,8 +224,6 @@ lemma norm_series_summable_of_norm_lt_one {X : E →L[ℝ] E} (h : ‖X‖ < 1) 
   intro n
   exact norm_nonneg _
 
-
-
 /--
 Third lemma: If ‖X‖ < 1, then the operator series ∑ X^n is summable
 in the Banach space of continuous linear maps.
@@ -213,148 +237,61 @@ lemma operator_series_summable_of_norm_lt_one {X : E →L[ℝ] E} (h : ‖X‖ <
   exact norm_series_summable_of_norm_lt_one h
 
 
-
 /--
 Helper definition: The Neumann series sum S = ∑ X^n exists when ‖X‖ < 1.
 This sum will be shown to be the inverse of (I - X).
 -/
 noncomputable def neumannSeriesSum {X : E →L[ℝ] E} (h : ‖X‖ < 1) : E →L[ℝ] E :=
-  haveI : Summable (fun n : ℕ => X ^ n) :=
+  haveI : Summable (fun n : ℕ => X ^ n) := 
   operator_series_summable_of_norm_lt_one h
   -- `∑' i, f i` is the sum of f if it exists and is unconditionally convergent, or 0 otherwise.
   ∑' n : ℕ, X ^ n
 
-
-
-omit [CompleteSpace E] [Nontrivial E] in
 /--
 Finite telescoping: (I - X) ∘ (∑_{n=0}^{N-1} X^n) = I - X^N
 -/
 lemma finite_telescoping {X : E →L[ℝ] E} (N : ℕ) :
   (ContinuousLinearMap.id ℝ E - X).comp (∑ n ∈ Finset.range N, X ^ n) =
    ContinuousLinearMap.id ℝ E - X ^ N := by
-  -- Prove equality of linear maps by showing they agree on all inputs
+  -- Use ext turns `f = g` into `∀ x, f x = g x`
   ext x
-  simp
+  calc 
+    ((ContinuousLinearMap.id ℝ E - X).comp (∑ n ∈ Finset.range N, X ^ n)) x
+      = (ContinuousLinearMap.id ℝ E - X) ((∑ n ∈ Finset.range N, X ^ n) x) 
+      := by rw [ContinuousLinearMap.coe_comp', Function.comp_apply]
+    -- Now have (id - X) (∑ n in range N, X^n x) = (id - X^N) x
+    _ = (∑ n ∈ Finset.range N, X ^ n) x - X ((∑ n ∈ Finset.range N, X ^ n) x)
+      := by rw [sub_apply, id_apply]
+  
+  -- Simplify the goal to x - X^N x
+  haveI : (ContinuousLinearMap.id ℝ E - X ^ N) x = x - (X ^ N) x := by
+    calc
+      (ContinuousLinearMap.id ℝ E - X ^ N) x
+        = (ContinuousLinearMap.id ℝ E) x - (X ^ N) x 
+        := by rw [sub_apply]
+      _ = x - (X ^ N) x := by rw [id_apply]
+  rw [this]
 
-  calc
-    -- Goal: ((I - X) ∘ S) x = (I - X) (S x)
-    -- where S = ∑_{n=0}^{N-1} X^n.
-    -- Distribute X over the sum using linearity: X(∑X^n x) = ( ∑X^{n+1} x )
-    ∑ n ∈ Finset.range N, (X ^ n) x - ∑ x_1 ∈ Finset.range N, X ((X ^ x_1) x) =
-    (∑ n ∈ Finset.range N, X ^ n) x - (∑ n ∈ Finset.range N, X ^ (n + 1)) x := by
-        -- The first term is unchanged, removed from the goal by `congr 1` (`rfl`)
-        congr 1
-        -- Move X inside the sum
-        simp [sum_apply]
-        -- Rewrite X ∘ (X^n) as X^{n+1}
-        haveI {n : ℕ} {x : E}: X ((X ^ n) x) = (X ^ (n + 1)) x := by
-          rw [pow_succ', ← comp_apply]
-          rfl
-        simp [this]
 
-    -- The telescoping: ∑_{n=0}^{N-1} X^n x - ∑_{n=0}^{N-1} X^{n+1} x = x - X^N x
-    _ = x - (X ^ N) x := by
-        have telescope : ∀ M : ℕ,
-          ∑ n ∈ Finset.range M, (X ^ n) x - ∑ n ∈ Finset.range M, (X ^ (n + 1)) x =
-          (X ^ 0) x - (X ^ M) x := by
-          intro M
-          induction M with
-          | zero      => simp
-          | succ k ih =>
-            -- break down a sum over k+1 terms into
-            -- a sum over k terms plus the final term
-            rw [Finset.sum_range_succ, Finset.sum_range_succ]
-            simp
-            calc
-              (∑ n ∈ Finset.range k, (X ^ n) x) + (X ^ k) x -
-              ((∑ n ∈ Finset.range k, (X ^ (n + 1)) x) +
-              (X ^ (k + 1)) x)
-              = (∑ n ∈ Finset.range k, (X ^ n) x) -
-                (∑ n ∈ Finset.range k, (X ^ (n + 1)) x) +
-                ((X ^ k) x - (X ^ (k + 1)) x)
-              := by abel
-              _ = ((X ^ 0) x - (X ^ k) x) + ((X ^ k) x - (X ^ (k + 1)) x)
-                := by rw [ih]
-              _ = (X ^ 0) x - (X ^ (k + 1)) x
-                := by abel
-
-        simp [telescope N]
-/--
-Finite telescoping - legacy version with redundant steps.
--/
--- lemma finite_telescoping_legacy {X : E →L[ℝ] E} (N : ℕ) :
---   (ContinuousLinearMap.id ℝ E - X).comp (∑ n ∈ Finset.range N, X ^ n) =
---    ContinuousLinearMap.id ℝ E - X ^ N := by
---   -- Prove equality of linear maps by showing they agree on all inputs
---   ext x
-
---   simp
---   -- -- Simplify the goal to x - X^N x
---   -- haveI : (ContinuousLinearMap.id ℝ E - X ^ N) x = x - (X ^ N) x := by
---   --   calc
---   --     (ContinuousLinearMap.id ℝ E - X ^ N) x
---   --       = (ContinuousLinearMap.id ℝ E) x - (X ^ N) x
---   --       := by rw [sub_apply]
---   --     _ = x - (X ^ N) x := by rw [id_apply]
---   -- rw [this]
-
---   calc
---     -- Goal: ((I - X) ∘ S) x = (I - X) (S x)
---     -- where S = ∑_{n=0}^{N-1} X^n.
---     -- ((ContinuousLinearMap.id ℝ E - X).comp (∑ n ∈ Finset.range N, X ^ n)) x
---     --   = (ContinuousLinearMap.id ℝ E - X) ((∑ n ∈ Finset.range N, X ^ n) x)
---     --   := by rw [ContinuousLinearMap.coe_comp', Function.comp_apply]
-
---     -- Apply the subtraction operator: (I - X)(S x) = (S x) - X(S x)
---     -- _ = (∑ n ∈ Finset.range N, X ^ n) x - X ((∑ n ∈ Finset.range N, X ^ n) x)
---     --   := by rw [sub_apply, id_apply]
-
---     -- Distribute X over the sum using linearity: X(∑X^n x) = ( ∑X^{n+1} x )
---     ∑ n ∈ Finset.range N, (X ^ n) x - ∑ x_1 ∈ Finset.range N, X ((X ^ x_1) x) = (∑ n ∈ Finset.range N, X ^ n) x - (∑ n ∈ Finset.range N, X ^ (n + 1)) x
---       := by
---         -- The first term is unchanged, removed from the goal by `congr 1` (`rfl`)
---         congr 1
---         -- Move X inside the sum
---         simp [sum_apply]
---         -- Simplify the goal again by dropping the sum
---         -- congr
---         -- change summation index to n
---         -- ext n
---         -- Rewrite X ∘ (X^n) as X^{n+1}
---         haveI {n : ℕ} {x : E}: X ((X ^ n) x) = (X ^ (n + 1)) x := by
---           rw [pow_succ', ← comp_apply]
---           rfl
---         simp [this]
-
---     -- The telescoping: ∑_{n=0}^{N-1} X^n x - ∑_{n=0}^{N-1} X^{n+1} x = x - X^N x
---     _ = x - (X ^ N) x := by
---         have telescope : ∀ M : ℕ,
---           ∑ n ∈ Finset.range M, (X ^ n) x - ∑ n ∈ Finset.range M, (X ^ (n + 1)) x =
---           (X ^ 0) x - (X ^ M) x := by
---           intro M
---           induction M with
---           | zero => simp
---           | succ k ih =>
---             -- break down a sum over k+1 terms into
---             -- a sum over k terms plus the final term
---             rw [Finset.sum_range_succ, Finset.sum_range_succ]
---             simp
---             calc
---               (∑ n ∈ Finset.range k, (X ^ n) x) + (X ^ k) x -
---               ((∑ n ∈ Finset.range k, (X ^ (n + 1)) x) +
---               (X ^ (k + 1)) x)
---               = (∑ n ∈ Finset.range k, (X ^ n) x) -
---                 (∑ n ∈ Finset.range k, (X ^ (n + 1)) x) +
---                 ((X ^ k) x - (X ^ (k + 1)) x)
---               := by abel
---               _ = ((X ^ 0) x - (X ^ k) x) + ((X ^ k) x - (X ^ (k + 1)) x)
---                 := by rw [ih]
---               _ = (X ^ 0) x - (X ^ (k + 1)) x
---                 := by abel
-
---         simp [telescope N]
-
+  
+  sorry
+  -- simp only [sub_apply, id_apply]
+  -- This is ∑ n in range N, ((id - X) (X^n x)) = x - X^N x
+  simp_rw [sub_apply, id_apply]
+  -- = ∑ n in range N, (X^n x - X^(n+1) x) = x - X^N x
+  trans (X ^ 0 x - X ^ N x)
+  · congr 1
+    -- The telescoping sum
+    have : ∑ n ∈ Finset.range N, (X ^ n x - X ^ (n + 1) x) = X ^ 0 x - X ^ N x := by
+      induction N with
+      | zero => simp
+      | succ m ih =>
+        rw [Finset.sum_range_succ, ih]
+        abel
+    convert this using 2
+    ext n
+    rw [← pow_succ]
+  · simp [pow_zero]
 
 
 lemma telescoping_left {X : E →L[ℝ] E} (h : ‖X‖ < 1) :
@@ -380,8 +317,6 @@ lemma telescoping_left {X : E →L[ℝ] E} (h : ‖X‖ < 1) :
         -- 2. The telescoping series converges to id
         -- 3. tendsto_pow_atTop_nhds_zero_of_norm_lt_one
 
-
-
 lemma telescoping_right {X : E →L[ℝ] E} (h : ‖X‖ < 1) :
   (neumannSeriesSum h).comp (ContinuousLinearMap.id ℝ E - X) =
   ContinuousLinearMap.id ℝ E := by
@@ -394,8 +329,6 @@ lemma telescoping_right {X : E →L[ℝ] E} (h : ‖X‖ < 1) :
   --                           = id (by telescoping)
 
   sorry
-
-
 
 /--
 **Main Neumann Series Theorem (IsUnit version)**
@@ -724,3 +657,13 @@ theorem radii_success_near_nondegenerate_zero
   -- The proof follows from continuity arguments and the fact that
   -- at a nondegenerate zero, DT(x̃) = 0, making T a strong contraction nearby
   sorry
+
+
+
+
+The better way to use tactics is to state the change of the symbols (equations of the proposition, if the proposition is defined in this way) with the `calc` tactic and then followed by the tactics that are used to carry out the pattern matching. If there are no equations to rewrite (say the proposition is defined by logical predication or other statements) then make sure you comment the steps and formulas on top of each use of tactics. More readable steps are always welcome.
+
+Now I'm working on finite_telescoping
+
+
+
