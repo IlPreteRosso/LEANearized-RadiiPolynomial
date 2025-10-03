@@ -357,6 +357,7 @@ Finite telescoping - legacy version with redundant steps.
 
 
 
+
 lemma telescoping_left {X : E →L[ℝ] E} (h : ‖X‖ < 1) :
   (ContinuousLinearMap.id ℝ E - X).comp (neumannSeriesSum h) =
   ContinuousLinearMap.id ℝ E := by
@@ -365,35 +366,148 @@ lemma telescoping_left {X : E →L[ℝ] E} (h : ‖X‖ < 1) :
   -- The series converges
   have h_summable := operator_series_summable_of_norm_lt_one h
 
-  -- Distribute composition over the infinite sum
-  -- Need: (id - X).comp (∑' n, X^n) = ∑' n, (id - X).comp (X^n)
-  conv_lhs =>
-    arg 2
-    rw [← h_summable.hasSum.tsum_eq]
+  -- Strategy: Show the norm of the difference goes to zero
+  suffices ‖(ContinuousLinearMap.id ℝ E - X).comp (∑' n, X ^ n) - ContinuousLinearMap.id ℝ E‖ = 0 by
+    have : (ContinuousLinearMap.id ℝ E - X).comp (∑' n, X ^ n) - ContinuousLinearMap.id ℝ E = 0 :=
+      norm_eq_zero.mp this
+    exact eq_of_sub_eq_zero this
 
-  -- Each term telescopes: (id - X).comp (X^n) = X^n - X^(n+1)
-  -- The telescoping series ∑' n, (X^n - X^(n+1)) = X^0 = id
-  -- because X^n → 0 as n → ∞
+  -- The partial sums converge in norm
+  have h_partial : ∀ ε > 0, ∃ N, ∀ n ≥ N,
+    ‖(∑ k ∈ Finset.range n, X ^ k) - ∑' k, X ^ k‖ < ε := by
+    intro ε hε
+    have := h_summable.hasSum.tendsto_sum_nat
+    rw [Metric.tendsto_atTop] at this
+    exact this ε hε
 
-  sorry -- Requires:
-        -- 1. ContinuousLinearMap.comp distributes over tsum
-        -- 2. The telescoping series converges to id
-        -- 3. tendsto_pow_atTop_nhds_zero_of_norm_lt_one
+  -- Apply finite telescoping and X^N → 0
+  have h_zero_lim : ∀ ε > 0, ∃ N, ∀ n ≥ N, ‖X ^ n‖ < ε := by
+    intro ε hε
+    have h_geom : Tendsto (fun n => ‖X‖ ^ n) atTop (𝓝 0) :=
+      tendsto_pow_atTop_nhds_zero_of_lt_one (norm_nonneg X) h
+    rw [Metric.tendsto_atTop] at h_geom
+    obtain ⟨N, hN⟩ := h_geom ε hε
+    use N
+    intro n hn
+    calc ‖X ^ n‖
+        ≤ ‖X‖ ^ n := norm_pow_le_pow_norm X n
+        _ < ε := by simpa using hN n hn
+
+  -- Show the composed series equals I
+  rw [norm_eq_zero]
+
+  -- For any ε > 0, we can make the difference small
+  by_contra h_nonzero
+  -- Convert negation of equality to positive norm
+  have h_pos : 0 < ‖(ContinuousLinearMap.id ℝ E - X).comp (∑' n, X ^ n) - ContinuousLinearMap.id ℝ E‖ := by
+    rwa [norm_pos_iff]
+
+  -- Choose a specific ε to work with
+  set ε := ‖(ContinuousLinearMap.id ℝ E - X).comp (∑' n, X ^ n) - ContinuousLinearMap.id ℝ E‖ / 3
+  have hε_pos : 0 < ε := by
+    simp only [ε]
+    apply div_pos h_pos
+    norm_num
+
+  -- Choose N large enough for both conditions
+  obtain ⟨N₁, hN₁⟩ := h_partial (ε / max ‖ContinuousLinearMap.id ℝ E - X‖ 1)
+                                  (div_pos hε_pos (lt_max_of_lt_right zero_lt_one))
+  obtain ⟨N₂, hN₂⟩ := h_zero_lim ε hε_pos
+
+  set N := max N₁ N₂
+
+  -- Use N to get a contradiction
+  have h_approx := hN₁ N (le_max_left _ _)
+  have h_small := hN₂ N (le_max_right _ _)
+
+  -- Estimate using triangle inequality
+  have : 3 * ε = ‖(ContinuousLinearMap.id ℝ E - X).comp (∑' n, X ^ n) - ContinuousLinearMap.id ℝ E‖ := by
+    simp [ε]
+    field_simp
+
+  -- Derive the contradiction
+  have h_ineq : 3 * ε ≤ 2 * ε := by
+    calc 3 * ε = ‖(ContinuousLinearMap.id ℝ E - X).comp (∑' n, X ^ n) - ContinuousLinearMap.id ℝ E‖ := this
+        _ ≤ ‖(ContinuousLinearMap.id ℝ E - X).comp (∑' n, X ^ n) -
+              (ContinuousLinearMap.id ℝ E - X).comp (∑ n ∈ Finset.range N, X ^ n)‖ +
+            ‖(ContinuousLinearMap.id ℝ E - X).comp (∑ n ∈ Finset.range N, X ^ n) -
+              ContinuousLinearMap.id ℝ E‖ := by
+          -- Apply triangle inequality ‖x - z‖ ≤ ‖x - y‖ + ‖y - z‖
+          have h_tri : ∀ (x y z : E →L[ℝ] E), ‖x - z‖ ≤ ‖x - y‖ + ‖y - z‖ := by
+            intros x y z
+            calc ‖x - z‖ = ‖(x - y) + (y - z)‖ := by abel_nf
+                  _ ≤ ‖x - y‖ + ‖y - z‖ := norm_add_le _ _
+          exact h_tri _ _ _
+        _ = ‖(ContinuousLinearMap.id ℝ E - X).comp ((∑' n, X ^ n) - ∑ n ∈ Finset.range N, X ^ n)‖ +
+            ‖ContinuousLinearMap.id ℝ E - X ^ N - ContinuousLinearMap.id ℝ E‖ := by
+          rw [← comp_sub, finite_telescoping N]
+        _ ≤ ‖ContinuousLinearMap.id ℝ E - X‖ * ‖(∑' n, X ^ n) - ∑ n ∈ Finset.range N, X ^ n‖ +
+            ‖X ^ N‖ := by
+          gcongr
+          · exact ContinuousLinearMap.opNorm_comp_le _ _
+          · simp [norm_neg]
+        _ ≤ ‖ContinuousLinearMap.id ℝ E - X‖ * (ε / max ‖ContinuousLinearMap.id ℝ E - X‖ 1) +
+            ε := by
+          gcongr
+          · rw [norm_sub_rev]
+            exact le_of_lt h_approx
+        _ ≤ ε + ε := by
+          gcongr
+          -- Since ‖ContinuousLinearMap.id ℝ E - X‖ ≤ max ‖ContinuousLinearMap.id ℝ E - X‖ 1
+          -- we have the desired bound directly
+          calc ‖ContinuousLinearMap.id ℝ E - X‖ * (ε / max ‖ContinuousLinearMap.id ℝ E - X‖ 1)
+              ≤ max ‖ContinuousLinearMap.id ℝ E - X‖ 1 * (ε / max ‖ContinuousLinearMap.id ℝ E - X‖ 1) := by
+                gcongr
+                exact le_max_left _ _
+            _ = ε := by
+              field_simp
+        _ = 2 * ε := by ring
+
+  -- This is impossible since ε > 0
+  have : 3 * ε > 2 * ε := by
+    linarith [hε_pos]
+
+  -- Contradiction!
+  linarith [h_ineq, this]
+
+
+
+lemma neumann_comm {X : E →L[ℝ] E} (h : ‖X‖ < 1) :
+  (ContinuousLinearMap.id ℝ E - X).comp (neumannSeriesSum h) =
+  (neumannSeriesSum h).comp (ContinuousLinearMap.id ℝ E - X) := by
+  unfold neumannSeriesSum
+  have h_summable := operator_series_summable_of_norm_lt_one h
+
+  -- X^n commutes with (I - X) for each n
+  have h_comm_finite : ∀ n, (ContinuousLinearMap.id ℝ E - X).comp (X ^ n) =
+                            (X ^ n).comp (ContinuousLinearMap.id ℝ E - X) := by
+    intro n
+    ext x
+    simp only [comp_apply, sub_apply, id_apply]
+    -- Need: X^n x - X(X^n x) = X^n x - X^n(X x)
+    -- This is true because X(X^n x) = X^{n+1} x = X^n(X x)
+    calc (X ^ n) x - X ((X ^ n) x)
+        = (X ^ n) x - (X ^ (n + 1)) x := by
+          simp [pow_succ']
+        _ = (X ^ n) x - (X ^ n) (X x) := by
+          rw [pow_succ]
+          rfl
+    sorry
+
+  -- Apply to infinite sum
+  ext x
+  simp [comp_apply, sub_apply]
+  sorry
+
+  -- exact congr_fun (congr_arg DFunLike.coe (h_comm_finite n)) x
 
 
 
 lemma telescoping_right {X : E →L[ℝ] E} (h : ‖X‖ < 1) :
   (neumannSeriesSum h).comp (ContinuousLinearMap.id ℝ E - X) =
   ContinuousLinearMap.id ℝ E := by
-  unfold neumannSeriesSum
-  have h_summable := operator_series_summable_of_norm_lt_one h
-
-  -- Similar: distribute right composition over the sum
-  -- (∑' n, X^n).comp (id - X) = ∑' n, X^n.comp (id - X)
-  --                           = ∑' n, (X^n - X^(n+1))
-  --                           = id (by telescoping)
-
-  sorry
+  rw [← neumann_comm h]
+  exact telescoping_left h
 
 
 
