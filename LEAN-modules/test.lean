@@ -45,3 +45,10 @@ variable (ha : |a| < δ) (hb : |b| < δ)
 #check @my_lemma a b δ h₀ h₁ ha hb
 
 end
+
+#check Summable.tsum_finsetSum
+#check ContinuousLinearMap.coe_comp
+#check summable_nat_add_iff
+#check HasSum.tendsto_sum_nat
+#check HasSum.tsum_eq
+#check Filter.Tendsto.mul
