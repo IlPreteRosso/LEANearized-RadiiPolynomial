@@ -160,10 +160,13 @@ end Proposition_2_3_1
 
 
 section RadiiPolynomialTheorem
-/- THEOREM 2.4.2: Radii Polynomials in Finite Dimensions
+/-
+================================================================================
+THEOREM 2.4.2: Radii Polynomials in Finite Dimensions
+================================================================================
 
 From page 22 of the document:
-"Consider f ∈ C¹(ℝⁿ, ℝⁿ). Let xBar ∈ ℝⁿ and A ∈ Mₙ(ℝ). Let Y₀ and Z₀ be
+"Consider f ∈ C^1(ℝ^n, ℝ^n). Let xBar ∈ ℝ^n and A ∈ M_n(ℝ). Let Y₀ and Z₀ be
 non-negative constants and Z₂ : (0,∞) → [0,∞) be a non-negative function satisfying:
 - ‖Af(xBar)‖ ≤ Y₀
 - ‖I - ADf(xBar)‖ ≤ Z₀
@@ -229,6 +232,71 @@ lemma general_radii_poly_neg_implies_Z_lt_one
   rw [← div_lt_one hr₀] at h3
   field_simp [ne_of_gt hr₀] at h3
   exact h3
+
+section fold
+omit [CompleteSpace E] in
+/-- T maps the ball into itself in Theorem 2.4.1 -/
+lemma general_maps_ball_to_itself
+  {T : E → E} {xBar : E}
+  {Y₀ : ℝ} {Z : ℝ → ℝ} {r₀ : ℝ}
+  (hT_diff : Differentiable ℝ T)
+  -- (hY₀ : 0 ≤ Y₀)
+  (hr₀ : 0 < r₀)
+  (h_bound_Y : ‖T xBar - xBar‖ ≤ Y₀)
+  (h_bound_Z : ∀ c ∈ Metric.ball xBar r₀, ‖fderiv ℝ T c‖ ≤ Z r₀)
+  (h_radii : generalRadiiPolynomial Y₀ Z r₀ < 0) :
+  ∀ x ∈ Metric.ball xBar r₀, T x ∈ Metric.ball xBar r₀ := by
+  intro x hx
+
+  -- From p(r₀) < 0, we get Z(r₀) < 1 and Z(r₀) * r₀ + Y₀ < r₀
+  -- have h_Z_lt_one : Z r₀ < 1 :=
+  --   general_radii_poly_neg_implies_Z_lt_one hY₀ hr₀ h_radii
+
+  -- Given that Z(r₀) * r₀ + Y₀ < r₀
+  have h_sum_bound : Z r₀ * r₀ + Y₀ < r₀ := by
+    unfold generalRadiiPolynomial at h_radii
+    linarith [h_radii]
+
+  -- The segment from xBar to x is in the ball
+  have h_segment_in_ball : segment ℝ xBar x ⊆ Metric.ball xBar r₀ :=
+    (convex_ball xBar r₀).segment_subset (mem_ball_self hr₀) hx
+
+  -- Apply Mean Value Inequality
+  /- `Convex.norm_image_sub_le_of_norm_fderiv_le`
+  Let 𝐄 and 𝐆 be normed spaces over a real or complex normed field 𝕜,
+  let 𝐒 be a convex subset of 𝐄. Suppose 𝐟 : 𝐄 → 𝐆 is differentiable at every point 𝑥 ∈ 𝐒 with derivative 𝑓′(𝑥) satisfying ‖𝑓′(𝑥)‖ ≤ 𝐶 for some constant 𝐶 ≥ 0. Then for any two points 𝑥, 𝑦 ∈ 𝐒, the following inequality holds:
+  ∣𝑓(𝑥) - 𝑓(𝑦)∣ ≤ 𝐶 ∙ ∣𝑥 - 𝑦∣
+  -/
+  have h_mvt : ‖T x - T xBar‖ ≤ Z r₀ * ‖x - xBar‖ := by
+    apply Convex.norm_image_sub_le_of_norm_fderiv_le (𝕜 := ℝ)
+    · intros c hc
+      exact hT_diff c
+    · intros c hc
+      exact h_bound_Z c (h_segment_in_ball hc)
+    · apply convex_segment
+    · apply left_mem_segment
+    · apply right_mem_segment
+
+  -- Triangle inequality to complete the proof
+  rw [mem_ball, dist_eq_norm] at hx ⊢
+  calc ‖T x - xBar‖
+      = ‖(T x - T xBar) + (T xBar - xBar)‖ := by simp only [sub_add_sub_cancel]
+    _ ≤ ‖T x - T xBar‖ + ‖T xBar - xBar‖ := norm_add_le _ _
+    _ ≤ Z r₀ * ‖x - xBar‖ + Y₀ := by
+        apply add_le_add
+        · exact h_mvt
+        · exact h_bound_Y
+    _ ≤ Z r₀ * r₀ + Y₀ := by
+        -- Cancels Y₀
+        simp only [add_le_add_iff_right]
+        have h_Z_nonneg : 0 ≤ Z r₀ := by
+          haveI := h_bound_Z xBar (mem_ball_self hr₀)
+          linarith [norm_nonneg (fderiv ℝ T xBar)]
+        -- `le_of_lt hx` gives ‖x - xBar‖ < r₀
+        -- `mul_le_mul_of_nonneg_left` requires Z(r₀) > 0 given by `h_Z_nonneg`
+        exact mul_le_mul_of_nonneg_left (le_of_lt hx) h_Z_nonneg
+    _ < r₀ := h_sum_bound
+end fold
 
 omit [CompleteSpace E] in
 /-- T maps the closed ball into itself when the radii polynomial is negative
@@ -517,6 +585,19 @@ lemma newton_operator_Y_bound
   -- ‖T(x̄) - x̄‖ = ‖-A(f(x̄))‖ = ‖A(f(x̄))‖ ≤ Y₀
   exact h_bound
 
+section fold
+-- omit [CompleteSpace E] in
+-- /-- Helper lemma: Composition of continuous linear map with differentiable function is differentiable -/
+-- lemma comp_clm_differentiable
+--   {f : E → E} {A : E →L[ℝ] E}
+--   (hf : Differentiable ℝ f) :
+--   Differentiable ℝ (fun x => A (f x)) := by
+--   -- A is differentiable as a continuous linear map
+--   have hA : Differentiable ℝ A := A.differentiable
+--   -- Composition is differentiable
+--   exact hA.comp hf
+end fold
+
 omit [CompleteSpace E] in
 /-- Derivative of the Newton-like operator
 
@@ -617,6 +698,113 @@ lemma newton_operator_derivative_bound_closed
         -- Apply second bound (eq. 2.16)
         exact h_Z₂ c hc
 
+section fold
+-- omit [CompleteSpace E] in
+-- /-- Helper lemma: If A is injective and A∘B is surjective, then B is surjective -/
+-- lemma injective_of_comp_injective
+--   {A : E →L[ℝ] E} {B : E →L[ℝ] E}
+--   (h_comp_inj : Function.Injective (A.comp B)) :
+--   Function.Injective B := by
+--   intro x y hxy
+--   have : A (B x) = A (B y) := by rw [hxy]
+--   exact h_comp_inj this
+end fold
+
+section fold
+-- omit [CompleteSpace E] in
+-- /-- Helper lemma: Surjectivity from composition -/
+-- lemma surjective_of_comp_surjective_left
+--   {A : E →L[ℝ] E} {B : E →L[ℝ] E}
+--   (hA : Function.Injective A)
+--   (h_comp_surj : Function.Surjective (A.comp B)) :
+--   Function.Surjective B := by
+--   intro y
+--   obtain ⟨x, hx⟩ := h_comp_surj (A y)
+--   use x
+--   exact hA hx
+end fold
+
+section fold
+-- /-- Bijectivity from composition with injective map
+
+--     If A is injective and ‖I - A∘B‖ < 1, then B is bijective.
+
+--     This is a key algebraic lemma for the radii polynomial theorem. It allows us to
+--     deduce that Df(x̃) is bijective (hence invertible) from:
+--     - A is injective (our weakened assumption)
+--     - ‖I - A∘Df(x̃)‖ < 1 (from the radii polynomial condition)
+
+--     Proof structure:
+--     1. ‖I - A∘B‖ < 1 ⟹ A∘B is invertible (given by Neumann series)
+--        Get (A∘B)⁻¹ with (A∘B)∘(A∘B)⁻¹ = I and (A∘B)⁻¹∘(A∘B) = I
+
+--     2. Having a two-sided inverse ⟹ A∘B is bijective
+--        - Right inverse ⟹ injective
+--        - Left inverse ⟹ surjective
+
+--     3. Use Mathlib composition lemmas:
+--        - A injective + A∘B injective ⟹ B injective
+--          (`Injective (f ∘ g) ↔ Injective g` when f injective)
+--        - A injective + A∘B surjective ⟹ B surjective
+--          (`Surjective (f ∘ g) + Injective f ⟹ Surjective g`)
+
+--     This avoids requiring A to be invertible, which would need finite dimensions. -/
+-- lemma bijective_of_comp_and_injective
+--   {A B : E →L[ℝ] E}
+--   (hA : Function.Injective A)          -- A is injective (only assumption on A!)
+--   (h_norm : ‖I - A.comp B‖ < 1) :     -- ‖I - A∘B‖ < 1 (near identity)
+--   Function.Bijective B := by          -- Goal: B is bijective
+
+--   -- From ‖I - A∘B‖ < 1, the Neumann series converges:
+--   -- (A∘B)⁻¹ = I + (I - A∘B) + (I - A∘B)² + (I - A∘B)³ + ...
+--   -- This gives us a two-sided inverse
+--   -- where: (A∘B) ∘ AB_inv = I  (left inverse, eq h_left)
+--   --        AB_inv ∘ (A∘B) = I  (right inverse, eq h_right)
+--   obtain ⟨AB_inv, h_left, h_right⟩ := invertible_comp_form h_norm
+
+
+--   -- Step 2: Convert continuous linear map equalities to function equalities
+--   -- Need to work with coerced functions (⇑A ∘ ⇑B) rather than A.comp B
+--   -- Right inverse for functions: AB_inv((A∘B)(x)) = x for all x
+--   have h_right_inv : Function.RightInverse (⇑A ∘ ⇑B) ⇑AB_inv := by
+--     intro x
+--     -- Extract pointwise equality from composition equality
+--     have := congrFun (congrArg DFunLike.coe h_right) x
+--     simp at this
+--     exact this
+
+--   -- Left inverse for functions: (A∘B)(AB_inv(y)) = y for all y
+--   have h_left_inv : Function.LeftInverse (⇑A ∘ ⇑B) ⇑AB_inv := by
+--     intro y
+--     -- Extract pointwise equality from composition equality
+--     have := congrFun (congrArg DFunLike.coe h_left) y
+--     simp at this
+--     exact this
+
+--   -- A∘B is bijective (from having a two-sided inverse)
+--   -- Mathlib theorems:
+--   -- - `Function.RightInverse.injective`: Right inverse ⟹ injective
+--   -- - `Function.LeftInverse.surjective`: Left inverse ⟹ surjective
+
+--   have h_AB_inj : Function.Injective (⇑A ∘ ⇑B) := h_right_inv.injective
+--   have h_AB_surj : Function.Surjective (⇑A ∘ ⇑B) := h_left_inv.surjective
+
+--   -- Deduce B is bijective from A injective and A∘B bijective
+--   constructor
+--   · -- B is injective
+--     -- Mathlib theorem: `Injective (f ∘ g) ↔ Injective g` when f is injective
+--     -- Since A is injective and A∘B is injective, B must be injective
+--     exact (hA.of_comp_iff ⇑B).mp h_AB_inj
+
+--   · -- B is surjective
+--     -- Mathlib theorem: `Surjective (f ∘ g) + Injective f ⟹ Surjective g`
+--     -- If A∘B is surjective and A is injective, then B must be surjective
+--     -- Proof: For any y, since A∘B surjective, ∃x: (A∘B)(x) = A(g(x)) for some g(x)
+--     --        But we need to show ∃z: B(z) = y
+--     --        Take some v with A(v) = A(B(x)), then by injectivity v = B(x)
+--     exact h_AB_surj.of_comp_left hA
+end fold
+
 /-- Construct the inverse of Df(x̃) from the inverse of A∘Df(x̃) and injectivity of A
 
     Key insight: If A is injective and A∘B is invertible with inverse (A∘B)⁻¹,
@@ -627,9 +815,9 @@ lemma newton_operator_derivative_bound_closed
 lemma construct_derivative_inverse
   {A : E →L[ℝ] E} {B : E →L[ℝ] E}
   (hA_inj : Function.Injective A)
-  (h_norm : ‖I - A.comp B‖ < 1) :
+  (h_norm : ‖I - A.comp B‖ < 1) :             -- ‖I - A∘B‖ < 1
   B.IsInvertible := by
-  -- By Neumann, A∘B is invertible
+  -- By Exercise 2.7.1 (Neumann series), A∘B is invertible
   obtain ⟨inv_AB, h_left, h_right⟩ := invertible_comp_form h_norm
   -- where (A∘B) ∘ inv_AB = I and inv_AB ∘ (A∘B) = I
 
@@ -658,6 +846,44 @@ lemma construct_derivative_inverse
   -- Package as ContinuousLinearEquiv
   use ContinuousLinearEquiv.equivOfInverse B B_inv h_inv_right h_inv_left
   rfl
+
+section fold
+-- omit [CompleteSpace E] in
+-- /-- If the radii polynomial is negative, then ‖I - A∘Df(x̄)‖ < 1
+
+--     This establishes equation (2.18): p(r₀) < 0 ⟹ Z(r₀) < 1
+--     which in turn implies ‖I - ADf(x̄)‖ ≤ Z₀ ≤ Z(r₀) < 1 -/
+-- lemma radii_implies_norm_lt_one
+--   {A : E →L[ℝ] E} {f : E → E} {xBar : E} {Y₀ Z₀ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
+--   (hr₀ : 0 < r₀)
+--   (h_Y₀ : ‖A (f xBar)‖ ≤ Y₀)                                   -- eq. 2.14
+--   (h_Z₀ : ‖I - A.comp (fderiv ℝ f xBar)‖ ≤ Z₀)                 -- eq. 2.15
+--   (h_Z₂ : ∀ c ∈ Metric.closedBall xBar r₀,
+--     ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r₀ * r₀)   -- eq. 2.16
+--   (h_radii : radiiPolynomial Y₀ Z₀ Z₂ r₀ < 0) :               -- eq. 2.17: p(r₀) < 0
+--   ‖I - A.comp (fderiv ℝ f xBar)‖ < 1 := by
+--   -- Y₀ ≥ 0 automatically from ‖A(f(x̄))‖ ≤ Y₀
+--   have hY₀_nonneg : 0 ≤ Y₀ := by
+--     calc 0 ≤ ‖A (f xBar)‖ := norm_nonneg _
+--          _ ≤ Y₀ := h_Y₀
+
+--   -- Z₂(r₀)·r₀ ≥ 0 from eq. 2.16 at c = x̄
+--   have h_Z₂_nonneg : 0 ≤ Z₂ r₀ * r₀ := by
+--     have := h_Z₂ xBar (mem_closedBall_self (le_of_lt hr₀))
+--     simp only [sub_self] at this
+--     simpa using this
+
+--   -- eq. 2.18: p(r₀) < 0 ⟹ Z(r₀) = Z₀ + Z₂(r₀)·r₀ < 1
+--   have h_Z_lt_one : Z_bound Z₀ Z₂ r₀ < 1 :=
+--     radii_poly_neg_implies_Z_bound_lt_one hY₀_nonneg hr₀ h_radii
+
+--   -- Chain of inequalities: ‖I - A·Df(x̄)‖ ≤ Z₀ ≤ Z(r₀) < 1
+--   calc ‖I - A.comp (fderiv ℝ f xBar)‖
+--       ≤ Z₀ := h_Z₀                            -- by eq. 2.15
+--     _ ≤ Z₀ + Z₂ r₀ * r₀ := by linarith [h_Z₂_nonneg]
+--     _ = Z_bound Z₀ Z₂ r₀ := rfl               -- definition of Z(r₀)
+--     _ < 1 := h_Z_lt_one                       -- by eq. 2.18
+end fold
 
 omit [CompleteSpace E] in
 /-- The Newton operator derivative bound at x̃ follows from the general bound
@@ -721,7 +947,7 @@ theorem radii_polynomial_theorem
     ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r₀ * r₀)
   (hf_diff : Differentiable ℝ f)
   (h_radii : radiiPolynomial Y₀ Z₀ Z₂ r₀ < 0)                  -- eq. 2.17: p(r₀) < 0
-  (hA_inj : Function.Injective A) :                            -- A injective (as in Prop. 2.3.1)
+  (hA_inj : Function.Injective A) :                            -- A injective (weakened!)
   ∃! xTilde ∈ Metric.closedBall xBar r₀,
     f xTilde = 0 ∧ (fderiv ℝ f xTilde).IsInvertible := by
 
@@ -763,7 +989,7 @@ theorem radii_polynomial_theorem
   -- Key steps:
   --   1. x̃ ∈ B̄ᵣ₀(x̄), so ‖DT(x̃)‖ ≤ Z(r₀) < 1 (by eq. 2.20)
   --   2. DT(x̃) = I - A∘Df(x̃), so ‖I - A∘Df(x̃)‖ < 1
-  --   3. By Neumann, A∘Df(x̃) is invertible
+  --   3. By Exercise 2.7.1, A∘Df(x̃) is invertible
   --   4. Since A is injective and A∘Df(x̃) is invertible, Df(x̃) is invertible
   --      (construct inverse as Df(x̃)⁻¹ = (A∘Df(x̃))⁻¹ ∘ A)
 
@@ -785,5 +1011,132 @@ theorem radii_polynomial_theorem
     exact hz_zero
   -- By uniqueness from Theorem 2.4.1, z = x̃
   exact hxTilde_unique z ⟨hz_mem, hz_fixed⟩
+
+section radii_polynomial_theorem_legacy
+-- theorem radii_polynomial_theorem_legacy
+--   {f : E → E} {xBar : E} {A : E →L[ℝ] E}
+--   {Y₀ Z₀ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
+--   (hr₀ : 0 < r₀)
+--   (h_Y₀ : ‖A (f xBar)‖ ≤ Y₀)                                   -- eq. 2.14
+--   (h_Z₀ : ‖I - A.comp (fderiv ℝ f xBar)‖ ≤ Z₀)                 -- eq. 2.15
+--   (h_Z₂ : ∀ c ∈ Metric.closedBall xBar r₀,                     -- eq. 2.16
+--     ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r₀ * r₀)
+--   (hf_diff : Differentiable ℝ f)
+--   (h_radii : radiiPolynomial Y₀ Z₀ Z₂ r₀ < 0)                  -- eq. 2.17
+--   (hA_inj : Function.Injective A):                             -- Assume A injective
+--   ∃! xTilde ∈ Metric.closedBall xBar r₀,
+--     f xTilde = 0 ∧ (fderiv ℝ f xTilde).IsInvertible := by
+
+--   -- Y₀ ≥ 0 from the norm
+--   have hY₀_nonneg : 0 ≤ Y₀ := by
+--     calc 0 ≤ ‖A (f xBar)‖ := norm_nonneg _
+--          _ ≤ Y₀ := h_Y₀
+
+--   -- Step 1: Define Newton-like operator T(x) = x - Af(x)
+--   let T := NewtonLikeMap f A
+
+--   -- Step 2: T is differentiable (composition of differentiable functions)
+--   have hT_diff : Differentiable ℝ T := by
+--     unfold T NewtonLikeMap
+--     apply Differentiable.sub differentiable_id
+--     exact A.differentiable.comp hf_diff
+
+--   -- Step 3: Verify Y₀ bound: ‖T(x̄) - x̄‖ ≤ Y₀ (eq. 2.14 reformulated)
+--   have h_bound_Y : ‖T xBar - xBar‖ ≤ Y₀ :=
+--     newton_operator_Y_bound h_Y₀
+
+--   -- Step 4: Verify derivative bound: ‖DT(c)‖ ≤ Z(r₀) for c ∈ B̄_{r₀}(x̄)
+--   -- This combines eq. 2.15 and 2.16 via eq. 2.18
+--   have h_bound_Z : ∀ c ∈ Metric.closedBall xBar r₀,
+--       ‖fderiv ℝ T c‖ ≤ Z_bound Z₀ Z₂ r₀ :=
+--     fun c hc => newton_operator_derivative_bound_closed hf_diff h_Z₀ h_Z₂ c hc
+
+--   -- Step 5: Convert specific radii polynomial to general form
+--   -- p(r) = Z₂(r)r² - (1-Z₀)r + Y₀ = (Z(r) - 1)r + Y₀
+--   have h_radii_general : generalRadiiPolynomial Y₀ (Z_bound Z₀ Z₂) r₀ < 0 := by
+--     unfold generalRadiiPolynomial
+--     rw [← radiiPolynomial_alt_form]
+--     exact h_radii
+
+--   -- Step 6: p(r₀) < 0 implies Z(r₀) < 1 (eq. 2.18)
+--   have h_Z_lt_one : Z_bound Z₀ Z₂ r₀ < 1 :=
+--     radii_poly_neg_implies_Z_bound_lt_one hY₀_nonneg hr₀ h_radii
+
+--   -- Step 7: In particular, ‖I - ADf(x̄)‖ ≤ Z₀ < Z(r₀) < 1
+--   have h_Z₂_nonneg : 0 ≤ Z₂ r₀ * r₀ := by
+--     haveI := h_Z₂ xBar (mem_closedBall_self (le_of_lt hr₀))
+--     simp only [sub_self] at this
+--     haveI : 0 ≤ Z₂ r₀ * r₀ := by simpa using this
+--     exact this
+
+--   have h_Z₀_lt_one : ‖I - A.comp (fderiv ℝ f xBar)‖ < 1 := by
+--     calc ‖I - A.comp (fderiv ℝ f xBar)‖
+--         ≤ Z₀ := h_Z₀
+--       _ ≤ Z₀ + Z₂ r₀ * r₀ := by linarith [h_Z₂_nonneg]
+--       _ = Z_bound Z₀ Z₂ r₀ := rfl
+--       _ < 1 := by exact h_Z_lt_one
+
+--    -- Step 8: ADf(x̄) is invertible
+--   have ⟨_, h_A_Df_left, h_A_Df_right⟩ := invertible_comp_form h_Z₀_lt_one
+
+--   -- Step 9: Apply general radii polynomial theorem to get unique fixed point
+--   have ⟨xTilde, ⟨hxTilde_mem, hxTilde_fixed⟩, hxTilde_unique⟩ :=
+--     general_radii_polynomial_theorem hT_diff hr₀ h_bound_Y h_bound_Z h_radii_general
+
+--   -- Step 10: Convert fixed point to zero using injectivity of A (Prop 2.3.1)
+--   have hxTilde_zero : f xTilde = 0 := by
+--     rw [← fixedPoint_injective_iff_zero hA_inj xTilde]
+--     exact hxTilde_fixed
+
+--   -- Step 11: Show Df(xTilde) is invertible
+--   have hDf_xTilde_inv : (fderiv ℝ f xTilde).IsInvertible := by
+--     -- ‖I - A ∘ Df(xTilde)‖ < 1
+--     have h_I_minus_lt : ‖I - A.comp (fderiv ℝ f xTilde)‖ < 1 := by
+--       calc ‖I - A.comp (fderiv ℝ f xTilde)‖
+--           = ‖fderiv ℝ T xTilde‖ := by rw [← newton_operator_fderiv hf_diff]
+--         _ ≤ Z_bound Z₀ Z₂ r₀ := h_bound_Z xTilde hxTilde_mem
+--         _ < 1 := h_Z_lt_one
+
+--     -- A∘Df(xTilde) is bijective
+--     have hDf_bij : Function.Bijective (fderiv ℝ f xTilde) :=
+--       bijective_of_comp_and_injective hA_inj h_I_minus_lt
+
+--     -- Get the two-sided inverse of A∘Df(xTilde)
+--     obtain ⟨inv_ADf, h_left, h_right⟩ := invertible_comp_form h_I_minus_lt
+
+--     -- Construct the ContinuousLinearEquiv
+--     let Df_inv := inv_ADf.comp A
+
+--     -- Prove the inverse properties as functions
+--     have h_inv_left : ∀ x, fderiv ℝ f xTilde (Df_inv x) = x := by
+--       intro x
+--       have h1 : A (fderiv ℝ f xTilde (inv_ADf (A x))) = A x := by
+--         have := congrFun (congrArg DFunLike.coe h_left) (A x)
+--         simp at this
+--         exact this
+--       exact hA_inj h1
+
+--     have h_inv_right : ∀ x, Df_inv (fderiv ℝ f xTilde x) = x := by
+--       intro x
+--       have := congrFun (congrArg DFunLike.coe h_right) x
+--       simp at this
+--       exact this
+
+--     -- Construct the equiv using the bijection
+--     use ContinuousLinearEquiv.equivOfInverse (fderiv ℝ f xTilde) Df_inv h_inv_right h_inv_left
+--     rfl
+
+--     -- Step 12: Package the result
+--   refine ⟨xTilde, ⟨hxTilde_mem, hxTilde_zero, hDf_xTilde_inv⟩, ?_⟩
+
+--   -- Uniqueness: if z also satisfies the conditions, then z = xTilde
+--   intro z ⟨hz_mem, hz_zero, _⟩
+--   -- z is a zero of f, so by Proposition 2.3.1, z is a fixed point of T
+--   have hz_fixed : T z = z := by
+--     rw [fixedPoint_injective_iff_zero hA_inj z]
+--     exact hz_zero
+--   -- Apply uniqueness from the general radii polynomial theorem
+--   exact hxTilde_unique z ⟨hz_mem, hz_fixed⟩
+end radii_polynomial_theorem_legacy
 
 end RadiiPolynomialTheorem
