@@ -739,7 +739,6 @@ theorem radii_polynomial_theorem
   --   (b) ‖DT(c)‖ ≤ Z(r₀) for all c ∈ B̄ᵣ₀(x̄)
   --   (c) p(r₀) < 0 (equivalently Z(r₀) < 1 - Y₀/r₀)
   -- Then Theorem 2.4.1 gives a unique fixed point x̃ ∈ B̄ᵣ₀(x̄)
-
   have ⟨xTilde, ⟨hxTilde_mem, hxTilde_fixed⟩, hxTilde_unique⟩ :=
     general_radii_polynomial_theorem
       hT_diff
@@ -754,7 +753,6 @@ theorem radii_polynomial_theorem
   -- Convert fixed point to zero via Proposition 2.3.1
   -- Proposition 2.3.1: T(x̃) = x̃ ⟺ f(x̃) = 0 when A is injective
   -- We have T(x̃) = x̃, therefore f(x̃) = 0
-
   have hxTilde_zero : f xTilde = 0 := by
     rw [← fixedPoint_injective_iff_zero hA_inj xTilde]
     exact hxTilde_fixed
@@ -766,7 +764,6 @@ theorem radii_polynomial_theorem
   --   3. By Neumann, A∘Df(x̃) is invertible
   --   4. Since A is injective and A∘Df(x̃) is invertible, Df(x̃) is invertible
   --      (construct inverse as Df(x̃)⁻¹ = (A∘Df(x̃))⁻¹ ∘ A)
-
   have hDf_xTilde_inv : (fderiv ℝ f xTilde).IsInvertible := by
     apply construct_derivative_inverse hA_inj
     exact newton_derivative_at_solution hf_diff hxTilde_mem h_Y₀ h_Z₀ h_Z₂ hr₀ h_radii
@@ -774,7 +771,6 @@ theorem radii_polynomial_theorem
   -- Package existence and uniqueness
   -- Existence: x̃ ∈ B̄ᵣ₀(x̄) with f(x̃) = 0 and Df(x̃) invertible
   -- Uniqueness: Any other z with these properties equals x̃
-
   refine ⟨xTilde, ⟨hxTilde_mem, hxTilde_zero, hDf_xTilde_inv⟩, ?_⟩
 
   -- Uniqueness: if z also satisfies the conditions, then z = x̃
