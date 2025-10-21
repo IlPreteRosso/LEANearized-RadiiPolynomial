@@ -9,13 +9,39 @@ open Metric Set Filter ContinuousLinearMap
 
 
 /-
-NormedAddCommGroup: A *normed* group is an additive group endowed with a norm for which `dist x y = ‖x - y‖` defines a *metric space structure*.
+Banach space setup: Type Class Hierarchy
 
-NormedSpace ℝ E: A normed space over the reals is a *vector space over the real numbers* equipped with a norm that satisfies the properties of a norm (non-negativity, definiteness, homogeneity, and triangle inequality).
+We work in a Banach space E over ℝ, which is constructed from three type classes:
 
-CompleteSpace E: A *complete* space is a metric space in which every Cauchy sequence converges to a limit within the space.
+1. `NormedAddCommGroup E`:
+   - E is an additive commutative group (E, +, 0, -)
+   - Equipped with a norm ‖·‖ : E → ℝ≥0 satisfying:
+     * ‖x‖ = 0 ⟺ x = 0                    (definiteness)
+     * ‖-x‖ = ‖x‖                         (symmetry)
+     * ‖x + y‖ ≤ ‖x‖ + ‖y‖                (triangle inequality)
+   - The norm induces a metric: dist(x, y) = ‖x - y‖
+   - This makes E a metric space
 
-⇒ E is a Banach space over ℝ.
+2. `NormedSpace ℝ E`:
+   - E is a vector space over ℝ
+   - The norm is compatible with scalar multiplication:
+     * ‖α · x‖ = |α| · ‖x‖  for all α ∈ ℝ, x ∈ E  (homogeneity)
+   - Combined with the above, this makes E a normed vector space
+
+3. `CompleteSpace E`:
+   - Every Cauchy sequence in E converges to a limit in E
+   - Formally: ∀ (xₙ)ₙ∈ℕ, (∀ ε > 0, ∃ N, ∀ m,n ≥ N, ‖xₘ - xₙ‖ < ε)
+                ⟹ (∃ x ∈ E, xₙ → x)
+   - This completeness property is crucial for fixed point theorems
+
+Result E is a *Banach space* over ℝ
+
+This framework supports:
+- Fréchet derivatives (via the norm structure)
+- Fixed point theorems (via completeness)
+- Mean Value Theorem (via the metric structure)
+- Linear operator theory (via the vector space structure)
+═══════════════════════════════════════════════════════════════════════════════
 -/
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
@@ -37,9 +63,7 @@ theorem isUnit_of_norm_sub_id_lt_one_LEAN_built_in {B : E →L[ℝ] E}
   -/
   exact isUnit_one_sub_of_norm_lt_one h
 
-/--
-Alternative version with explicit inverse construction
--/
+/-- Alternative version with explicit inverse construction -/
 theorem invertible_of_norm_sub_id_lt_one {B : E →L[ℝ] E}
   (h : ‖(1 : E →L[ℝ] E) - B‖ < 1) :
   ∃ (B_inv : E →L[ℝ] E),
@@ -68,59 +92,67 @@ section Proposition_2_3_1
 -- Omit `[CompleteSpace]` for this section
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-/--
-PROPOSITION 2.3.1:
-T(x) = x - A(f(x)) = 0 ↔ f(x) = 0 when A is injective.
--/
+/-- Proposition 2.3.1: Fixed points of Newton operator ⟺ Zeros of f
+
+    Let T(x) = x - Af(x) be the Newton-like operator. If A : Y → X is an
+    injective linear map, then:
+
+    T(x) = x  ⟺  f(x) = 0
+
+    This fundamental equivalence allows us to:
+    - Convert fixed point problems (T(x) = x) to zero-finding problems (f(x) = 0)
+    - Apply fixed point theorems (like Banach's) to find zeros of f
+
+    This proposition is used twice in Theorem 2.4.2:
+    1. To show the fixed point x̃ is a zero: T(x̃) = x̃ ⟹ f(x̃) = 0
+    2. To establish uniqueness: f(z) = 0 ⟹ T(z) = z -/
 lemma fixedPoint_injective_iff_zero
   {f : E → E} {A : E →L[ℝ] E}
-  (hA : Function.Injective A) (x : E) :
+  (hA : Function.Injective A)   -- A injective (NOT necessarily invertible!)
+  (x : E) :
   NewtonLikeMap f A x = x ↔ f x = 0 := by
-  -- Unfold the definition of NewtonLikeMap: T(x) = x - A(f(x))
+  -- Unfold T(x) = x - A(f(x))
   unfold NewtonLikeMap
 
-  -- T(x) = x means x - A(f(x)) = x
-  -- This is equivalent to A(f(x)) = 0
+  -- First equivalence: T(x) = x ⟺ A(f(x)) = 0
+  -- T(x) = x means x - A(f(x)) = x, which simplifies to A(f(x)) = 0
   calc
     x - A (f x) = x ↔ A (f x) = 0 := by
       constructor
-      · intro h
-        -- From x - A(f(x)) = x, subtract x from both sides
+      · -- Forward direction: x - A(f(x)) = x ⟹ A(f(x)) = 0
+        intro h
+        -- Algebraic manipulation: x - A(f(x)) = x implies A(f(x)) = 0
         have h_sub : x - (x - A (f x)) = x - x := by rw [h]
         calc
           A (f x)
-            = x - (x - A (f x)) := by abel
+            = x - (x - A (f x)) := by abel  -- Rewrite using associativity
           _ = x - x             := by rw [h_sub]
           _ = 0                 := by rw [sub_self x]
-        -- linarith [h]
-      · intro h
-        -- From A(f(x)) = 0, we get x - 0 = x
+      · -- Backward direction: A(f(x)) = 0 ⟹ x - A(f(x)) = x
+        intro h
+        -- If A(f(x)) = 0, then x - 0 = x
         simp [h]
+
+    -- Second equivalence: A(f(x)) = 0 ⟺ f(x) = 0
+    -- This is where injectivity of A is crucial
     _ ↔ f x = 0 := by
-      -- Since A is injective, A(y) = 0 implies y = 0
       constructor
-      · intro h
-        -- A is a linear map, so A(0) = 0
+      · -- Forward direction: A(f(x)) = 0 ⟹ f(x) = 0
+        intro h
+        -- Key fact: For linear maps, A(0) = 0
         haveI : A 0 = 0 := map_zero A
 
-        -- (1) We haveI `h : A (f x) = 0`. We want to show `A (f x) = A 0`.
-        -- To do this, we first flip the equality `A 0 = 0` to `0 = A 0`.
+        -- Build the chain: A(f(x)) = 0 = A(0), so A(f(x)) = A(0)
         haveI : 0 = A 0 := this.symm
-
-        -- (2) Now we chain the two equalities together.
-        -- `h` gives us `A (f x) = 0`
-        -- `this` gives us `0 = A 0`
-        -- By transitivity of equality, we get `A (f x) = A 0`.
         haveI : A (f x) = A 0 := h.trans this
 
-        -- (3) Apply the injectivity of A.
-        -- `hA` is the hypothesis `Function.Injective A`.
-        -- By definition, this means if `A y = A z`, then `y = z`.
-        -- We apply `hA` to our proof `h_eq_A_zero` to conclude `f x = 0`.
+        -- Apply injectivity: A(f(x)) = A(0) ⟹ f(x) = 0
+        -- This is the critical step requiring injectivity!
         exact hA this
 
-      · intro h
-        -- If f(x) = 0, then A(f(x)) = A(0) = 0
+      · -- Backward direction: f(x) = 0 ⟹ A(f(x)) = 0
+        intro h
+        -- If f(x) = 0, then A(f(x)) = A(0) = 0 by linearity
         simp [h]
 
 end Proposition_2_3_1
@@ -169,25 +201,39 @@ lemma radiiPolynomial_alt_form (Y₀ Z₀ : ℝ) (Z₂ : ℝ → ℝ) (r : ℝ) 
 def generalRadiiPolynomial (Y₀ : ℝ) (Z : ℝ → ℝ) (r : ℝ) : ℝ :=
   (Z r - 1) * r + Y₀
 
-/-- If p(r₀) < 0, then Z(r₀) < 1 (Equation 2.13) -/
+/-- If p(r₀) < 0, then Z(r₀) < 1 (Equation 2.13)
+    where p(r) = (Z(r) - 1)r + Y₀ is the general radii polynomial.
+
+    This establishes a key implication for the general radii polynomial formulation
+    used in Theorem 2.4.1:
+
+    This is equation (2.13) or part of equation (2.18) in the informal proof. -/
 lemma general_radii_poly_neg_implies_Z_lt_one
   {Y₀ : ℝ} {Z : ℝ → ℝ} {r₀ : ℝ}
-  (hY₀ : 0 ≤ Y₀) (hr₀ : 0 < r₀)
-  (h_poly : generalRadiiPolynomial Y₀ Z r₀ < 0) :
-  Z r₀ < 1 := by
-  -- p(r₀) < 0 means (Z(r₀) - 1)r₀ + Y₀ < 0
+  (hY₀ : 0 ≤ Y₀)                                    -- Y₀ ≥ 0 (from norm bound)
+  (hr₀ : 0 < r₀)                                    -- r₀ > 0 (positive radius)
+  (h_poly : generalRadiiPolynomial Y₀ Z r₀ < 0) :  -- p(r₀) < 0
+  Z r₀ < 1 := by                                    -- Goal: Z(r₀) < 1
+
+  -- Unfold definition: p(r₀) = (Z(r₀) - 1)·r₀ + Y₀ < 0
   unfold generalRadiiPolynomial at h_poly
-  -- This gives us Z(r₀)r₀ - r₀ + Y₀ < 0
+
+  -- Expand: (Z(r₀) - 1)·r₀ + Y₀ = Z(r₀)·r₀ - r₀ + Y₀ < 0
   have h1 : Z r₀ * r₀ - r₀ + Y₀ < 0 := by linarith [h_poly]
-  -- Therefore Z(r₀)r₀ + Y₀ < r₀
+
+  -- Rearrange: Z(r₀)·r₀ + Y₀ < r₀
   have h2 : Z r₀ * r₀ + Y₀ < r₀ := by linarith [h1]
-  -- Since Y₀ ≥ 0, we have Z(r₀)r₀ < r₀
+
+  -- Since Y₀ ≥ 0, we get: Z(r₀)·r₀ < r₀ - Y₀ ≤ r₀
   have h3 : Z r₀ * r₀ < r₀ := by linarith [h2, hY₀]
-  -- Dividing by r₀ > 0 gives Z(r₀) < 1
+
+  -- Divide both sides by r₀ > 0 to get Z(r₀) < 1
+  -- Using: a·b < b ⟺ a < b/b = 1 when b > 0
   rw [← div_lt_one hr₀] at h3
   field_simp [ne_of_gt hr₀] at h3
   exact h3
 
+section fold
 omit [CompleteSpace E] in
 /-- T maps the ball into itself in Theorem 2.4.1 -/
 lemma general_maps_ball_to_itself
@@ -250,68 +296,113 @@ lemma general_maps_ball_to_itself
         -- `mul_le_mul_of_nonneg_left` requires Z(r₀) > 0 given by `h_Z_nonneg`
         exact mul_le_mul_of_nonneg_left (le_of_lt hx) h_Z_nonneg
     _ < r₀ := h_sum_bound
+end fold
 
 omit [CompleteSpace E] in
-/-- If the radii polynomial is negative, T maps the closed ball into itself. -/
+/-- T maps the closed ball into itself when the radii polynomial is negative
+
+    This is a key step in Theorem 2.4.1 for applying the Banach fixed point theorem.
+
+    Given:
+    - ‖T(x̄) - x̄‖ ≤ Y₀                          (initial displacement bound)
+    - ‖DT(c)‖ ≤ Z(r₀) for all c ∈ B̄ᵣ₀(x̄)       (derivative bound)
+    - p(r₀) < 0 where p(r) = (Z(r) - 1)r + Y₀  (radii polynomial condition)
+
+    We prove: T : B̄ᵣ₀(x̄) → B̄ᵣ₀(x̄) (T maps the ball to itself)
+
+    Strategy:
+    1. From p(r₀) < 0, extract: Z(r₀)·r₀ + Y₀ < r₀
+    2. For x ∈ B̄ᵣ₀(x̄), use Mean Value Theorem:
+       ‖T(x) - T(x̄)‖ ≤ Z(r₀)·‖x - x̄‖ ≤ Z(r₀)·r₀
+    3. Triangle inequality:
+       ‖T(x) - x̄‖ ≤ ‖T(x) - T(x̄)‖ + ‖T(x̄) - x̄‖
+                   ≤ Z(r₀)·r₀ + Y₀ < r₀
+    4. Therefore T(x) ∈ B̄ᵣ₀(x̄) -/
 lemma general_maps_closedBall_to_itself
   {T : E → E} {xBar : E}
   {Y₀ : ℝ} {Z : ℝ → ℝ} {r₀ : ℝ}
-  (hT_diff : Differentiable ℝ T)
-  -- (hY₀ : 0 ≤ Y₀)
-  (hr₀ : 0 < r₀)
-  (h_bound_Y : ‖T xBar - xBar‖ ≤ Y₀)
-  (h_bound_Z : ∀ c ∈ closedBall xBar r₀, ‖fderiv ℝ T c‖ ≤ Z r₀)
-  (h_Z_nonneg : 0 ≤ Z r₀)
-  (h_radii : generalRadiiPolynomial Y₀ Z r₀ < 0) :
+  (hT_diff : Differentiable ℝ T)            -- T ∈ C¹(E,E)
+  (hr₀ : 0 < r₀)                            -- r₀ > 0 (positive radius)
+  (h_bound_Y : ‖T xBar - xBar‖ ≤ Y₀)        -- Initial displacement bound
+  (h_bound_Z : ∀ c ∈ closedBall xBar r₀,    -- Derivative bound on B̄ᵣ₀(x̄)
+    ‖fderiv ℝ T c‖ ≤ Z r₀)
+  (h_Z_nonneg : 0 ≤ Z r₀)                   -- Z(r₀) ≥ 0 (needed for monotonicity)
+  (h_radii : generalRadiiPolynomial Y₀ Z r₀ < 0) :  -- p(r₀) < 0
   MapsTo T (closedBall xBar r₀) (closedBall xBar r₀) := by
-  intro x hx
+  intro x hx  -- Let x ∈ B̄ᵣ₀(x̄), show T(x) ∈ B̄ᵣ₀(x̄)
 
-  -- Key bound: Z(r₀) * r₀ + Y₀ < r₀
+  -- From p(r₀) < 0, extract the key inequality: Z(r₀)·r₀ + Y₀ < r₀
+  -- p(r₀) = (Z(r₀) - 1)·r₀ + Y₀ < 0 implies Z(r₀)·r₀ + Y₀ < r₀
   have h_sum_bound : Z r₀ * r₀ + Y₀ < r₀ := by
     unfold generalRadiiPolynomial at h_radii
     linarith [h_radii]
 
-  -- Segment [xBar, x] is in the closed ball (convexity)
+  -- The line segment [x̄, x] lies entirely in B̄ᵣ₀(x̄) by convexity
+  -- This allows us to apply the Mean Value Theorem
   have h_segment : segment ℝ xBar x ⊆ closedBall xBar r₀ := by
     apply (convex_closedBall xBar r₀).segment_subset
-    · exact mem_closedBall_self (le_of_lt hr₀)
-    · exact hx
+    · exact mem_closedBall_self (le_of_lt hr₀)  -- x̄ ∈ B̄ᵣ₀(x̄)
+    · exact hx                                   -- x ∈ B̄ᵣ₀(x̄)
 
-  -- Apply MVT: ‖T x - T xBar‖ ≤ Z(r₀) * ‖x - xBar‖
+  -- Mean Value Theorem: ‖T(x) - T(x̄)‖ ≤ sup_{c ∈ [x̄,x]} ‖DT(c)‖ · ‖x - x̄‖
+  -- Since ‖DT(c)‖ ≤ Z(r₀) for all c ∈ B̄ᵣ₀(x̄) ⊇ [x̄, x]:
+  -- ‖T(x) - T(x̄)‖ ≤ Z(r₀) · ‖x - x̄‖
   have h_mvt : ‖T x - T xBar‖ ≤ Z r₀ * ‖x - xBar‖ := by
     apply Convex.norm_image_sub_le_of_norm_fderiv_le (𝕜 := ℝ)
     · intros c hc
-      exact hT_diff c
+      exact hT_diff c                   -- T is differentiable
     · intros c hc
-      exact h_bound_Z c (h_segment hc)
-    · apply convex_segment
-    · apply left_mem_segment
-    · apply right_mem_segment
+      exact h_bound_Z c (h_segment hc)  -- ‖DT(c)‖ ≤ Z(r₀) on segment
+    · apply convex_segment              -- [x̄, x] is convex
+    · apply left_mem_segment            -- x̄ ∈ [x̄, x]
+    · apply right_mem_segment           -- x ∈ [x̄, x]
 
-  -- Complete the bound using triangle inequality
+  -- Now show ‖T(x) - x̄‖ ≤ r₀ using triangle inequality and the bounds
   rw [mem_closedBall, dist_eq_norm] at hx ⊢
   calc ‖T x - xBar‖
+      -- Decompose: T(x) - x̄ = (T(x) - T(x̄)) + (T(x̄) - x̄)
       = ‖(T x - T xBar) + (T xBar - xBar)‖ := by simp only [sub_add_sub_cancel]
+    -- Triangle inequality: ‖a + b‖ ≤ ‖a‖ + ‖b‖
     _ ≤ ‖T x - T xBar‖ + ‖T xBar - xBar‖ := norm_add_le _ _
+    -- Apply MVT bound and Y₀ bound
     _ ≤ Z r₀ * ‖x - xBar‖ + Y₀ := add_le_add h_mvt h_bound_Y
+    -- Since ‖x - x̄‖ ≤ r₀ and Z(r₀) ≥ 0: Z(r₀)·‖x - x̄‖ ≤ Z(r₀)·r₀
     _ ≤ Z r₀ * r₀ + Y₀ := by
         apply add_le_add_right
         exact mul_le_mul_of_nonneg_left (hx) h_Z_nonneg
+    -- Apply the key inequality from p(r₀) < 0
     _ ≤ r₀ := le_of_lt h_sum_bound
 
-/-- Closed subsets of complete metric spaces are complete -/
+/-- Closed balls in complete spaces are complete
+
+    If E is a complete normed space (i.e., a Banach space), then every
+    closed ball B̄ᵣ(x) = {y ∈ E : ‖y - x‖ ≤ r} is a complete metric subspace.
+
+    This lemma is crucial for applying the Banach fixed point theorem
+    (Theorem 2.4.1), which requires the domain to be a complete metric space. -/
 lemma isComplete_closedBall {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [CompleteSpace E] (x : E) (r : ℝ) :
   IsComplete (closedBall x r : Set E) := by
+  -- Closed subsets of complete spaces are complete
   apply IsClosed.isComplete
+  -- The closed ball is indeed closed in the norm topology
   exact isClosed_closedBall
 
-/-- In a normed space, the extended distance between any two points is finite -/
+/-- Extended distance is finite in normed spaces
+
+    In any normed space, the extended distance edist : E → E → ℝ≥0∞ between
+    any two points is *finite* (i.e., not ⊤ = ∞).
+
+    This lemma is needed for applying the Banach fixed point theorem
+    (ContractingWith.exists_fixedPoint'), which requires edist to be finite
+    to ensure the iteration sequence is well-defined. -/
 lemma edist_ne_top_of_normed {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (x y : E) :
   edist x y ≠ ⊤ := by
-  -- In a pseudo/metric space, edist x y = ENNReal.ofReal (dist x y)
+  -- In a (pseudo)metric space, edist is defined via the ordinary distance:
+  -- edist x y = ENNReal.ofReal (dist x y)
   rw [edist_dist]
+  -- ENNReal.ofReal : ℝ → ℝ≥0∞ maps to [0, ∞), never to ⊤ = ∞
   exact ENNReal.ofReal_ne_top
 
 /-- **Theorem 2.4.1**: Radii Polynomial Fixed Point Theorem
@@ -321,8 +412,7 @@ lemma edist_ne_top_of_normed {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ
     - ‖DT(c)‖ ≤ Z(r) for all c ∈ B̄ᵣ(x̄) and all r > 0
     - p(r₀) < 0 where p(r) = (Z(r) - 1)r + Y₀
 
-    Then there exists a unique fixed point x̃ ∈ B̄_{r₀}(x̄) with T(x̃) = x̃.
--/
+    Then there exists a unique fixed point x̃ ∈ B̄_{r₀}(x̄) with T(x̃) = x̃ -/
 theorem general_radii_polynomial_theorem
   {T : E → E} {xBar : E}
   {Y₀ : ℝ} {Z : ℝ → ℝ} {r₀ : ℝ}
@@ -436,39 +526,63 @@ theorem general_radii_polynomial_theorem
   exact congrArg Subtype.val this
 
 
-/-- Key lemma: If p(r₀) < 0, then Z(r₀) < 1
-    (Part of Theorem 2.4.2, eq. 2.18) -/
+/-- Radii polynomial negativity implies Z(r₀) < 1
+
+    This establishes equation (2.18) from Theorem 2.4.2:
+
+    p(r₀) < 0  ⟺  Z(r₀) < 1 - Y₀/r₀  ⟹  Z(r₀) < 1
+
+    where:
+    - p(r) = Z₂(r)r² - (1-Z₀)r + Y₀  (eq. 2.17, definition of radii polynomial)
+    - Z(r) = Z₀ + Z₂(r)·r             (eq. 2.18, definition of Z_bound)
+    - p(r) = (Z(r) - 1)r + Y₀         (alternative formulation connecting the two) -/
 lemma radii_poly_neg_implies_Z_bound_lt_one
   {Y₀ Z₀ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
-  (hY₀ : 0 ≤ Y₀) (hr₀ : 0 < r₀)
-  (h_poly : radiiPolynomial Y₀ Z₀ Z₂ r₀ < 0) :
-  Z_bound Z₀ Z₂ r₀ < 1 := by
-  -- Use the alternative formulation
+  (hY₀ : 0 ≤ Y₀)                                    -- Y₀ ≥ 0 (from norm bound)
+  (hr₀ : 0 < r₀)                                    -- r₀ > 0 (positive radius)
+  (h_poly : radiiPolynomial Y₀ Z₀ Z₂ r₀ < 0) :      -- p(r₀) < 0 (eq. 2.17)
+  Z_bound Z₀ Z₂ r₀ < 1 := by                        -- Goal: Z(r₀) < 1 (eq. 2.18)
+
+  -- Use the alternative formulation: p(r) = (Z(r) - 1)r + Y₀
+  -- This connects the radii polynomial to the Z_bound
   rw [radiiPolynomial_alt_form] at h_poly
-  -- We have (Z(r₀) - 1) * r₀ + Y₀ < 0
-  -- Since Y₀ ≥ 0, we need (Z(r₀) - 1) * r₀ < 0
-  have h_prod_neg : (Z_bound Z₀ Z₂ r₀ - 1) * r₀ < 0 := by linarith [h_poly, hY₀]
-  -- Since r₀ > 0, we need Z(r₀) - 1 < 0
+
+  -- From p(r₀) < 0, we have: (Z(r₀) - 1)·r₀ + Y₀ < 0
+  -- Rearranging: (Z(r₀) - 1)·r₀ < -Y₀ ≤ 0
+  have h_prod_neg : (Z_bound Z₀ Z₂ r₀ - 1) * r₀ < 0 := by
+    linarith [h_poly, hY₀]
+
+  -- Since r₀ > 0 and (Z(r₀) - 1)·r₀ < 0, we must have Z(r₀) - 1 < 0
+  -- Proof by contradiction: if Z(r₀) - 1 ≥ 0, then the product would be ≥ 0
   have h_Z_minus_one : Z_bound Z₀ Z₂ r₀ - 1 < 0 := by
     by_contra h_not
-    -- Assume Z(r₀) - 1 ≥ 0
+    -- Assume for contradiction that Z(r₀) - 1 ≥ 0
     have h_nonneg : 0 ≤ Z_bound Z₀ Z₂ r₀ - 1 := by linarith
-    -- Then (Z(r₀) - 1) * r₀ ≥ 0 since r₀ > 0
+    -- Then (Z(r₀) - 1)·r₀ ≥ 0 since both factors are non-negative
     have h_prod_nonneg : 0 ≤ (Z_bound Z₀ Z₂ r₀ - 1) * r₀ :=
       mul_nonneg h_nonneg (le_of_lt hr₀)
+    -- But this contradicts (Z(r₀) - 1)·r₀ < 0
     linarith [h_prod_neg]
+
+  -- From Z(r₀) - 1 < 0, we conclude Z(r₀) < 1
   linarith
 
 omit [CompleteSpace E] in
-/-- Derivative bound: ‖DT(c)‖ ≤ Z₀ + Z₂(r)·r for c ∈ B_r(x̄)
-    (Combining equations 2.15 and 2.16 from Theorem 2.4.2) -/
+/-- Newton operator Y₀ bound: ‖T(x̄) - x̄‖ ≤ Y₀
+
+    This reformulates equation (2.14) for the Newton-like operator.
+
+    This bound is used in Theorem 2.4.1 to verify the first condition
+    for the contraction mapping theorem. -/
 lemma newton_operator_Y_bound
   {f : E → E} {xBar : E} {A : E →L[ℝ] E} {Y₀ : ℝ}
-  (h_bound : ‖A (f xBar)‖ ≤ Y₀) :
+  (h_bound : ‖A (f xBar)‖ ≤ Y₀) :                              -- eq. 2.14
   let T := NewtonLikeMap f A
   ‖T xBar - xBar‖ ≤ Y₀ := by
   unfold NewtonLikeMap
+  -- T(x̄) - x̄ = (x̄ - A(f(x̄))) - x̄ = -A(f(x̄))
   simp only [sub_sub_cancel_left, norm_neg]
+  -- ‖T(x̄) - x̄‖ = ‖-A(f(x̄))‖ = ‖A(f(x̄))‖ ≤ Y₀
   exact h_bound
 
 section fold
@@ -485,56 +599,103 @@ section fold
 end fold
 
 omit [CompleteSpace E] in
-/-- The derivative of the Newton-like operator T(x) = x - Af(x) equals I - A∘Df(x) -/
+/-- Derivative of the Newton-like operator
+
+    For T(x) = x - Af(x), we compute:
+    DT(x) = D(x) - D(Af(x)) = I - A∘Df(x)
+
+    This formula is used throughout the proof, particularly in establishing
+    the derivative bound ‖DT(c)‖ ≤ Z(r₀) (equations 2.19-2.20). -/
 lemma newton_operator_fderiv
   {f : E → E} {A : E →L[ℝ] E} {x : E}
   (hf_diff : Differentiable ℝ f) :
   fderiv ℝ (NewtonLikeMap f A) x = I - A.comp (fderiv ℝ f x) := by
   unfold NewtonLikeMap
+
+  -- Step 1: D(x) = I (derivative of identity map)
   have h1 : fderiv ℝ (fun x => x) x = I := fderiv_id'
+
+  -- Step 2: D(A(f(x))) = A∘Df(x) by chain rule
+  -- Since A is linear: D_y[A](y) = A for all y
+  -- By chain rule: D[A ∘ f](x) = D[A](f(x)) ∘ Df(x) = A ∘ Df(x)
   have h2 : fderiv ℝ (fun x => A (f x)) x = A.comp (fderiv ℝ f x) := by
     have : (fun x => A (f x)) = A ∘ f := rfl
     rw [this, fderiv_comp]
-    · rw [ContinuousLinearMap.fderiv]
-    · exact A.differentiableAt
-    · exact hf_diff.differentiableAt
+    · -- For continuous linear map A: D[A](y) = A
+      rw [ContinuousLinearMap.fderiv]
+    · -- A is differentiable everywhere (continuous linear)
+      exact A.differentiableAt
+    · -- f is differentiable at x (hypothesis)
+      exact hf_diff.differentiableAt
+
+  -- Step 3: D(g - h) = Dg - Dh (linearity of Fréchet derivative)
   have h_sub : fderiv ℝ (fun x => x - A (f x)) x =
       fderiv ℝ (fun x => x) x - fderiv ℝ (fun x => A (f x)) x := by
     apply fderiv_sub differentiableAt_id
     exact A.differentiableAt.comp x hf_diff.differentiableAt
+
+  -- Combine: DT(x) = D(x) - D(Af(x)) = I - A∘Df(x)
   rw [h_sub, h1, h2]
 
 omit [CompleteSpace E] in
-/-- Derivative bound: ‖DT(c)‖ ≤ Z₀ + Z₂(r)·r for c ∈ B_r(x̄)
-    (Combining equations 2.15 and 2.16 from Theorem 2.4.2)
-    Note: ball and closedBall are interchangable -/
+/-- Newton operator derivative bound on closed ball
+
+    ‖DT(c)‖ ≤ Z₀ + Z₂(r)·r  for all c ∈ B̄ᵣ(x̄)
+
+    This combines two separate bounds from Theorem 2.4.2:
+    - Equation (2.15): ‖I - A·Df(x̄)‖ ≤ Z₀            (bound at center x̄)
+    - Equation (2.16): ‖A·[Df(c) - Df(x̄)]‖ ≤ Z₂(r)·r  (Lipschitz-type bound)
+
+    to produce equation (2.19)-(2.20):
+    ‖DT(c)‖ = ‖I - A·Df(c)‖ ≤ Z₀ + Z₂(r)·r ≙ Z(r)
+
+    This bound is crucial for showing T is a contraction with constant Z(r) < 1. -/
 lemma newton_operator_derivative_bound_closed
   {f : E → E} {xBar : E} {A : E →L[ℝ] E}
   {Z₀ : ℝ} {Z₂ : ℝ → ℝ} {r : ℝ}
-  (hf_diff : Differentiable ℝ f)
-  (h_Z₀ : ‖I - A.comp (fderiv ℝ f xBar)‖ ≤ Z₀)                -- ‖I - A·Df(x̄)‖ ≤ Z₀
-  (h_Z₂ : ∀ c ∈ Metric.closedBall xBar r,                     -- For c ∈ B̄ᵣ(x̄):
-    ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r * r)     -- ‖A·[Df(c) - Df(x̄)]‖ ≤ Z₂(r)·r
+  (hf_diff : Differentiable ℝ f)                                   -- f ∈ C¹(E,E)
+  (h_Z₀ : ‖I - A.comp (fderiv ℝ f xBar)‖ ≤ Z₀)                     -- eq. 2.15: ‖I - A·Df(x̄)‖ ≤ Z₀
+  (h_Z₂ : ∀ c ∈ Metric.closedBall xBar r,                          -- eq. 2.16: For c ∈ B̄ᵣ(x̄):
+    ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r * r)          --   ‖A·[Df(c) - Df(x̄)]‖ ≤ Z₂(r)·r
   (c : E) (hc : c ∈ Metric.closedBall xBar r) :
-  ‖fderiv ℝ (NewtonLikeMap f A) c‖ ≤ Z_bound Z₀ Z₂ r := by    -- ‖DT(c)‖ ≤ Z₀ + Z₂(r)·r
-  unfold Z_bound
-  -- DT(c) = I - A·Df(c) by the Newton operator derivative lemma
+  ‖fderiv ℝ (NewtonLikeMap f A) c‖ ≤ Z_bound Z₀ Z₂ r := by         -- Goal: ‖DT(c)‖ ≤ Z(r) = Z₀ + Z₂(r)·r
+  unfold Z_bound  -- Z(r) := Z₀ + Z₂(r)·r
+
+  -- Use the derivative formula: DT(c) = I - A·Df(c)
   rw [newton_operator_fderiv hf_diff]
-  -- Idea: I - A·Df(c) = [I - A·Df(x̄)] + A·[Df(x̄) - Df(c)]
-  -- Then apply triangle inequality and use both bounds
+
+  -- The key decomposition technique (adding and subtracting A·Df(x̄)):
+  -- I - A·Df(c) = I - A·Df(x̄) + A·Df(x̄) - A·Df(c)
+  --             = [I - A·Df(x̄)] + A·[Df(x̄) - Df(c)]
+  --
+  -- This splits the derivative into:
+  -- 1. A "center term" [I - A·Df(x̄)] bounded by Z₀ (eq. 2.15)
+  -- 2. A "variation term" A·[Df(x̄) - Df(c)] bounded by Z₂(r)·r (eq. 2.16)
+
   calc ‖I - A.comp (fderiv ℝ f c)‖
-      -- Rewrite: I - A·Df(c) = [I - A·Df(x̄)] + A·[Df(x̄) - Df(c)]
+      -- Step 1: Decompose using A·Df(x̄) as a "pivot"
+      -- I - A·Df(c) = [I - A·Df(x̄) + A·Df(x̄)] - A·Df(c)
+      --             = [I - A·Df(x̄)] + [A·Df(x̄) - A·Df(c)]
       = ‖I - A.comp (fderiv ℝ f xBar) + A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ := by
+        -- Algebraic identity: comp is linear, so A∘(B - C) = A∘B - A∘C
         simp only [comp_sub, sub_add_sub_cancel]
-    -- Triangle inequality: ‖a + b‖ ≤ ‖a‖ + ‖b‖
+
+    -- Step 2: Apply triangle inequality ‖a + b‖ ≤ ‖a‖ + ‖b‖
     _ ≤ ‖I - A.comp (fderiv ℝ f xBar)‖ + ‖A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ :=
         norm_add_le _ _
-    -- Apply bounds: ‖I - A·Df(x̄)‖ ≤ Z₀ and ‖A·[Df(x̄) - Df(c)]‖ ≤ Z₂(r)·r
+
+    -- Step 3: Apply both bounds from hypotheses
+    -- First term: ‖I - A·Df(x̄)‖ ≤ Z₀ by eq. 2.15
+    -- Second term: ‖A·[Df(x̄) - Df(c)]‖ ≤ Z₂(r)·r by eq. 2.16
     _ ≤ Z₀ + Z₂ r * r := by
-        apply add_le_add h_Z₀
-        -- Use ‖-v‖ = ‖v‖ to flip Df(x̄) - Df(c) to Df(c) - Df(x̄)
-        have : fderiv ℝ f xBar - fderiv ℝ f c = -(fderiv ℝ f c - fderiv ℝ f xBar) := by abel
+        apply add_le_add h_Z₀                      -- Apply first bound
+        -- For the second term, need to flip Df(x̄) - Df(c) to Df(c) - Df(x̄)
+        -- to match the form in hypothesis h_Z₂
+        have : fderiv ℝ f xBar - fderiv ℝ f c = -(fderiv ℝ f c - fderiv ℝ f xBar) := by
+          abel  -- Algebraic manipulation: a - b = -(b - a)
+        -- Use norm symmetry: ‖-v‖ = ‖v‖ and linearity: A∘(-B) = -(A∘B)
         rw [this, ContinuousLinearMap.comp_neg, norm_neg]
+        -- Apply second bound (eq. 2.16)
         exact h_Z₂ c hc
 
 omit [CompleteSpace E] in
@@ -559,47 +720,83 @@ lemma surjective_of_comp_surjective_left
   use x
   exact hA hx
 
-/-- If ‖I - A∘B‖ < 1 and A is injective, then B is bijective -/
+/-- **Bijectivity from composition with injective map**
+
+    If A is injective and ‖I - A∘B‖ < 1, then B is bijective.
+
+    This is a key algebraic lemma for the radii polynomial theorem. It allows us to
+    deduce that Df(x̃) is bijective (hence invertible) from:
+    - A is injective (our weakened assumption)
+    - ‖I - A∘Df(x̃)‖ < 1 (from the radii polynomial condition)
+
+    **Proof structure**:
+    1. ‖I - A∘B‖ < 1 ⟹ A∘B is invertible (Exercise 2.7.1, Neumann series)
+       Get (A∘B)⁻¹ with (A∘B)∘(A∘B)⁻¹ = I and (A∘B)⁻¹∘(A∘B) = I
+
+    2. Having a two-sided inverse ⟹ A∘B is bijective
+       - Right inverse ⟹ injective
+       - Left inverse ⟹ surjective
+
+    3. Use Mathlib composition lemmas:
+       - A injective + A∘B injective ⟹ B injective
+         (Theorem: Injective (f ∘ g) ↔ Injective g when f injective)
+       - A injective + A∘B surjective ⟹ B surjective
+         (Theorem: Surjective (f ∘ g) + Injective f ⟹ Surjective g)
+
+    This avoids requiring A to be invertible, which would need finite dimensions. -/
 lemma bijective_of_comp_and_injective
   {A B : E →L[ℝ] E}
-  (hA : Function.Injective A)
-  (h_norm : ‖I - A.comp B‖ < 1) :
-  Function.Bijective B := by
-  -- A∘B is invertible by Neumann series
+  (hA : Function.Injective A)          -- A is injective (only assumption on A!)
+  (h_norm : ‖I - A.comp B‖ < 1) :     -- ‖I - A∘B‖ < 1 (near identity)
+  Function.Bijective B := by          -- Goal: B is bijective
+
+  -- From ‖I - A∘B‖ < 1, the Neumann series converges:
+  -- (A∘B)⁻¹ = I + (I - A∘B) + (I - A∘B)² + (I - A∘B)³ + ...
+  -- This gives us a two-sided inverse
+  -- where: (A∘B) ∘ AB_inv = I  (left inverse, eq h_left)
+  --        AB_inv ∘ (A∘B) = I  (right inverse, eq h_right)
   obtain ⟨AB_inv, h_left, h_right⟩ := invertible_comp_form h_norm
 
-  -- Convert composition equalities to pointwise equalities
+
+  -- Step 2: Convert continuous linear map equalities to function equalities
+  -- Need to work with coerced functions (⇑A ∘ ⇑B) rather than A.comp B
+  -- Right inverse for functions: AB_inv((A∘B)(x)) = x for all x
   have h_right_inv : Function.RightInverse (⇑A ∘ ⇑B) ⇑AB_inv := by
     intro x
+    -- Extract pointwise equality from composition equality
     have := congrFun (congrArg DFunLike.coe h_right) x
     simp at this
     exact this
 
+  -- Left inverse for functions: (A∘B)(AB_inv(y)) = y for all y
   have h_left_inv : Function.LeftInverse (⇑A ∘ ⇑B) ⇑AB_inv := by
     intro y
+    -- Extract pointwise equality from composition equality
     have := congrFun (congrArg DFunLike.coe h_left) y
     simp at this
     exact this
 
   -- A∘B is bijective (from having a two-sided inverse)
-  /-
-  theorem `Function.RightInverse.injective`
-  {α : Sort u_1} {β : Sort u_2} {f : α → β} {g : β → α} 
-  (h : RightInverse f g) :
-  Injective f
+  -- Mathlib theorems:
+  -- - `Function.RightInverse.injective`: Right inverse ⟹ injective
+  -- - `Function.LeftInverse.surjective`: Left inverse ⟹ surjective
 
-  theorem `Function.LeftInverse.surjective`
-  {α : Sort u_1} {β : Sort u_2} {f : α → β} {g : β → α} 
-  (h : LeftInverse f g) :
-  Surjective f
-  -/
   have h_AB_inj : Function.Injective (⇑A ∘ ⇑B) := h_right_inv.injective
   have h_AB_surj : Function.Surjective (⇑A ∘ ⇑B) := h_left_inv.surjective
 
+  -- Deduce B is bijective from A injective and A∘B bijective
   constructor
   · -- B is injective
+    -- Mathlib theorem: `Injective (f ∘ g) ↔ Injective g` when f is injective
+    -- Since A is injective and A∘B is injective, B must be injective
     exact (hA.of_comp_iff ⇑B).mp h_AB_inj
+
   · -- B is surjective
+    -- Mathlib theorem: `Surjective (f ∘ g) + Injective f ⟹ Surjective g`
+    -- If A∘B is surjective and A is injective, then B must be surjective
+    -- Proof: For any y, since A∘B surjective, ∃x: (A∘B)(x) = A(g(x)) for some g(x)
+    --        But we need to show ∃z: B(z) = y
+    --        Take some v with A(v) = A(B(x)), then by injectivity v = B(x)
     exact h_AB_surj.of_comp_left hA
 
 omit [CompleteSpace E] in
@@ -754,9 +951,7 @@ theorem radii_polynomial_theorem
     unfold T NewtonLikeMap
     exact (differentiable_id).sub (A.differentiable.comp hf_diff)
 
-  -- ═══════════════════════════════════════════════════════════════════════
-  -- Step 1: Apply Theorem 2.4.1 (general radii polynomial theorem)
-  -- ═══════════════════════════════════════════════════════════════════════
+  -- Apply Theorem 2.4.1 (general radii polynomial theorem)
   -- We verify:
   --   (a) ‖T(x̄) - x̄‖ = ‖Af(x̄)‖ ≤ Y₀
   --   (b) ‖DT(c)‖ ≤ Z(r₀) for all c ∈ B̄ᵣ₀(x̄)
@@ -774,9 +969,7 @@ theorem radii_polynomial_theorem
           rw [← radiiPolynomial_alt_form]
           exact h_radii)
 
-  -- ═══════════════════════════════════════════════════════════════════════
-  -- Step 2: Convert fixed point to zero via Proposition 2.3.1
-  -- ═══════════════════════════════════════════════════════════════════════
+  -- Convert fixed point to zero via Proposition 2.3.1
   -- Proposition 2.3.1: T(x̃) = x̃ ⟺ f(x̃) = 0 when A is injective
   -- We have T(x̃) = x̃, therefore f(x̃) = 0
 
@@ -784,9 +977,7 @@ theorem radii_polynomial_theorem
     rw [← fixedPoint_injective_iff_zero hA_inj xTilde]
     exact hxTilde_fixed
 
-  -- ═══════════════════════════════════════════════════════════════════════
-  -- Step 3: Show Df(x̃) is invertible
-  -- ═══════════════════════════════════════════════════════════════════════
+  -- Show Df(x̃) is invertible
   -- Key steps:
   --   1. x̃ ∈ B̄ᵣ₀(x̄), so ‖DT(x̃)‖ ≤ Z(r₀) < 1 (by eq. 2.20)
   --   2. DT(x̃) = I - A∘Df(x̃), so ‖I - A∘Df(x̃)‖ < 1
@@ -798,9 +989,7 @@ theorem radii_polynomial_theorem
     apply construct_derivative_inverse hA_inj
     exact newton_derivative_at_solution hf_diff hxTilde_mem h_Y₀ h_Z₀ h_Z₂ hr₀ h_radii
 
-  -- ═══════════════════════════════════════════════════════════════════════
-  -- Step 4: Package existence and uniqueness
-  -- ═══════════════════════════════════════════════════════════════════════
+  -- Package existence and uniqueness
   -- Existence: x̃ ∈ B̄ᵣ₀(x̄) with f(x̃) = 0 and Df(x̃) invertible
   -- Uniqueness: Any other z with these properties equals x̃
 
