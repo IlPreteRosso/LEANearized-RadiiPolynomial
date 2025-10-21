@@ -720,7 +720,7 @@ lemma surjective_of_comp_surjective_left
   use x
   exact hA hx
 
-/-- **Bijectivity from composition with injective map**
+/-- Bijectivity from composition with injective map
 
     If A is injective and ‖I - A∘B‖ < 1, then B is bijective.
 
@@ -729,8 +729,8 @@ lemma surjective_of_comp_surjective_left
     - A is injective (our weakened assumption)
     - ‖I - A∘Df(x̃)‖ < 1 (from the radii polynomial condition)
 
-    **Proof structure**:
-    1. ‖I - A∘B‖ < 1 ⟹ A∘B is invertible (Exercise 2.7.1, Neumann series)
+    Proof structure:
+    1. ‖I - A∘B‖ < 1 ⟹ A∘B is invertible (given by Neumann series)
        Get (A∘B)⁻¹ with (A∘B)∘(A∘B)⁻¹ = I and (A∘B)⁻¹∘(A∘B) = I
 
     2. Having a two-sided inverse ⟹ A∘B is bijective
@@ -739,9 +739,9 @@ lemma surjective_of_comp_surjective_left
 
     3. Use Mathlib composition lemmas:
        - A injective + A∘B injective ⟹ B injective
-         (Theorem: Injective (f ∘ g) ↔ Injective g when f injective)
+         (`Injective (f ∘ g) ↔ Injective g` when f injective)
        - A injective + A∘B surjective ⟹ B surjective
-         (Theorem: Surjective (f ∘ g) + Injective f ⟹ Surjective g)
+         (`Surjective (f ∘ g) + Injective f ⟹ Surjective g`)
 
     This avoids requiring A to be invertible, which would need finite dimensions. -/
 lemma bijective_of_comp_and_injective
@@ -799,42 +799,6 @@ lemma bijective_of_comp_and_injective
     --        Take some v with A(v) = A(B(x)), then by injectivity v = B(x)
     exact h_AB_surj.of_comp_left hA
 
-omit [CompleteSpace E] in
-/-- If the radii polynomial is negative, then ‖I - A∘Df(x̄)‖ < 1
-
-    This establishes equation (2.18): p(r₀) < 0 ⟹ Z(r₀) < 1
-    which in turn implies ‖I - ADf(x̄)‖ ≤ Z₀ ≤ Z(r₀) < 1 -/
-lemma radii_implies_norm_lt_one
-  {A : E →L[ℝ] E} {f : E → E} {xBar : E} {Y₀ Z₀ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
-  (hr₀ : 0 < r₀)
-  (h_Y₀ : ‖A (f xBar)‖ ≤ Y₀)                                   -- eq. 2.14
-  (h_Z₀ : ‖I - A.comp (fderiv ℝ f xBar)‖ ≤ Z₀)                 -- eq. 2.15
-  (h_Z₂ : ∀ c ∈ Metric.closedBall xBar r₀,
-    ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r₀ * r₀)   -- eq. 2.16
-  (h_radii : radiiPolynomial Y₀ Z₀ Z₂ r₀ < 0) :               -- eq. 2.17: p(r₀) < 0
-  ‖I - A.comp (fderiv ℝ f xBar)‖ < 1 := by
-  -- Y₀ ≥ 0 automatically from ‖A(f(x̄))‖ ≤ Y₀
-  have hY₀_nonneg : 0 ≤ Y₀ := by
-    calc 0 ≤ ‖A (f xBar)‖ := norm_nonneg _
-         _ ≤ Y₀ := h_Y₀
-
-  -- Z₂(r₀)·r₀ ≥ 0 from eq. 2.16 at c = x̄
-  have h_Z₂_nonneg : 0 ≤ Z₂ r₀ * r₀ := by
-    have := h_Z₂ xBar (mem_closedBall_self (le_of_lt hr₀))
-    simp only [sub_self] at this
-    simpa using this
-
-  -- eq. 2.18: p(r₀) < 0 ⟹ Z(r₀) = Z₀ + Z₂(r₀)·r₀ < 1
-  have h_Z_lt_one : Z_bound Z₀ Z₂ r₀ < 1 :=
-    radii_poly_neg_implies_Z_bound_lt_one hY₀_nonneg hr₀ h_radii
-
-  -- Chain of inequalities: ‖I - A·Df(x̄)‖ ≤ Z₀ ≤ Z(r₀) < 1
-  calc ‖I - A.comp (fderiv ℝ f xBar)‖
-      ≤ Z₀ := h_Z₀                            -- by eq. 2.15
-    _ ≤ Z₀ + Z₂ r₀ * r₀ := by linarith [h_Z₂_nonneg]
-    _ = Z_bound Z₀ Z₂ r₀ := rfl               -- definition of Z(r₀)
-    _ < 1 := h_Z_lt_one                       -- by eq. 2.18
-
 /-- Construct the inverse of Df(x̃) from the inverse of A∘Df(x̃) and injectivity of A
 
     Key insight: If A is injective and A∘B is invertible with inverse (A∘B)⁻¹,
@@ -876,6 +840,44 @@ lemma construct_derivative_inverse
   -- Package as ContinuousLinearEquiv
   use ContinuousLinearEquiv.equivOfInverse B B_inv h_inv_right h_inv_left
   rfl
+
+section fold
+-- omit [CompleteSpace E] in
+-- /-- If the radii polynomial is negative, then ‖I - A∘Df(x̄)‖ < 1
+
+--     This establishes equation (2.18): p(r₀) < 0 ⟹ Z(r₀) < 1
+--     which in turn implies ‖I - ADf(x̄)‖ ≤ Z₀ ≤ Z(r₀) < 1 -/
+-- lemma radii_implies_norm_lt_one
+--   {A : E →L[ℝ] E} {f : E → E} {xBar : E} {Y₀ Z₀ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
+--   (hr₀ : 0 < r₀)
+--   (h_Y₀ : ‖A (f xBar)‖ ≤ Y₀)                                   -- eq. 2.14
+--   (h_Z₀ : ‖I - A.comp (fderiv ℝ f xBar)‖ ≤ Z₀)                 -- eq. 2.15
+--   (h_Z₂ : ∀ c ∈ Metric.closedBall xBar r₀,
+--     ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r₀ * r₀)   -- eq. 2.16
+--   (h_radii : radiiPolynomial Y₀ Z₀ Z₂ r₀ < 0) :               -- eq. 2.17: p(r₀) < 0
+--   ‖I - A.comp (fderiv ℝ f xBar)‖ < 1 := by
+--   -- Y₀ ≥ 0 automatically from ‖A(f(x̄))‖ ≤ Y₀
+--   have hY₀_nonneg : 0 ≤ Y₀ := by
+--     calc 0 ≤ ‖A (f xBar)‖ := norm_nonneg _
+--          _ ≤ Y₀ := h_Y₀
+
+--   -- Z₂(r₀)·r₀ ≥ 0 from eq. 2.16 at c = x̄
+--   have h_Z₂_nonneg : 0 ≤ Z₂ r₀ * r₀ := by
+--     have := h_Z₂ xBar (mem_closedBall_self (le_of_lt hr₀))
+--     simp only [sub_self] at this
+--     simpa using this
+
+--   -- eq. 2.18: p(r₀) < 0 ⟹ Z(r₀) = Z₀ + Z₂(r₀)·r₀ < 1
+--   have h_Z_lt_one : Z_bound Z₀ Z₂ r₀ < 1 :=
+--     radii_poly_neg_implies_Z_bound_lt_one hY₀_nonneg hr₀ h_radii
+
+--   -- Chain of inequalities: ‖I - A·Df(x̄)‖ ≤ Z₀ ≤ Z(r₀) < 1
+--   calc ‖I - A.comp (fderiv ℝ f xBar)‖
+--       ≤ Z₀ := h_Z₀                            -- by eq. 2.15
+--     _ ≤ Z₀ + Z₂ r₀ * r₀ := by linarith [h_Z₂_nonneg]
+--     _ = Z_bound Z₀ Z₂ r₀ := rfl               -- definition of Z(r₀)
+--     _ < 1 := h_Z_lt_one                       -- by eq. 2.18
+end fold
 
 omit [CompleteSpace E] in
 /-- The Newton operator derivative bound at x̃ follows from the general bound
