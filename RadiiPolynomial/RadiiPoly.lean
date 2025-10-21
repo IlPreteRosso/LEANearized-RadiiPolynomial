@@ -194,26 +194,26 @@ lemma radiiPolynomial_alt_form (Y₀ Z₀ : ℝ) (Z₂ : ℝ → ℝ) (r : ℝ) 
   ring
 
 -- set_option diagnostics true
-/-- General radii polynomial for Theorem 2.4.1: p(r) = (Z(r) - 1)r + Y₀ -/
-def generalRadiiPolynomial (Y₀ : ℝ) (Z : ℝ → ℝ) (r : ℝ) : ℝ :=
+/-- simple radii polynomial for Theorem 2.4.1: p(r) = (Z(r) - 1)r + Y₀ -/
+def simpleRadiiPolynomial (Y₀ : ℝ) (Z : ℝ → ℝ) (r : ℝ) : ℝ :=
   (Z r - 1) * r + Y₀
 
 /-- If p(r₀) < 0, then Z(r₀) < 1 (Equation 2.13)
-    where p(r) = (Z(r) - 1)r + Y₀ is the general radii polynomial.
+    where p(r) = (Z(r) - 1)r + Y₀ is the simple radii polynomial.
 
-    This establishes a key implication for the general radii polynomial formulation
+    This establishes a key implication for the simple radii polynomial formulation
     used in Theorem 2.4.1:
 
     This is equation (2.13) or part of equation (2.18) in the informal proof. -/
-lemma general_radii_poly_neg_implies_Z_lt_one
+lemma simple_radii_poly_neg_implies_Z_lt_one
   {Y₀ : ℝ} {Z : ℝ → ℝ} {r₀ : ℝ}
   (hY₀ : 0 ≤ Y₀)                                    -- Y₀ ≥ 0 (from norm bound)
   (hr₀ : 0 < r₀)                                    -- r₀ > 0 (positive radius)
-  (h_poly : generalRadiiPolynomial Y₀ Z r₀ < 0) :  -- p(r₀) < 0
+  (h_poly : simpleRadiiPolynomial Y₀ Z r₀ < 0) :  -- p(r₀) < 0
   Z r₀ < 1 := by                                    -- Goal: Z(r₀) < 1
 
   -- Unfold definition: p(r₀) = (Z(r₀) - 1)·r₀ + Y₀ < 0
-  unfold generalRadiiPolynomial at h_poly
+  unfold simpleRadiiPolynomial at h_poly
 
   -- Expand: (Z(r₀) - 1)·r₀ + Y₀ = Z(r₀)·r₀ - r₀ + Y₀ < 0
   have h1 : Z r₀ * r₀ - r₀ + Y₀ < 0 := by linarith [h_poly]
@@ -250,7 +250,7 @@ omit [CompleteSpace E] in
        ‖T(x) - x̄‖ ≤ ‖T(x) - T(x̄)‖ + ‖T(x̄) - x̄‖
                    ≤ Z(r₀)·r₀ + Y₀ < r₀
     4. Therefore T(x) ∈ B̄ᵣ₀(x̄) -/
-lemma general_maps_closedBall_to_itself
+lemma simple_maps_closedBall_to_itself
   {T : E → E} {xBar : E}
   {Y₀ : ℝ} {Z : ℝ → ℝ} {r₀ : ℝ}
   (hT_diff : Differentiable ℝ T)            -- T ∈ C¹(E,E)
@@ -259,14 +259,14 @@ lemma general_maps_closedBall_to_itself
   (h_bound_Z : ∀ c ∈ closedBall xBar r₀,    -- Derivative bound on B̄ᵣ₀(x̄)
     ‖fderiv ℝ T c‖ ≤ Z r₀)
   (h_Z_nonneg : 0 ≤ Z r₀)                   -- Z(r₀) ≥ 0 (needed for monotonicity)
-  (h_radii : generalRadiiPolynomial Y₀ Z r₀ < 0) :  -- p(r₀) < 0
+  (h_radii : simpleRadiiPolynomial Y₀ Z r₀ < 0) :  -- p(r₀) < 0
   MapsTo T (closedBall xBar r₀) (closedBall xBar r₀) := by
   intro x hx  -- Let x ∈ B̄ᵣ₀(x̄), show T(x) ∈ B̄ᵣ₀(x̄)
 
   -- From p(r₀) < 0, extract the key inequality: Z(r₀)·r₀ + Y₀ < r₀
   -- p(r₀) = (Z(r₀) - 1)·r₀ + Y₀ < 0 implies Z(r₀)·r₀ + Y₀ < r₀
   have h_sum_bound : Z r₀ * r₀ + Y₀ < r₀ := by
-    unfold generalRadiiPolynomial at h_radii
+    unfold simpleRadiiPolynomial at h_radii
     linarith [h_radii]
 
   -- The line segment [x̄, x] lies entirely in B̄ᵣ₀(x̄) by convexity
@@ -345,14 +345,14 @@ lemma edist_ne_top_of_normed {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ
     - p(r₀) < 0 where p(r) = (Z(r) - 1)r + Y₀
 
     Then there exists a unique fixed point x̃ ∈ B̄_{r₀}(x̄) with T(x̃) = x̃ -/
-theorem general_radii_polynomial_theorem
+theorem simple_radii_polynomial_theorem
   {T : E → E} {xBar : E}
   {Y₀ : ℝ} {Z : ℝ → ℝ} {r₀ : ℝ}
   (hT_diff : Differentiable ℝ T)
   (hr₀ : 0 < r₀)
   (h_bound_Y : ‖T xBar - xBar‖ ≤ Y₀)
   (h_bound_Z : ∀ c ∈ Metric.closedBall xBar r₀, ‖fderiv ℝ T c‖ ≤ Z r₀)
-  (h_radii : generalRadiiPolynomial Y₀ Z r₀ < 0) :
+  (h_radii : simpleRadiiPolynomial Y₀ Z r₀ < 0) :
   ∃! xTilde ∈ Metric.closedBall xBar r₀, T xTilde = xTilde := by
 
   -- Need Y₀ ≥ 0 for the polynomial argument
@@ -362,7 +362,7 @@ theorem general_radii_polynomial_theorem
 
   -- p(r₀) < 0 ⇒ Z(r₀) < 1
   have h_Z_lt_one : Z r₀ < 1 :=
-    general_radii_poly_neg_implies_Z_lt_one hY₀ hr₀ h_radii
+    simple_radii_poly_neg_implies_Z_lt_one hY₀ hr₀ h_radii
 
   have h_Z_nonneg : 0 ≤ Z r₀ := by
     have := h_bound_Z xBar (mem_closedBall_self (le_of_lt hr₀))
@@ -370,7 +370,7 @@ theorem general_radii_polynomial_theorem
 
   -- T maps the closed ball into itself
   have h_maps : MapsTo T (closedBall xBar r₀) (closedBall xBar r₀) :=
-    general_maps_closedBall_to_itself hT_diff hr₀ h_bound_Y h_bound_Z h_Z_nonneg h_radii
+    simple_maps_closedBall_to_itself hT_diff hr₀ h_bound_Y h_bound_Z h_Z_nonneg h_radii
 
   -- T is a contraction on the closed ball
   have h_contracting_on_ball : ∀ x y,
@@ -575,7 +575,7 @@ lemma newton_operator_derivative_bound_closed
   (hf_diff : Differentiable ℝ f)                                   -- f ∈ C¹(E,E)
   (h_Z₀ : ‖I - A.comp (fderiv ℝ f xBar)‖ ≤ Z₀)                     -- eq. 2.15: ‖I - A·Df(x̄)‖ ≤ Z₀
   (h_Z₂ : ∀ c ∈ Metric.closedBall xBar r,                          -- eq. 2.16: For c ∈ B̄ᵣ(x̄):
-    ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r * r)          --   ‖A·[Df(c) - Df(x̄)]‖ ≤ Z₂(r)·r
+    ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r * r)          -- ‖A·[Df(c) - Df(x̄)]‖ ≤ Z₂(r)·r
   (c : E) (hc : c ∈ Metric.closedBall xBar r) :
   ‖fderiv ℝ (NewtonLikeMap f A) c‖ ≤ Z_bound Z₀ Z₂ r := by         -- Goal: ‖DT(c)‖ ≤ Z(r) = Z₀ + Z₂(r)·r
   unfold Z_bound  -- Z(r) := Z₀ + Z₂(r)·r
@@ -660,7 +660,7 @@ lemma construct_derivative_inverse
   rfl
 
 omit [CompleteSpace E] in
-/-- The Newton operator derivative bound at x̃ follows from the general bound
+/-- The Newton operator derivative bound at x̃ follows from the simple bound
 
     At the solution x̃ ∈ B̄ᵣ₀(x̄), we have:
     ‖I - A∘Df(x̃)‖ = ‖DT(x̃)‖ ≤ Z(r₀) < 1
@@ -733,20 +733,20 @@ theorem radii_polynomial_theorem
     unfold T NewtonLikeMap
     exact (differentiable_id).sub (A.differentiable.comp hf_diff)
 
-  -- Apply Theorem 2.4.1 (general radii polynomial theorem)
+  -- Apply Theorem 2.4.1 (simple radii polynomial theorem)
   -- We verify:
   --   (a) ‖T(x̄) - x̄‖ = ‖Af(x̄)‖ ≤ Y₀
   --   (b) ‖DT(c)‖ ≤ Z(r₀) for all c ∈ B̄ᵣ₀(x̄)
   --   (c) p(r₀) < 0 (equivalently Z(r₀) < 1 - Y₀/r₀)
   -- Then Theorem 2.4.1 gives a unique fixed point x̃ ∈ B̄ᵣ₀(x̄)
   have ⟨xTilde, ⟨hxTilde_mem, hxTilde_fixed⟩, hxTilde_unique⟩ :=
-    general_radii_polynomial_theorem
+    simple_radii_polynomial_theorem
       hT_diff
       hr₀
       (newton_operator_Y_bound h_Y₀)                            -- ‖T(x̄) - x̄‖ ≤ Y₀
       (fun c hc => newton_operator_derivative_bound_closed      -- ‖DT(c)‖ ≤ Z(r₀)
         hf_diff h_Z₀ h_Z₂ c hc)
-      (by unfold generalRadiiPolynomial                         -- p(r₀) < 0
+      (by unfold simpleRadiiPolynomial                         -- p(r₀) < 0
           rw [← radiiPolynomial_alt_form]
           exact h_radii)
 
