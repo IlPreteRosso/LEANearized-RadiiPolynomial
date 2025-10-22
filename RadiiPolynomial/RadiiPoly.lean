@@ -50,6 +50,7 @@ def NewtonLikeMap (A : E →L[ℝ] E) (f : E → E) (x : E) : E := x - A (f x)
 abbrev I := ContinuousLinearMap.id ℝ E
 
 
+
 section NeumannSeries
 theorem isUnit_of_norm_sub_id_lt_one_LEAN_built_in {B : E →L[ℝ] E}
   (h : ‖I - B‖ < 1) :
@@ -504,7 +505,7 @@ omit [CompleteSpace E] in
 
     This reformulates equation (2.14) for the Newton-like operator.
 
-    This bound is used in Theorem 2.4.1 to verify the first condition
+    This bound is used in Theorem 2.4.2 to verify the first condition
     for the contraction mapping theorem. -/
 lemma newton_operator_Y_bound
   {f : E → E} {xBar : E} {A : E →L[ℝ] E} {Y₀ : ℝ}
@@ -706,7 +707,7 @@ lemma newton_derivative_at_solution
     - ‖I - ADf(x̄)‖ ≤ Z₀                               (eq. 2.15)
     - ‖A[Df(c) - Df(x̄)]‖ ≤ Z₂(r)·r for all c ∈ B̄ᵣ(x̄)  (eq. 2.16)
 
-    If p(r₀) < 0 where p(r) = Z₂(r)r² - (1-Z₀)r + Y₀ (eq. 2.17),
+    If p(r₀) < 0 where p(r) = Z₂(r)r² - (1-Z₀)r + Y₀  (eq. 2.17),
     then there exists a unique x̃ ∈ B̄_{r₀}(x̄) with f(x̃) = 0 and Df(x̃) invertible.
 
     *Modification from informal proof*: Assume A is injective as in Proposition 2.3.1 rather than invertible, avoiding unnecessary finite-dimensionality assumptions. -/
