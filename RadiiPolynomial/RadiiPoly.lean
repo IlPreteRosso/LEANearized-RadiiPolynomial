@@ -45,7 +45,7 @@ This framework supports:
 -/
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
-def NewtonLikeMap (f : E → E) (A : E →L[ℝ] E) (x : E) : E := x - A (f x)
+def NewtonLikeMap (A : E →L[ℝ] E) (f : E → E) (x : E) : E := x - A (f x)
 
 abbrev I := ContinuousLinearMap.id ℝ E
 
@@ -110,7 +110,7 @@ lemma fixedPoint_injective_iff_zero
   {f : E → E} {A : E →L[ℝ] E}
   (hA : Function.Injective A)   -- A injective (NOT necessarily invertible!)
   (x : E) :
-  NewtonLikeMap f A x = x ↔ f x = 0 := by
+  NewtonLikeMap A f x = x ↔ f x = 0 := by
   -- Unfold T(x) = x - A(f(x))
   unfold NewtonLikeMap
 
@@ -509,7 +509,7 @@ omit [CompleteSpace E] in
 lemma newton_operator_Y_bound
   {f : E → E} {xBar : E} {A : E →L[ℝ] E} {Y₀ : ℝ}
   (h_bound : ‖A (f xBar)‖ ≤ Y₀) :                              -- eq. 2.14
-  let T := NewtonLikeMap f A
+  let T := NewtonLikeMap A f
   ‖T xBar - xBar‖ ≤ Y₀ := by
   unfold NewtonLikeMap
   -- T(x̄) - x̄ = (x̄ - A(f(x̄))) - x̄ = -A(f(x̄))
@@ -528,7 +528,7 @@ omit [CompleteSpace E] in
 lemma newton_operator_fderiv
   {f : E → E} {A : E →L[ℝ] E} {x : E}
   (hf_diff : Differentiable ℝ f) :
-  fderiv ℝ (NewtonLikeMap f A) x = I - A.comp (fderiv ℝ f x) := by
+  fderiv ℝ (NewtonLikeMap A f) x = I - A.comp (fderiv ℝ f x) := by
   unfold NewtonLikeMap
 
   -- Step 1: D(x) = I (derivative of identity map)
@@ -577,7 +577,7 @@ lemma newton_operator_derivative_bound_closed
   (h_Z₂ : ∀ c ∈ Metric.closedBall xBar r,                          -- eq. 2.16: For c ∈ B̄ᵣ(x̄):
     ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r * r)          -- ‖A·[Df(c) - Df(x̄)]‖ ≤ Z₂(r)·r
   (c : E) (hc : c ∈ Metric.closedBall xBar r) :
-  ‖fderiv ℝ (NewtonLikeMap f A) c‖ ≤ Z_bound Z₀ Z₂ r := by         -- Goal: ‖DT(c)‖ ≤ Z(r) = Z₀ + Z₂(r)·r
+  ‖fderiv ℝ (NewtonLikeMap A f) c‖ ≤ Z_bound Z₀ Z₂ r := by         -- Goal: ‖DT(c)‖ ≤ Z(r) = Z₀ + Z₂(r)·r
   unfold Z_bound  -- Z(r) := Z₀ + Z₂(r)·r
 
   -- Use the derivative formula: DT(c) = I - A·Df(c)
@@ -684,7 +684,7 @@ lemma newton_derivative_at_solution
          _ ≤ Y₀ := h_Y₀
 
   -- eq. 2.19-2.20: ‖DT(x̃)‖ ≤ Z₀ + Z₂(r₀)·r₀ = Z(r₀)
-  have h_bound : ‖fderiv ℝ (NewtonLikeMap f A) xTilde‖ ≤ Z_bound Z₀ Z₂ r₀ :=
+  have h_bound : ‖fderiv ℝ (NewtonLikeMap A f) xTilde‖ ≤ Z_bound Z₀ Z₂ r₀ :=
     newton_operator_derivative_bound_closed hf_diff h_Z₀ h_Z₂ xTilde hxTilde_mem
 
   -- eq. 2.18: Z(r₀) < 1 from p(r₀) < 0
@@ -694,17 +694,16 @@ lemma newton_derivative_at_solution
   -- DT(x) = I - A∘Df(x) for all x (derivative of Newton operator)
   -- Therefore: ‖I - A∘Df(x̃)‖ = ‖DT(x̃)‖ ≤ Z(r₀) < 1
   calc ‖I - A.comp (fderiv ℝ f xTilde)‖
-      = ‖fderiv ℝ (NewtonLikeMap f A) xTilde‖ := by
+      = ‖fderiv ℝ (NewtonLikeMap A f) xTilde‖ := by
         rw [← newton_operator_fderiv hf_diff]
     _ ≤ Z_bound Z₀ Z₂ r₀ := h_bound             -- eq. 2.20
     _ < 1 := h_Z_lt_one                         -- eq. 2.18
 
 
 /-- **Theorem 2.4.2**: Radii Polynomials in Finite Dimensions
-
-    Given f ∈ C¹(E,E) and **injective** linear map A with bounds Y₀, Z₀, Z₂ satisfying:
+    Given f ∈ C¹(E,E) and *injective* linear map A with bounds Y₀, Z₀, Z₂ satisfying:
     - ‖Af(x̄)‖ ≤ Y₀                                    (eq. 2.14)
-    - ‖I - ADf(x̄)‖ ≤ Z₀                              (eq. 2.15)
+    - ‖I - ADf(x̄)‖ ≤ Z₀                               (eq. 2.15)
     - ‖A[Df(c) - Df(x̄)]‖ ≤ Z₂(r)·r for all c ∈ B̄ᵣ(x̄)  (eq. 2.16)
 
     If p(r₀) < 0 where p(r) = Z₂(r)r² - (1-Z₀)r + Y₀ (eq. 2.17),
@@ -726,7 +725,7 @@ theorem radii_polynomial_theorem
     f xTilde = 0 ∧ (fderiv ℝ f xTilde).IsInvertible := by
 
   -- Define the Newton-like operator T(x) = x - Af(x)
-  let T := NewtonLikeMap f A
+  let T := NewtonLikeMap A f
 
   -- T ∈ C¹(E,E) since f ∈ C¹(E,E) and A is continuous linear
   have hT_diff : Differentiable ℝ T := by
