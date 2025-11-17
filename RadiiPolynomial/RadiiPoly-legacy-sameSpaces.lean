@@ -16,7 +16,7 @@ We work in a Banach space E over ℝ, which is constructed from three type class
 1. `NormedAddCommGroup E`:
    - E is an additive commutative group (E, +, 0, -)
    - Equipped with a norm ‖·‖ : E → ℝ≥0 satisfying:
-     * ‖x‖ = 0 ⟺ x = 0                    (definiteness)
+     * ‖x‖ = 0 ⟺ x = 0                   (definiteness)
      * ‖-x‖ = ‖x‖                         (symmetry)
      * ‖x + y‖ ≤ ‖x‖ + ‖y‖                (triangle inequality)
    - The norm induces a metric: dist(x, y) = ‖x - y‖
@@ -43,7 +43,13 @@ This framework supports:
 - Linear operator theory (via the vector space structure)
 ═══════════════════════════════════════════════════════════════════════════════
 -/
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+-- -- Let's do something that LEAN doesn't like
+-- class BanachSpace (E : Type*) extends NormedAddCommGroup E, NormedSpace ℝ E, CompleteSpace E
+-- -- Then use it to define the working spaces
+-- variable {E F : Type*} [BanachSpace E] [BanachSpace F]
+-- -- Interestingly, wrapping the three spaces into one suppresses the redundant assumptions warnings.
+-- -- I don't think this is a good idea in general, thus do things the old ways.
+variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
 def NewtonLikeMap (A : E →L[ℝ] E) (f : E → E) (x : E) : E := x - A (f x)
 
@@ -90,9 +96,7 @@ end NeumannSeries
 
 section Proposition_2_3_1
 
--- Omit `[CompleteSpace]` for this section
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-
+omit [CompleteSpace E] in
 /-- Proposition 2.3.1: Fixed points of Newton operator ⟺ Zeros of f
 
     Let T(x) = x - Af(x) be the Newton-like operator. If A : Y → X is an
@@ -176,7 +180,7 @@ If there exists r₀ > 0 such that p(r₀) < 0, then there exists a unique xTild
 satisfying f(xTilde) = 0 and Df(xTilde) is invertible."
 -/
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+-- variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
 /-- The radii polynomial p(r) = Z₂(r)r² - (1 - Z₀)r + Y₀
     (Definition 2.4.3, eq. 2.17 from page 22) -/
@@ -652,7 +656,7 @@ lemma construct_derivative_inverse
   have h_inv_right : ∀ x, B_inv (B x) = x := by
     intro x
     -- Apply inv_AB ∘ (A∘B) = I to x
-    have := congrFun (congrArg DFunLike.coe h_right) x
+    haveI := congrFun (congrArg DFunLike.coe h_right) x
     simp at this
     exact this
 
