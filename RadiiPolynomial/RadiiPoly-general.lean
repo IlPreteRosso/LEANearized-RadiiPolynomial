@@ -291,11 +291,7 @@ lemma general_radii_poly_neg_implies_Z_lt_one
   have h_prod_neg : (Z_bound_general Z₀ Z₁ Z₂ r₀ - 1) * r₀ < 0 := by
     linarith [h_poly, hY₀]
   have h_Z_minus_one : Z_bound_general Z₀ Z₁ Z₂ r₀ - 1 < 0 := by
-    by_contra h_not
-    have h_nonneg : 0 ≤ Z_bound_general Z₀ Z₁ Z₂ r₀ - 1 := by linarith
-    have h_prod_nonneg : 0 ≤ (Z_bound_general Z₀ Z₁ Z₂ r₀ - 1) * r₀ :=
-      mul_nonneg h_nonneg (le_of_lt hr₀)
-    linarith [h_prod_neg]
+    nlinarith [h_prod_neg, hr₀]
   linarith
 
 /-- Simple version: if p(r₀) < 0 then Z(r₀) < 1 -/

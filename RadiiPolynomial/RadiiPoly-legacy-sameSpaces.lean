@@ -278,7 +278,7 @@ lemma simple_maps_closedBall_to_itself
   -- This allows us to apply the Mean Value Theorem
   have h_segment : segment ℝ xBar x ⊆ closedBall xBar r₀ := by
     apply (convex_closedBall xBar r₀).segment_subset
-    · exact mem_closedBall_self (le_of_lt hr₀)  -- x̄ ∈ B̄ᵣ₀(x̄)
+    · exact mem_closedBall_self (le_of_lt hr₀)   -- x̄ ∈ B̄ᵣ₀(x̄)
     · exact hx                                   -- x ∈ B̄ᵣ₀(x̄)
 
   -- Mean Value Theorem: ‖T(x) - T(x̄)‖ ≤ sup_{c ∈ [x̄,x]} ‖DT(c)‖ · ‖x - x̄‖
@@ -369,6 +369,7 @@ theorem simple_radii_polynomial_theorem
   have h_Z_lt_one : Z r₀ < 1 :=
     simple_radii_poly_neg_implies_Z_lt_one hY₀ hr₀ h_radii
 
+  -- Z(r₀) ≥ ‖ · ‖ ≥ 0
   have h_Z_nonneg : 0 ≤ Z r₀ := by
     have := h_bound_Z xBar (mem_closedBall_self (le_of_lt hr₀))
     exact le_trans (norm_nonneg _) this
@@ -491,15 +492,17 @@ lemma radii_poly_neg_implies_Z_bound_lt_one
 
   -- Since r₀ > 0 and (Z(r₀) - 1)·r₀ < 0, we must have Z(r₀) - 1 < 0
   -- Proof by contradiction: if Z(r₀) - 1 ≥ 0, then the product would be ≥ 0
+  -- have h_Z_minus_one : Z_bound Z₀ Z₂ r₀ - 1 < 0 := by
+  --   by_contra h_not
+  --   -- Assume for contradiction that Z(r₀) - 1 ≥ 0
+  --   have h_nonneg : 0 ≤ Z_bound Z₀ Z₂ r₀ - 1 := by linarith
+  --   -- Then (Z(r₀) - 1)·r₀ ≥ 0 since both factors are non-negative
+  --   have h_prod_nonneg : 0 ≤ (Z_bound Z₀ Z₂ r₀ - 1) * r₀ :=
+  --     mul_nonneg h_nonneg (le_of_lt hr₀)
+  --   -- But this contradicts (Z(r₀) - 1)·r₀ < 0
+  --   linarith [h_prod_neg]
   have h_Z_minus_one : Z_bound Z₀ Z₂ r₀ - 1 < 0 := by
-    by_contra h_not
-    -- Assume for contradiction that Z(r₀) - 1 ≥ 0
-    have h_nonneg : 0 ≤ Z_bound Z₀ Z₂ r₀ - 1 := by linarith
-    -- Then (Z(r₀) - 1)·r₀ ≥ 0 since both factors are non-negative
-    have h_prod_nonneg : 0 ≤ (Z_bound Z₀ Z₂ r₀ - 1) * r₀ :=
-      mul_nonneg h_nonneg (le_of_lt hr₀)
-    -- But this contradicts (Z(r₀) - 1)·r₀ < 0
-    linarith [h_prod_neg]
+    nlinarith [h_prod_neg, hr₀]
 
   -- From Z(r₀) - 1 < 0, we conclude Z(r₀) < 1
   linarith
@@ -712,9 +715,7 @@ lemma newton_derivative_at_solution
     - ‖A[Df(c) - Df(x̄)]‖ ≤ Z₂(r)·r for all c ∈ B̄ᵣ(x̄)  (eq. 2.16)
 
     If p(r₀) < 0 where p(r) = Z₂(r)r² - (1-Z₀)r + Y₀  (eq. 2.17),
-    then there exists a unique x̃ ∈ B̄_{r₀}(x̄) with f(x̃) = 0 and Df(x̃) invertible.
-
-    *Modification from informal proof*: Assume A is injective as in Proposition 2.3.1 rather than invertible, avoiding unnecessary finite-dimensionality assumptions. -/
+    then there exists a unique x̃ ∈ B̄_{r₀}(x̄) with f(x̃) = 0 and Df(x̃) invertible. -/
 theorem radii_polynomial_theorem
   {f : E → E} {xBar : E} {A : E →L[ℝ] E}
   {Y₀ Z₀ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
@@ -724,8 +725,8 @@ theorem radii_polynomial_theorem
   (h_Z₂ : ∀ c ∈ Metric.closedBall xBar r₀,                     -- eq. 2.16
     ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r₀ * r₀)
   (hf_diff : Differentiable ℝ f)
-  (h_radii : radiiPolynomial Y₀ Z₀ Z₂ r₀ < 0)                  -- eq. 2.17: p(r₀) < 0
-  (hA_inj : Function.Injective A) :                            -- A injective (as in Prop. 2.3.1)
+  (h_radii : radiiPolynomial Y₀ Z₀ Z₂ r₀ < 0)                  -- eq. 2.17: p(r₀) < 0 (as in Prop. 2.4.1/7.6.1)
+  (hA_inj : Function.Injective A) :                            -- A injective (as in Prop. 2.3.1/7.6.2)
   ∃! xTilde ∈ Metric.closedBall xBar r₀,
     f xTilde = 0 ∧ (fderiv ℝ f xTilde).IsInvertible := by
 
