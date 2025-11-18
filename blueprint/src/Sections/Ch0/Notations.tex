@@ -1,33 +1,47 @@
 % blueprint/src/Sections/Ch0/Notations.tex
 
 \subsection*{General Notations}
-\begin{itemize}
-  \item $E, F, X, Y$ — Banach spaces over $\mathbb{R}$
-  \item $\|\cdot\|$ — norm on a normed space
-  \item $\|\cdot\|_{\mathcal{B}(X,Y)}$ — operator norm for continuous linear maps
-  \item $B_r(x)$ — open ball of radius $r$ centered at $x$
-  \item $\overline{B}_r(x)$ — closed ball of radius $r$ centered at $x$
-  \item $I_E$ — identity operator on space $E$
-  \item $\text{Df}(x)$ — Fréchet derivative of $f$ at $x$
-\end{itemize}
+
+$E, F, X, Y$ — Banach spaces over $\mathbb{R}$
+
+$\|\cdot\|$ — norm on a normed space
+
+$\|\cdot\|_{\mathcal{B}(X,Y)}$ — operator norm for continuous linear maps
+
+$B_r(x)$ — open ball of radius $r$ centered at $x$
+
+$\overline{B}_r(x)$ — closed ball of radius $r$ centered at $x$
+
+$I_E$ — identity operator on space $E$
+
+$\text{Df}(x)$ — Fréchet derivative of $f$ at $x$
 
 \subsection*{Radii Polynomial Notations}
-\begin{itemize}
-  \item $\bar{x}$ — approximate zero or initial guess
-  \item $\tilde{x}$ — exact zero of function $f$
-  \item $A$ — approximate inverse operator
-  \item $A^\dagger$ — approximate derivative operator
-  \item $Y_0$ — bound on $\|A(f(\bar{x}))\|$ (initial defect)
-  \item $Z_0$ — bound on $\|I_E - AA^\dagger\|$ (composition error)
-  \item $Z_1$ — bound on $\|A[\text{Df}(\bar{x}) - A^\dagger]\|$ (derivative approximation error)
-  \item $Z_2(r)$ — bound on $\|A[\text{Df}(c) - \text{Df}(\bar{x})]\|$ for $c \in \overline{B}_r(\bar{x})$
-  \item $Z(r)$ — combined bound $Z_0 + Z_1 + Z_2(r) \cdot r$
-  \item $p(r)$ — radii polynomial
-\end{itemize}
+
+$\bar{x}$ — approximate zero or initial guess
+
+$\tilde{x}$ — exact zero of function $f$
+
+$A$ — approximate inverse operator
+
+$A^\dagger$ — approximate derivative operator
+
+$Y_0$ — bound on $\|A(f(\bar{x}))\|$ (initial defect)
+
+$Z_0$ — bound on $\|I_E - AA^\dagger\|$ (composition error)
+
+$Z_1$ — bound on $\|A[\text{Df}(\bar{x}) - A^\dagger]\|$ (derivative approximation error)
+
+$Z_2(r)$ — bound on $\|A[\text{Df}(c) - \text{Df}(\bar{x})]\|$ for $c \in \overline{B}_r(\bar{x})$
+
+$Z(r)$ — combined bound $Z_0 + Z_1 + Z_2(r) \cdot r$
+
+$p(r)$ — radii polynomial
 
 \subsection*{Special Cases}
-\begin{itemize}
-  \item When $E = F$ and $A^\dagger = \text{Df}(\bar{x})$, we have $Z_1 = 0$
-  \item Simple radii polynomial: $p(r) = Z_2(r)r^2 - (1-Z_0)r + Y_0$
-  \item General radii polynomial: $p(r) = Z_2(r)r^2 - (1-Z_0-Z_1)r + Y_0$
-\end{itemize}
+
+When $E = F$ and $A^\dagger = \text{Df}(\bar{x})$, we have $Z_1 = 0$.
+
+Simple radii polynomial: $p(r) = Z_2(r)r^2 - (1-Z_0)r + Y_0$
+
+General radii polynomial: $p(r) = Z_2(r)r^2 - (1-Z_0-Z_1)r + Y_0$

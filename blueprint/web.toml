@@ -2,7 +2,7 @@
 # Place this file at blueprint/web.toml
 
 name = "Radii Polynomial Approach"
-author = "Your Name"
+author = "Fengyang Wang"
 description = "Formalization of radii polynomial methods for proving existence of zeros in Banach spaces"
 
 # Path to the main content file

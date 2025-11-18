@@ -10,14 +10,14 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   Consider a map $T \in C^1(\mathbb{R}^n, \mathbb{R}^n)$ and let $\bar{x} \in \mathbb{R}^n$. 
   Let $Y_0 \geq 0$ and $Z: (0,\infty) \to [0,\infty)$ be a non-negative function satisfying
   \begin{align}
-    \|T(\bar{x}) - \bar{x}\| &\leq Y_0 \label{eq:2.10}\\
-    \|\text{DT}(c)\| &\leq Z(r), \quad \text{for all } c \in \overline{B}_r(\bar{x}) 
+    \lVert T(\bar{x}) - \bar{x}\rVert &\leq Y_0 \label{eq:2.10}\\
+    \lVert \text{DT}(c)\rVert &\leq Z(r), \quad \text{for all } c \in \overline{B}_r(\bar{x}) 
     \text{ and all } r > 0. \label{eq:2.11}
   \end{align}
   Define
-  \[
+  \begin{equation*}
     p(r) := (Z(r) - 1)r + Y_0.
-  \]
+  \end{equation*}
   If there exists $r_0 > 0$ such that $p(r_0) < 0$, then there exists a unique 
   $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ such that $T(\tilde{x}) = \tilde{x}$.
 \end{theorem}
@@ -26,19 +26,19 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   \lean{radiiPolynomial}
   \leanok
   Given constants $Y_0, Z_0 \geq 0$ and a function $Z_2: (0,\infty) \to [0,\infty)$, 
-  the \emph{radii polynomial} is defined by
-  \[
+  the \textit{radii polynomial} is defined by
+  \begin{equation*}
     p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0.
-  \]
+  \end{equation*}
 \end{definition}
 
 \begin{definition}[Combined bound]\label{def:Z_bound}
   \lean{Z_bound}
   \leanok
-  The \emph{combined bound} is defined as
-  \[
+  The \textit{combined bound} is defined as
+  \begin{equation*}
     Z(r) := Z_0 + Z_2(r) \cdot r.
-  \]
+  \end{equation*}
 \end{definition}
 
 \begin{lemma}[Alternative form of radii polynomial]\label{lem:radii_poly_alt_form}
@@ -46,9 +46,9 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   \leanok
   \uses{def:radii_polynomial, def:Z_bound}
   The radii polynomial can be rewritten as
-  \[
+  \begin{equation*}
     p(r) = (Z(r) - 1)r + Y_0.
-  \]
+  \end{equation*}
 \end{lemma}
 
 \begin{lemma}[Polynomial negativity implies contraction]\label{lem:poly_neg_implies_contraction}
@@ -66,15 +66,15 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   $A \in M_n(\mathbb{R})$. Let $Y_0$ and $Z_0$ be non-negative constants and 
   $Z_2: (0,\infty) \to [0,\infty)$ be a non-negative function satisfying
   \begin{align}
-    \|Af(\bar{x})\| &\leq Y_0 \label{eq:2.14}\\
-    \|I - A\text{Df}(\bar{x})\| &\leq Z_0 \label{eq:2.15}\\
-    \|A[\text{Df}(c) - \text{Df}(\bar{x})]\| &\leq Z_2(r) \cdot r, 
+    \lVert Af(\bar{x})\rVert &\leq Y_0 \label{eq:2.14}\\
+    \lVert I - A\text{Df}(\bar{x})\rVert &\leq Z_0 \label{eq:2.15}\\
+    \lVert A[\text{Df}(c) - \text{Df}(\bar{x})]\rVert &\leq Z_2(r) \cdot r, 
     \quad \text{for all } c \in \overline{B}_r(\bar{x}) \text{ and all } r > 0. \label{eq:2.16}
   \end{align}
   Define
-  \[
+  \begin{equation*}
     p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0.
-  \]
+  \end{equation*}
   If there exists $r_0 > 0$ such that $p(r_0) < 0$, then there exists a unique 
   $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ satisfying $f(\tilde{x}) = 0$ and 
   $\text{Df}(\tilde{x})$ is invertible (hence $\tilde{x}$ is a nondegenerate zero).
@@ -86,12 +86,12 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   Define the Newton-like mapping $T(x) = x - Af(x)$.
   
   \textbf{Step 1: Verify bounds.}
-  We have $\|T(\bar{x}) - \bar{x}\| = \|Af(\bar{x})\| \leq Y_0$ by \eqref{eq:2.14}.
+  We have $\lVert T(\bar{x}) - \bar{x}\rVert = \lVert Af(\bar{x})\rVert \leq Y_0$ by \eqref{eq:2.14}.
   
   For $c \in \overline{B}_{r_0}(\bar{x})$,
   \begin{align*}
-    \|\text{DT}(c)\| &= \|I - A\text{Df}(c)\|\\
-    &\leq \|I - A\text{Df}(\bar{x})\| + \|A[\text{Df}(\bar{x}) - \text{Df}(c)]\|\\
+    \lVert \text{DT}(c)\rVert &= \lVert I - A\text{Df}(c)\rVert\\
+    &\leq \lVert I - A\text{Df}(\bar{x})\rVert + \lVert A[\text{Df}(\bar{x}) - \text{Df}(c)]\rVert\\
     &\leq Z_0 + Z_2(r_0) \cdot r_0 \quad \text{by \eqref{eq:2.15} and \eqref{eq:2.16}}\\
     &= Z(r_0).
   \end{align*}
@@ -103,7 +103,7 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   
   \textbf{Step 3: Show $A$ is invertible.}
   From $p(r_0) < 0$ we get $Z(r_0) < 1$ by Lemma~\ref{lem:poly_neg_implies_contraction}. 
-  In particular, $\|I - A\text{Df}(\bar{x})\| \leq Z_0 \leq Z(r_0) < 1$, so 
+  In particular, $\lVert I - A\text{Df}(\bar{x})\rVert \leq Z_0 \leq Z(r_0) < 1$, so 
   $A\text{Df}(\bar{x})$ is invertible by the Neumann series. Since $\text{Df}(\bar{x})$ 
   is square and finite-dimensional, this implies $A$ is invertible.
   
@@ -113,7 +113,7 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   
   \textbf{Step 5: Show $\text{Df}(\tilde{x})$ is invertible.}
   Since $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$, we have 
-  $\|\text{DT}(\tilde{x})\| = \|I - A\text{Df}(\tilde{x})\| \leq Z(r_0) < 1$. 
+  $\lVert \text{DT}(\tilde{x})\rVert = \lVert I - A\text{Df}(\tilde{x})\rVert \leq Z(r_0) < 1$. 
   By the Neumann series, $A\text{Df}(\tilde{x})$ is invertible, which implies 
   $\text{Df}(\tilde{x})$ is invertible (using that $A$ is invertible).
 \end{proof}
@@ -123,15 +123,15 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   $f: \mathbb{R}^n \to \mathbb{R}^n$ where $Z_2(r)$ is a polynomial with non-negative 
   coefficients (or a non-decreasing function of $r$). The maximal interval 
   $(r_-, r_+) \subset (0,\infty)$ over which $p(r) < 0$ is called the 
-  \emph{existence interval} for the radii polynomial $p$, denoted by $\text{EI}(p)$.
+  \textit{existence interval} for the radii polynomial $p$, denoted by $\text{EI}(p)$.
 \end{definition}
 
 \begin{remark}\label{rem:existence_interval_interpretation}
   If the existence interval for a radii polynomial is nonempty, then:
   \begin{itemize}
-    \item $r_-$ provides tight bounds on the location of $\tilde{x}$
-    \item $r_+$ provides information about the domain of isolation of $\tilde{x}$
-    \item The unique zero $\tilde{x}$ satisfies $\tilde{x} \in \overline{B}_r(\bar{x})$ 
+    (1) $r_-$ provides tight bounds on the location of $\tilde{x}$
+    (2) $r_+$ provides information about the domain of isolation of $\tilde{x}$
+    (3) The unique zero $\tilde{x}$ satisfies $\tilde{x} \in \overline{B}_r(\bar{x})$ 
           for all $r \in \text{EI}(p)$
   \end{itemize}
 \end{remark}

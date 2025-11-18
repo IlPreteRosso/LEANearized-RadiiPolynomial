@@ -8,7 +8,7 @@ of fixed points. This section establishes the basic definitions and the classica
 \begin{definition}[Complete metric space]\label{def:complete_metric_space}
   \lean{CompleteSpace}
   \leanok
-  A metric space $(X, d)$ is \emph{complete} if every Cauchy sequence converges in $X$, 
+  A metric space $(X, d)$ is \textit{complete} if every Cauchy sequence converges in $X$, 
   i.e., if given any $\varepsilon > 0$ there exists $N(\varepsilon)$ such that 
   $n, m > N(\varepsilon)$ implies $d(x_n, x_m) < \varepsilon$, then there is some 
   $y \in X$ with $\lim_{n\to\infty} x_n = y$.
@@ -17,11 +17,11 @@ of fixed points. This section establishes the basic definitions and the classica
 \begin{definition}[Contraction mapping]\label{def:contraction}
   \lean{ContractingWith}
   \leanok
-  Let $(X, d)$ be a metric space. A function $T: X \to X$ is a \emph{contraction} if 
-  there is a number $\kappa \in [0, 1)$, called a \emph{contraction constant}, such that
-  \[
+  Let $(X, d)$ be a metric space. A function $T: X \to X$ is a \textit{contraction} if 
+  there is a number $\kappa \in [0, 1)$, called a \textit{contraction constant}, such that
+  \begin{equation*}
     d(T(x), T(y)) \leq \kappa \cdot d(x, y)
-  \]
+  \end{equation*}
   for all $x, y \in X$.
 \end{definition}
 
@@ -31,9 +31,9 @@ of fixed points. This section establishes the basic definitions and the classica
   Let $(X, d)$ be a complete metric space. If $T: X \to X$ is a contraction with 
   contraction constant $\kappa$, then there exists a unique fixed point $\tilde{x} \in X$ 
   of $T$. Furthermore, $\tilde{x}$ is globally attracting, and for any $x \in X$,
-  \[
+  \begin{equation*}
     d(T^n(x), \tilde{x}) \leq \frac{\kappa^n}{1-\kappa} d(T(x), x).
-  \]
+  \end{equation*}
 \end{theorem}
 
 \begin{remark}\label{rem:contraction_rate}
