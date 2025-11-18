@@ -1,0 +1,18 @@
+# Configuration file for leanblueprint web
+# Place this file at blueprint/web.toml
+
+name = "Radii Polynomial Approach"
+author = "Fengyang Wang"
+description = "Formalization of radii polynomial methods for proving existence of zeros in Banach spaces"
+
+# Path to the main content file
+content = "src/content.tex"
+
+# Lean project root (relative to blueprint directory)
+lean_project = ".."
+
+# Declarations file
+declarations = "lean_decls"
+
+# Additional LaTeX packages if needed
+packages = ["amsmath", "amsthm", "amssymb"]

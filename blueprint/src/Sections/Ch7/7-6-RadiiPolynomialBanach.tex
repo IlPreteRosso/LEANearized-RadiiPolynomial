@@ -1,0 +1,348 @@
+% blueprint/src/Sections/Ch7/7-6-RadiiPolynomialBanach.tex
+
+\section{Radii Polynomial Approach on Banach Spaces}\label{sec:radii_poly_banach}
+
+This section extends the radii polynomial method to infinite-dimensional Banach spaces, 
+allowing for maps between potentially different spaces $E$ and $F$.
+
+\subsection{Banach Space Setup}\label{subsec:banach_setup}
+
+We work with two Banach spaces $E$ and $F$ over $\mathbb{R}$. For each space 
+$X \in \{E, F\}$:
+\begin{enumerate}
+  \item \texttt{NormedAddCommGroup X}: $X$ has a norm satisfying definiteness, 
+        symmetry, triangle inequality
+  \item \texttt{NormedSpace $\mathbb{R}$ X}: The norm is compatible with scalar multiplication
+  \item \texttt{CompleteSpace X}: Every Cauchy sequence converges 
+        (crucial for fixed point theorems)
+\end{enumerate}
+
+This framework supports:
+\begin{itemize}
+  \item Fréchet derivatives (via the norm structure)
+  \item Fixed point theorems (via completeness)
+  \item Mean Value Theorem (via the metric structure)
+  \item Linear operator theory (via the vector space structure)
+\end{itemize}
+
+\subsection{Neumann Series and Operator Invertibility}\label{subsec:neumann_series}
+
+The Neumann series provides a constructive way to show operators close to the identity 
+are invertible.
+
+\begin{theorem}[Neumann series invertibility]\label{thm:neumann_series}
+  \lean{isUnit_of_norm_sub_id_lt_one}
+  \leanok
+  Let $E$ be a Banach space and $B: E \to E$ a continuous linear operator. 
+  If $\|I_E - B\| < 1$, then $B$ is invertible (a unit in the multiplicative sense).
+\end{theorem}
+
+\begin{lemma}[Explicit two-sided inverse]\label{lem:explicit_inverse}
+  \lean{invertible_of_norm_sub_id_lt_one}
+  \leanok
+  \uses{thm:neumann_series}
+  If $\|I_E - B\| < 1$ for $B: E \to E$, then there exists $B^{-1}: E \to E$ such that
+  \[
+    B \circ B^{-1} = I_E \quad \text{and} \quad B^{-1} \circ B = I_E.
+  \]
+\end{lemma}
+
+\begin{lemma}[Composition form]\label{lem:invertible_comp_form}
+  \lean{invertible_comp_form}
+  \leanok
+  \uses{lem:explicit_inverse}
+  If $\|I_E - B\| < 1$, then there exists $B^{-1}$ such that
+  \[
+    B.comp(B^{-1}) = I_E \quad \text{and} \quad B^{-1}.comp(B) = I_E.
+  \]
+\end{lemma}
+
+\subsection{Newton-Like Operators for E to F Maps}\label{subsec:newton_ef}
+
+\begin{definition}[Newton-like map for E to F]\label{def:newton_ef}
+  \lean{NewtonLikeMap}
+  \leanok
+  For a function $f: E \to F$ and an approximate inverse $A: F \to E$, the 
+  \emph{Newton-like map} is
+  \[
+    T(x) = x - A(f(x)).
+  \]
+  Note that $T: E \to E$ even though $f$ maps between different spaces.
+\end{definition}
+
+\begin{proposition}[Fixed points ⟺ Zeros for E to F]\label{prop:fixed_zero_ef}
+  \lean{fixedPoint_injective_iff_zero}
+  \leanok
+  \uses{def:newton_ef}
+  Let $f: E \to F$ and $A: F \to E$ be injective. Then for the Newton-like operator 
+  $T(x) = x - A(f(x))$:
+  \[
+    T(x) = x \quad \iff \quad f(x) = 0.
+  \]
+  This holds even when $E \neq F$; injectivity of $A$ is sufficient.
+\end{proposition}
+
+\subsection{Radii Polynomial Definitions}\label{subsec:radii_poly_defs_banach}
+
+\begin{definition}[General radii polynomial]\label{def:general_radii_poly}
+  \lean{generalRadiiPolynomial}
+  \leanok
+  For constants $Y_0, Z_0, Z_1 \geq 0$ and function $Z_2: (0,\infty) \to [0,\infty)$, 
+  the \emph{general radii polynomial} is
+  \[
+    p(r) := Z_2(r)r^2 - (1 - Z_0 - Z_1)r + Y_0.
+  \]
+\end{definition}
+
+\begin{definition}[Combined bound (general case)]\label{def:Z_bound_general}
+  \lean{Z_bound_general}
+  \leanok
+  The \emph{combined bound} is
+  \[
+    Z(r) := Z_0 + Z_1 + Z_2(r) \cdot r.
+  \]
+\end{definition}
+
+\begin{lemma}[Alternative form (general)]\label{lem:general_poly_alt_form}
+  \lean{generalRadiiPolynomial_alt_form}
+  \leanok
+  \uses{def:general_radii_poly, def:Z_bound_general}
+  The general radii polynomial can be rewritten as
+  \[
+    p(r) = (Z(r) - 1)r + Y_0.
+  \]
+\end{lemma}
+
+\begin{definition}[Simple radii polynomial]\label{def:simple_radii_poly_banach}
+  \lean{simpleRadiiPolynomial}
+  \leanok
+  For $Y_0 \geq 0$ and $Z: (0,\infty) \to [0,\infty)$, the \emph{simple radii polynomial} is
+  \[
+    p(r) := (Z(r) - 1)r + Y_0.
+  \]
+\end{definition}
+
+\subsection{Operator Bounds}\label{subsec:operator_bounds}
+
+\begin{lemma}[Y₀ bound for Newton operator]\label{lem:newton_Y_bound}
+  \lean{newton_operator_Y_bound}
+  \leanok
+  \uses{def:newton_ef}
+  If $\|A(f(\bar{x}))\| \leq Y_0$, then for $T(x) = x - A(f(x))$:
+  \[
+    \|T(\bar{x}) - \bar{x}\| \leq Y_0.
+  \]
+\end{lemma}
+
+\begin{lemma}[Derivative of Newton operator]\label{lem:newton_fderiv}
+  \lean{newton_operator_fderiv}
+  \leanok
+  \uses{def:newton_ef}
+  For $T(x) = x - A(f(x))$ where $f: E \to F$ is differentiable:
+  \[
+    \text{DT}(x) = I_E - A \circ \text{Df}(x).
+  \]
+\end{lemma}
+
+\begin{lemma}[General derivative bound]\label{lem:newton_deriv_bound_general}
+  \lean{newton_operator_derivative_bound_general}
+  \leanok
+  \uses{lem:newton_fderiv, def:Z_bound_general}
+  Suppose for all $c \in \overline{B}_r(\bar{x})$:
+  \begin{align}
+    \|I_E - A \circ A^\dagger\| &\leq Z_0 \label{eq:7.31}\\
+    \|A \circ (A^\dagger - \text{Df}(\bar{x}))\| &\leq Z_1 \label{eq:7.32}\\
+    \|A \circ (\text{Df}(c) - \text{Df}(\bar{x}))\| &\leq Z_2(r) \cdot r \label{eq:7.33}
+  \end{align}
+  Then for $T(x) = x - A(f(x))$ and $c \in \overline{B}_r(\bar{x})$:
+  \[
+    \|\text{DT}(c)\| \leq Z_0 + Z_1 + Z_2(r) \cdot r = Z(r).
+  \]
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  For $c \in \overline{B}_r(\bar{x})$, decompose using $A^\dagger$:
+  \begin{align*}
+    \text{DT}(c) &= I_E - A \circ \text{Df}(c)\\
+    &= [I_E - A \circ A^\dagger] + A \circ [A^\dagger - \text{Df}(\bar{x})] 
+       + A \circ [\text{Df}(\bar{x}) - \text{Df}(c)].
+  \end{align*}
+  Apply triangle inequality and the three bounds \eqref{eq:7.31}, \eqref{eq:7.32}, 
+  \eqref{eq:7.33}:
+  \[
+    \|\text{DT}(c)\| \leq Z_0 + Z_1 + Z_2(r) \cdot r.
+  \]
+\end{proof}
+
+\begin{lemma}[Simple derivative bound]\label{lem:newton_deriv_bound_simple}
+  \lean{newton_operator_derivative_bound_simple}
+  \leanok
+  \uses{lem:newton_fderiv}
+  When $A^\dagger = \text{Df}(\bar{x})$ (so $Z_1 = 0$), for all 
+  $c \in \overline{B}_r(\bar{x})$:
+  \begin{align}
+    \|I_E - A \circ \text{Df}(\bar{x})\| &\leq Z_0 \label{eq:2.15b}\\
+    \|A \circ (\text{Df}(c) - \text{Df}(\bar{x}))\| &\leq Z_2(r) \cdot r \label{eq:2.16b}
+  \end{align}
+  imply $\|\text{DT}(c)\| \leq Z_0 + Z_2(r) \cdot r$.
+\end{lemma}
+
+\subsection{Helper Lemmas}\label{subsec:helper_lemmas}
+
+\begin{lemma}[Closed balls are complete]\label{lem:closed_ball_complete}
+  \lean{isComplete_closedBall}
+  \leanok
+  In a complete space $E$, closed balls $\overline{B}_r(x)$ are complete.
+\end{lemma}
+
+\begin{lemma}[Extended distance is finite]\label{lem:edist_finite}
+  \lean{edist_ne_top_of_normed}
+  \leanok
+  In normed spaces, extended distance is always finite: $d_{\text{ext}}(x,y) \neq \top$.
+\end{lemma}
+
+\begin{lemma}[Constructing derivative inverse]\label{lem:construct_deriv_inverse}
+  \lean{construct_derivative_inverse}
+  \leanok
+  \uses{thm:neumann_series}
+  If $A: F \to E$ is injective and $\|I_E - A \circ B\| < 1$ for $B: E \to F$, 
+  then $B$ is invertible with inverse $B^{-1} = (A \circ B)^{-1} \circ A$.
+\end{lemma}
+
+\begin{lemma}[Ball mapping property]\label{lem:maps_ball_to_itself}
+  \lean{simple_maps_closedBall_to_itself}
+  \leanok
+  \uses{cor:mean_value_inequality}
+  Given $T: E \to E$ differentiable with:
+  \begin{itemize}
+    \item $\|T(\bar{x}) - \bar{x}\| \leq Y_0$
+    \item $\|\text{DT}(c)\| \leq Z(r_0)$ for all $c \in \overline{B}_{r_0}(\bar{x})$
+    \item $p(r_0) = (Z(r_0) - 1)r_0 + Y_0 < 0$
+  \end{itemize}
+  Then $T: \overline{B}_{r_0}(\bar{x}) \to \overline{B}_{r_0}(\bar{x})$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Let $x \in \overline{B}_{r_0}(\bar{x})$. From $p(r_0) < 0$:
+  \[
+    Z(r_0) \cdot r_0 + Y_0 < r_0.
+  \]
+  
+  By Mean Value Theorem:
+  \[
+    \|T(x) - T(\bar{x})\| \leq Z(r_0) \cdot \|x - \bar{x}\| \leq Z(r_0) \cdot r_0.
+  \]
+  
+  By triangle inequality:
+  \begin{align*}
+    \|T(x) - \bar{x}\| &\leq \|T(x) - T(\bar{x})\| + \|T(\bar{x}) - \bar{x}\|\\
+    &\leq Z(r_0) \cdot r_0 + Y_0 < r_0.
+  \end{align*}
+  Therefore $T(x) \in \overline{B}_{r_0}(\bar{x})$.
+\end{proof}
+
+\subsection{Main Theorems}\label{subsec:main_theorems}
+
+\begin{theorem}[General Fixed Point Theorem (Theorem 7.6.1)]\label{thm:general_fixed_point}
+  \lean{general_fixed_point_theorem}
+  \leanok
+  \uses{def:simple_radii_poly_banach, lem:maps_ball_to_itself, thm:contraction_mapping}
+  Let $T: E \to E$ be Fréchet differentiable and $\bar{x} \in E$. Suppose:
+  \begin{align}
+    \|T(\bar{x}) - \bar{x}\| &\leq Y_0 \label{eq:7.27}\\
+    \|\text{DT}(x)\| &\leq Z(r) \quad \text{for all } x \in \overline{B}_r(\bar{x}) \label{eq:7.28}
+  \end{align}
+  Define $p(r) := (Z(r) - 1)r + Y_0$.
+  
+  If there exists $r_0 > 0$ such that $p(r_0) < 0$, then there exists a unique 
+  $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ such that $T(\tilde{x}) = \tilde{x}$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  \textbf{Step 1:} From $p(r_0) < 0$, we get $Z(r_0) < 1$ (contraction constant).
+  
+  \textbf{Step 2:} By Lemma~\ref{lem:maps_ball_to_itself}, 
+  $T: \overline{B}_{r_0}(\bar{x}) \to \overline{B}_{r_0}(\bar{x})$.
+  
+  \textbf{Step 3:} $T$ restricted to $\overline{B}_{r_0}(\bar{x})$ is a contraction 
+  with constant $Z(r_0) < 1$.
+  
+  \textbf{Step 4:} The closed ball is complete by Lemma~\ref{lem:closed_ball_complete}.
+  
+  \textbf{Step 5:} Apply Banach Fixed Point Theorem to get unique fixed point.
+\end{proof}
+
+\begin{theorem}[General Radii Polynomial Theorem (Theorem 7.6.2)]\label{thm:general_radii_poly}
+  \lean{general_radii_polynomial_theorem}
+  \leanok
+  \uses{thm:general_fixed_point, prop:fixed_zero_ef, def:general_radii_poly}
+  Let $E$ and $F$ be Banach spaces and $f: E \to F$ be Fréchet differentiable. 
+  Suppose $\bar{x} \in E$, $A^\dagger: E \to F$, and $A: F \to E$ with $A$ injective. 
+  Assume:
+  \begin{align}
+    \|A(f(\bar{x}))\| &\leq Y_0 \label{eq:7.30}\\
+    \|I_E - A \circ A^\dagger\| &\leq Z_0 \label{eq:7.31b}\\
+    \|A \circ [\text{Df}(\bar{x}) - A^\dagger]\| &\leq Z_1 \label{eq:7.32b}\\
+    \|A \circ [\text{Df}(c) - \text{Df}(\bar{x})]\| &\leq Z_2(r) \cdot r 
+    \quad \text{for } c \in \overline{B}_r(\bar{x}) \label{eq:7.33b}
+  \end{align}
+  Define
+  \[
+    p(r) := Z_2(r)r^2 - (1 - Z_0 - Z_1)r + Y_0.
+  \]
+  
+  If there exists $r_0 > 0$ such that $p(r_0) < 0$, then there exists a unique 
+  $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ with $f(\tilde{x}) = 0$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  \textbf{Step 1: Define Newton operator.}
+  Let $T(x) = x - A(f(x))$. Then $T: E \to E$ is differentiable.
+  
+  \textbf{Step 2: Verify conditions of Theorem~\ref{thm:general_fixed_point}.}
+  \begin{itemize}
+    \item By Lemma~\ref{lem:newton_Y_bound}: $\|T(\bar{x}) - \bar{x}\| \leq Y_0$
+    \item By Lemma~\ref{lem:newton_deriv_bound_general}: 
+          $\|\text{DT}(c)\| \leq Z(r_0)$ for $c \in \overline{B}_{r_0}(\bar{x})$
+    \item The polynomial condition: 
+          $p(r_0) = (Z(r_0) - 1)r_0 + Y_0 < 0$ by Lemma~\ref{lem:general_poly_alt_form}
+  \end{itemize}
+  
+  \textbf{Step 3: Apply Theorem~\ref{thm:general_fixed_point}.}
+  Get unique $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ with $T(\tilde{x}) = \tilde{x}$.
+  
+  \textbf{Step 4: Convert to zero.}
+  By Proposition~\ref{prop:fixed_zero_ef} with injectivity of $A$: $f(\tilde{x}) = 0$.
+\end{proof}
+
+\begin{theorem}[Simple Radii Polynomial (Same Space)]\label{thm:simple_radii_poly_same}
+  \lean{simple_radii_polynomial_theorem_same_space}
+  \leanok
+  \uses{thm:general_fixed_point, lem:construct_deriv_inverse}
+  Consider $f: E \to E$ Fréchet differentiable, $\bar{x} \in E$, and $A: E \to E$ 
+  injective. Assume:
+  \begin{align}
+    \|A(f(\bar{x}))\| &\leq Y_0\\
+    \|I_E - A \circ \text{Df}(\bar{x})\| &\leq Z_0\\
+    \|A \circ [\text{Df}(c) - \text{Df}(\bar{x})]\| &\leq Z_2(r) \cdot r 
+    \quad \text{for } c \in \overline{B}_r(\bar{x})
+  \end{align}
+  Define $p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0$.
+  
+  If $p(r_0) < 0$, then there exists unique $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ 
+  with $f(\tilde{x}) = 0$ and $\text{Df}(\tilde{x})$ invertible.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Apply Theorem~\ref{thm:general_fixed_point} to get fixed point $\tilde{x}$. 
+  Convert to zero using Proposition~\ref{prop:fixed_zero_ef}.
+  
+  For invertibility: Since $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ and 
+  $Z(r_0) < 1$, we have $\|I_E - A \circ \text{Df}(\tilde{x})\| < 1$. 
+  Apply Lemma~\ref{lem:construct_deriv_inverse} to get $\text{Df}(\tilde{x})$ invertible.
+\end{proof}

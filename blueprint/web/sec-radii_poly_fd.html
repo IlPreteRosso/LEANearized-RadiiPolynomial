@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RadiiPolynomial: Radii Polynomials in Finite Dimensions</title>
+<link rel="next" href="ch-banach.html" title="Banach Space Theory" />
+<link rel="prev" href="sec-newton.html" title="Newton’s Method" />
+<link rel="up" href="ch-foundations.html" title="Foundations" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">RadiiPolynomial</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Notations</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000003"><span class="toc_ref"></span> <span class="toc_entry">General Notations</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000004"><span class="toc_ref"></span> <span class="toc_entry">Radii Polynomial Notations</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000005"><span class="toc_ref"></span> <span class="toc_entry">Special Cases</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active">
+  <a href="ch-foundations.html"><span class="toc_ref">1</span> <span class="toc_entry">Foundations</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sec-contraction.html"><span class="toc_ref">1</span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-mean_value.html"><span class="toc_ref">2</span> <span class="toc_entry">Mean Value Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-newton.html"><span class="toc_ref">3</span> <span class="toc_entry">Newton’s Method</span></a>
+ </li>
+<li class=" active current">
+  <a href="sec-radii_poly_fd.html"><span class="toc_ref">4</span> <span class="toc_entry">Radii Polynomials in Finite Dimensions</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Banach Space Theory</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-radii_poly_banach.html"><span class="toc_ref">1</span> <span class="toc_entry">Radii Polynomial Approach on Banach Spaces</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-radii_poly_banach.html#<plasTeX.TeXFragment object at 0x103d16210>"><span class="toc_ref">1.1</span> <span class="toc_entry">Banach Space Setup</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:neumann_series"><span class="toc_ref">1.2</span> <span class="toc_entry">Neumann Series and Operator Invertibility</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:newton_ef"><span class="toc_ref">1.3</span> <span class="toc_entry">Newton-Like Operators for E to F Maps</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:radii_poly_defs_banach"><span class="toc_ref">1.4</span> <span class="toc_entry">Radii Polynomial Definitions</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:operator_bounds"><span class="toc_ref">1.5</span> <span class="toc_entry">Operator Bounds</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:helper_lemmas"><span class="toc_ref">1.6</span> <span class="toc_entry">Helper Lemmas</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:main_theorems"><span class="toc_ref">1.7</span> <span class="toc_entry">Main Theorems</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="sec:radii_poly_fd">4 Radii Polynomials in Finite Dimensions</h1>
+
+<p>This section develops the radii polynomial method for proving existence of zeros in finite dimensions. The method provides explicit domains of existence and uniqueness. </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:fixed_point_radii">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">4.1</span>
+    <span class="theorem_thmtitle">Fixed point theorem with radii polynomial</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#thm:fixed_point_radii">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-contraction.html#def:contraction">Definition 1.2</a></li>
+          
+          <li><a href="sec-mean_value.html#cor:mean_value_inequality">Corollary 2.4</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>  Consider a map </p>
+
+  </div>
+</div>
+<p>\(\)T C^1(R^n, R^n)\( and let \)x R^n\(. Let \)Y_0 ≥0\( and \)Z: (0,∞) [0,∞)\( be a non-negative function satisfying \begin{align}  \| T(\bar{x}) - \bar{x}\|  & \leq Y_0 \label{eq:2.10}\\ \| \text{DT}(c)\|  & \leq Z(r), \quad \text{for all } c \in \overline{B}_r(\bar{x}) \text{ and all } r {\gt} 0. \label{eq:2.11} \end{align} Define \[  p(r) := (Z(r) - 1)r + Y_0.  \] If there exists \)r_0 &gt; 0\( such that \)p(r_0) &lt; 0\(, then there exists a unique \)x B_r_0(x)\( such that \)T(x) = x\(. \)</p>
+<div class="theorem_thmwrapper theorem-style-plain" id="a0000000018">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000018">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:radii_polynomial">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">4.2</span>
+    <span class="definition_thmtitle">Radii polynomial</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#def:radii_polynomial">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/radiiPolynomial" class="lean_decl">radiiPolynomial</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  Given constants </p>
+
+  </div>
+</div>
+<p>\(\)Y_0, Z_0 ≥0\( and a function \)Z_2: (0,∞) [0,∞)\(, the \emph{radii polynomial} is defined by \[  p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0.  \] \)</p>
+<div class="definition_thmwrapper theorem-style-plain" id="a0000000019">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000019">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:Z_bound">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">4.3</span>
+    <span class="definition_thmtitle">Combined bound</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#def:Z_bound">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Z_bound" class="lean_decl">Z_bound</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  The <em>combined bound</em> is defined as </p>
+<div class="displaymath" id="a0000000020">
+  \[  Z(r) := Z_0 + Z_2(r) \cdot r.  \]
+</div>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:radii_poly_alt_form">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.4</span>
+    <span class="lemma_thmtitle">Alternative form of radii polynomial</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#lem:radii_poly_alt_form">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-radii_poly_fd.html#def:radii_polynomial">Definition 4.2</a></li>
+          
+          <li><a href="sec-radii_poly_fd.html#def:Z_bound">Definition 4.3</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/radiiPolynomial_alt_form" class="lean_decl">radiiPolynomial_alt_form</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   The radii polynomial can be rewritten as </p>
+<div class="displaymath" id="a0000000021">
+  \[  p(r) = (Z(r) - 1)r + Y_0.  \]
+</div>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:poly_neg_implies_contraction">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.5</span>
+    <span class="lemma_thmtitle">Polynomial negativity implies contraction</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#lem:poly_neg_implies_contraction">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-radii_poly_fd.html#def:radii_polynomial">Definition 4.2</a></li>
+          
+          <li><a href="sec-radii_poly_fd.html#def:Z_bound">Definition 4.3</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/radii_poly_neg_implies_Z_bound_lt_one" class="lean_decl">radii_poly_neg_implies_Z_bound_lt_one</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   If </p>
+
+  </div>
+</div>
+<p>\(\)Y_0 ≥0\(, \)r_0 &gt; 0\(, and \)p(r_0) &lt; 0\(, then \)Z(r_0) &lt; 1\(. \)</p>
+<div class="lemma_thmwrapper theorem-style-plain" id="a0000000022">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000022">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:radii_poly_fd">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">4.6</span>
+    <span class="theorem_thmtitle">Radii polynomial theorem in finite dimensions</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#thm:radii_poly_fd">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-newton.html#def:newton_like_map">Definition 3.1</a></li>
+          
+          <li><a href="sec-radii_poly_fd.html#def:radii_polynomial">Definition 4.2</a></li>
+          
+          <li><a href="sec-newton.html#prop:fixed_point_iff_zero">Proposition 3.2</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/simple_radii_polynomial_theorem_same_space" class="lean_decl">simple_radii_polynomial_theorem_same_space</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   Consider </p>
+
+  </div>
+</div>
+<p>\(\)f C^1(R^n, R^n)\(. Let \)x R^n\( and \)A M_n(R)\(. Let \)Y_0\( and \)Z_0\( be non-negative constants and \)Z_2: (0,∞) [0,∞)\( be a non-negative function satisfying \begin{align}  \| Af(\bar{x})\|  & \leq Y_0 \label{eq:2.14}\\ \| I - A\text{Df}(\bar{x})\|  & \leq Z_0 \label{eq:2.15}\\ \| A[\text{Df}(c) - \text{Df}(\bar{x})]\|  & \leq Z_2(r) \cdot r, \quad \text{for all } c \in \overline{B}_r(\bar{x}) \text{ and all } r {\gt} 0. \label{eq:2.16} \end{align} Define \[  p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0.  \] If there exists \)r_0 &gt; 0\( such that \)p(r_0) &lt; 0\(, then there exists a unique \)x B_r_0(x)\( satisfying \)f(x) = 0\( and \)Df(x)\( is invertible (hence \)x\( is a nondegenerate zero). \)</p>
+<div class="theorem_thmwrapper theorem-style-plain" id="a0000000023">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000023">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000024">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Define the Newton-like mapping </p>
+
+  </div>
+</div>
+<p>\(\)T(x) = x - Af(x)\(. 
+
+\textbf{Step 1: Verify bounds.} We have 
+
+\)T(x) - x = Af(x) ≤Y_0\( by \eqref{eq:2.14}. 
+
+For 
+
+\)c B_r_0(x)\(, 
+
+\begin{align*}  \| \text{DT}(c)\|  & = \| I - A\text{Df}(c)\| \\ & \leq \| I - A\text{Df}(\bar{x})\|  + \| A[\text{Df}(\bar{x}) - \text{Df}(c)]\| \\ & \leq Z_0 + Z_2(r_0) \cdot r_0 \quad \text{by \eqref{eq:2.15} and \eqref{eq:2.16}}\\ & = Z(r_0). \end{align*}
+
+\textbf{Step 2: Apply fixed point theorem.} Since 
+
+\)p(r_0) = (Z(r_0) - 1)r_0 + Y_0 &lt; 0\( by assumption, Theorem~ \ref{thm:fixed_point_radii} gives a unique fixed point \)x B_r_0(x)\( with \)T(x) = x\(. 
+
+\textbf{Step 3: Show $A$ is invertible.} From 
+
+\)p(r_0) &lt; 0\( we get \)Z(r_0) &lt; 1\( by Lemma~ \ref{lem:poly_neg_implies_contraction}. In particular, \)I - ADf(x) ≤Z_0 ≤Z(r_0) &lt; 1\(, so \)ADf(x)\( is invertible by the Neumann series. Since \)Df(x)\( is square and finite-dimensional, this implies \)A\( is invertible. 
+
+\textbf{Step 4: Convert fixed point to zero.} By Proposition~ \ref{prop:fixed_point_iff_zero} and invertibility of 
+
+\)A\(, \)T(x) = x\( implies \)f(x) = 0\(. 
+
+\textbf{Step 5: Show $\text{Df}(\tilde{x})$ is invertible.} Since 
+
+\)x B_r_0(x)\(, we have \)DT(x) = I - ADf(x) ≤Z(r_0) &lt; 1\(. By the Neumann series, \)ADf(x)\( is invertible, which implies \)Df(x)\( is invertible (using that \)A\( is invertible). \)</p>
+<div class="proof_wrapper" id="a0000000025">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:existence_interval">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">4.7</span>
+    <span class="definition_thmtitle">Existence interval</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#def:existence_interval">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p> Consider a radii polynomial </p>
+
+  </div>
+</div>
+<p>\(\)p(r) = Z_2(r)r^2 - (1-Z_0)r + Y_0\( for a function \)f: R^n R^n\( where \)Z_2(r)\( is a polynomial with non-negative coefficients (or a non-decreasing function of \)r\(). The maximal interval \)(r_-, r_+) ⊂(0,∞)\( over which \)p(r) &lt; 0\( is called the \emph{existence interval} for the radii polynomial \)p\(, denoted by \)EI(p)\(. \)</p>
+<div class="definition_thmwrapper theorem-style-plain" id="a0000000026">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000026">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  
+  </div>
+</div>
+<div class="remark_thmwrapper theorem-style-plain" id="rem:existence_interval_interpretation">
+  <div class="remark_thmheading">
+    <span class="remark_thmcaption">
+    Remark
+    </span>
+    <span class="remark_thmlabel">4.8</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#rem:existence_interval_interpretation">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="remark_thmcontent">
+  <p> If the existence interval for a radii polynomial is nonempty, then: </p>
+<ul class="itemize">
+  <li></li>
+</ul>
+
+  </div>
+</div>
+<p>\(\)r_-\( provides tight bounds on the location of \)x\( \item \)r_+\( provides information about the domain of isolation of \)x\( \item The unique zero \)x\( satisfies \)x B_r(x)\( for all \)r EI(p)\( \)</p>
+<ul class="itemize">
+</ul>
+<div class="remark_thmwrapper theorem-style-plain" id="a0000000027">
+  <div class="remark_thmheading">
+    <span class="remark_thmcaption">
+    Remark
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000027">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="remark_thmcontent">
+  
+  </div>
+</div>
+<p>  <br /></p>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sec-newton.html" title="Newton’s Method"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="ch-foundations.html" title="Foundations"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="ch-banach.html" title="Banach Space Theory"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

@@ -7,20 +7,24 @@
 % can start with a \section or \chapter for instance.
 
 
+% Main content file for the Radii Polynomial Blueprint
+% This file should be placed at blueprint/src/content.tex
+
 \input{Sections/Ch0/Abstract}
-
-
 \tableofcontents
 \pagebreak
 
-
 \section*{Notations}\label{sec:notations}
 \input{Sections/Ch0/Notations}
-
 \pagebreak
 
-\section{Chapter 1}\label{sec:chapter1}
-\input{Sections/Ch1/1-1-ContractionMapping}
-\input{Sections/Ch1/1-RP-FD}
+\chapter{Foundations}\label{ch:foundations}
+\input{Sections/Ch2/2-1-ContractionMapping}
+\input{Sections/Ch2/2-2-MeanValue}
+\input{Sections/Ch2/2-3-Newton}
+\input{Sections/Ch2/2-4-RadiiPolynomialsFD}
+\pagebreak
 
+\chapter{Banach Space Theory}\label{ch:banach}
+\input{Sections/Ch7/7-6-RadiiPolynomialBanach}
 \pagebreak

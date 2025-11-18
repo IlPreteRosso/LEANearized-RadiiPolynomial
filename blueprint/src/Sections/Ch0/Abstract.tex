@@ -1,4 +1,21 @@
+% blueprint/src/Sections/Ch0/Abstract.tex
 \begin{abstract}
-An attempt to formalize the finite dimensional radii-polynomial theorem in Lean.
-The formalization is based on the book \emph{Ordinary Diﬀerential Equations: A Constructive Approach} by J.B. van den Berg, M. Gameiro, J.-P. Lessard, J.D. Mireles James, and K. Mischaikow
+This blueprint presents a formalization in Lean 4 of the radii polynomial approach 
+for proving existence of zeros of nonlinear functions on Banach spaces. The method 
+combines the contraction mapping theorem with Newton-like operators, enabling 
+computer-assisted proofs of existence and uniqueness of solutions.
+
+The formalization covers both finite-dimensional and infinite-dimensional settings, 
+with particular emphasis on:
+\begin{itemize}
+  \item The Banach Fixed Point Theorem (Contraction Mapping Theorem)
+  \item Newton-like operators for zero-finding problems
+  \item Radii polynomial approach in finite dimensions (Theorem 2.4.2)
+  \item General radii polynomial approach on Banach spaces (Theorem 7.6.2)
+  \item Neumann series for operator invertibility
+\end{itemize}
+
+The formalization extends classical results to maps between potentially different 
+Banach spaces $E$ and $F$, requiring careful treatment of approximate inverses 
+and approximate derivatives.
 \end{abstract}

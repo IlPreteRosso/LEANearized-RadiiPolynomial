@@ -1,0 +1,64 @@
+% blueprint/src/Sections/Ch2/2-3-Newton.tex
+
+\section{Newton's Method}\label{sec:newton}
+
+Newton's method transforms the problem of finding zeros into the problem of finding 
+fixed points. This section establishes the fundamental equivalence and introduces 
+Newton-like operators.
+
+\begin{definition}[Newton-like map]\label{def:newton_like_map}
+  \lean{NewtonLikeMap}
+  \leanok
+  Let $E, F$ be Banach spaces, $f: E \to F$ a function, and $A: F \to E$ a continuous 
+  linear map. The \emph{Newton-like map} is defined by
+  \[
+    T(x) = x - A(f(x)).
+  \]
+\end{definition}
+
+\begin{proposition}[Fixed points $\iff$ Zeros]\label{prop:fixed_point_iff_zero}
+  \lean{fixedPoint_injective_iff_zero}
+  \leanok
+  \uses{def:newton_like_map}
+  Let $f: E \to F$ and $A: F \to E$ be an injective linear map. 
+  Let $T(x) = x - A(f(x))$ be the Newton-like operator. Then:
+  \[
+    T(x) = x \quad \iff \quad f(x) = 0.
+  \]
+\end{proposition}
+
+\begin{proof}
+  \leanok
+  First direction ($T(x) = x \Rightarrow f(x) = 0$):
+  
+  If $T(x) = x$, then $x - A(f(x)) = x$, which gives $A(f(x)) = 0$. 
+  Since $A$ is linear, $A(0) = 0$. By injectivity of $A$, we have $A(f(x)) = A(0)$ 
+  implies $f(x) = 0$.
+  
+  Second direction ($f(x) = 0 \Rightarrow T(x) = x$):
+  
+  If $f(x) = 0$, then $T(x) = x - A(f(x)) = x - A(0) = x - 0 = x$.
+\end{proof}
+
+\begin{definition}[Nondegenerate zero]\label{def:nondegenerate_zero}
+  Let $f \in C^1(U, \mathbb{R}^n)$ where $U \subset \mathbb{R}^n$ is an open set. 
+  A point $\tilde{x} \in U$ is a \emph{nondegenerate zero} of $f$ if $f(\tilde{x}) = 0$ 
+  and $\text{Df}(\tilde{x})$ is invertible.
+\end{definition}
+
+\begin{definition}[Classical Newton operator]\label{def:classical_newton}
+  If $f \in C^2(U, \mathbb{R}^n)$ where $U \subset \mathbb{R}^n$ is an open set, 
+  the \emph{classical Newton operator} is given by
+  \[
+    T(x) := x - (\text{Df}(x))^{-1} f(x).
+  \]
+\end{definition}
+
+\begin{remark}\label{rem:newton_derivative_at_zero}
+  If $\tilde{x}$ is a nondegenerate zero of $f \in C^2$, then the derivative of the 
+  classical Newton operator satisfies
+  \[
+    \text{DT}(\tilde{x}) = I - (\text{Df}(\tilde{x}))^{-1} \text{Df}(\tilde{x}) = 0,
+  \]
+  making $T$ a strong contraction near $\tilde{x}$.
+\end{remark}

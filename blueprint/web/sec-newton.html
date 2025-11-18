@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RadiiPolynomial: Newton’s Method</title>
+<link rel="next" href="sec-radii_poly_fd.html" title="Radii Polynomials in Finite Dimensions" />
+<link rel="prev" href="sec-mean_value.html" title="Mean Value Theorem" />
+<link rel="up" href="ch-foundations.html" title="Foundations" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">RadiiPolynomial</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Notations</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000003"><span class="toc_ref"></span> <span class="toc_entry">General Notations</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000004"><span class="toc_ref"></span> <span class="toc_entry">Radii Polynomial Notations</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000005"><span class="toc_ref"></span> <span class="toc_entry">Special Cases</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active">
+  <a href="ch-foundations.html"><span class="toc_ref">1</span> <span class="toc_entry">Foundations</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sec-contraction.html"><span class="toc_ref">1</span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-mean_value.html"><span class="toc_ref">2</span> <span class="toc_entry">Mean Value Theorem</span></a>
+ </li>
+<li class=" active current">
+  <a href="sec-newton.html"><span class="toc_ref">3</span> <span class="toc_entry">Newton’s Method</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_fd.html"><span class="toc_ref">4</span> <span class="toc_entry">Radii Polynomials in Finite Dimensions</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Banach Space Theory</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-radii_poly_banach.html"><span class="toc_ref">1</span> <span class="toc_entry">Radii Polynomial Approach on Banach Spaces</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-radii_poly_banach.html#<plasTeX.TeXFragment object at 0x103d16210>"><span class="toc_ref">1.1</span> <span class="toc_entry">Banach Space Setup</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:neumann_series"><span class="toc_ref">1.2</span> <span class="toc_entry">Neumann Series and Operator Invertibility</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:newton_ef"><span class="toc_ref">1.3</span> <span class="toc_entry">Newton-Like Operators for E to F Maps</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:radii_poly_defs_banach"><span class="toc_ref">1.4</span> <span class="toc_entry">Radii Polynomial Definitions</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:operator_bounds"><span class="toc_ref">1.5</span> <span class="toc_entry">Operator Bounds</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:helper_lemmas"><span class="toc_ref">1.6</span> <span class="toc_entry">Helper Lemmas</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:main_theorems"><span class="toc_ref">1.7</span> <span class="toc_entry">Main Theorems</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="sec:newton">3 Newton’s Method</h1>
+
+<p>Newton’s method transforms the problem of finding zeros into the problem of finding fixed points. This section establishes the fundamental equivalence and introduces Newton-like operators. </p>
+<div class="definition_thmwrapper theorem-style-plain" id="def:newton_like_map">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">3.1</span>
+    <span class="definition_thmtitle">Newton-like map</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-newton.html#def:newton_like_map">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/NewtonLikeMap" class="lean_decl">NewtonLikeMap</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  Let </p>
+
+  </div>
+</div>
+<p>\(\)E, F\( be Banach spaces, \)f: E F\( a function, and \)A: F E\( a continuous linear map. The \emph{Newton-like map} is defined by \[  T(x) = x - A(f(x)).  \] \)</p>
+<div class="definition_thmwrapper theorem-style-plain" id="a0000000012">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-newton.html#a0000000012">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  
+  </div>
+</div>
+<div class="proposition_thmwrapper theorem-style-plain" id="prop:fixed_point_iff_zero">
+  <div class="proposition_thmheading">
+    <span class="proposition_thmcaption">
+    Proposition
+    </span>
+    <span class="proposition_thmlabel">3.2</span>
+    <span class="proposition_thmtitle">Fixed points \( Zeros\)</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-newton.html#prop:fixed_point_iff_zero">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-newton.html#def:newton_like_map">Definition 3.1</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/fixedPoint_injective_iff_zero" class="lean_decl">fixedPoint_injective_iff_zero</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="proposition_thmcontent">
+  <p>   Let \(\)f: E F\( and \)A: F E\( be an injective linear map. Let \)T(x) = x - A(f(x))\( be the Newton-like operator. Then: \[  T(x) = x \quad \iff \quad f(x) = 0.  \] \)</p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000013">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>First direction (</p>
+
+  </div>
+</div>
+<p>\(\)T(x) = x ⇒f(x) = 0\(): 
+
+If 
+
+\)T(x) = x\(, then \)x - A(f(x)) = x\(, which gives \)A(f(x)) = 0\(. Since \)A\( is linear, \)A(0) = 0\(. By injectivity of \)A\(, we have \)A(f(x)) = A(0)\( implies \)f(x) = 0\(. 
+
+Second direction (
+
+\)f(x) = 0 ⇒T(x) = x\(): 
+
+If 
+
+\)f(x) = 0\(, then \)T(x) = x - A(f(x)) = x - A(0) = x - 0 = x\(. \)</p>
+<div class="proof_wrapper" id="a0000000014">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:nondegenerate_zero">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">3.3</span>
+    <span class="definition_thmtitle">Nondegenerate zero</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-newton.html#def:nondegenerate_zero">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p> Let </p>
+
+  </div>
+</div>
+<p>\(\)f C^1(U, R^n)\( where \)U ⊂R^n\( is an open set. A point \)x U\( is a \emph{nondegenerate zero} of \)f\( if \)f(x) = 0\( and \)Df(x)\( is invertible. \)</p>
+<div class="definition_thmwrapper theorem-style-plain" id="a0000000015">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-newton.html#a0000000015">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:classical_newton">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">3.4</span>
+    <span class="definition_thmtitle">Classical Newton operator</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-newton.html#def:classical_newton">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p> If </p>
+
+  </div>
+</div>
+<p>\(\)f C^2(U, R^n)\( where \)U ⊂R^n\( is an open set, the \emph{classical Newton operator} is given by \[  T(x) := x - (\text{Df}(x))^{-1} f(x).  \] \)</p>
+<div class="definition_thmwrapper theorem-style-plain" id="a0000000016">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-newton.html#a0000000016">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  
+  </div>
+</div>
+<div class="remark_thmwrapper theorem-style-plain" id="rem:newton_derivative_at_zero">
+  <div class="remark_thmheading">
+    <span class="remark_thmcaption">
+    Remark
+    </span>
+    <span class="remark_thmlabel">3.5</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-newton.html#rem:newton_derivative_at_zero">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="remark_thmcontent">
+  <p> If </p>
+
+  </div>
+</div>
+<p>\(\)x\( is a nondegenerate zero of \)f C^2\(, then the derivative of the classical Newton operator satisfies \[  \text{DT}(\tilde{x}) = I - (\text{Df}(\tilde{x}))^{-1} \text{Df}(\tilde{x}) = 0,  \] making \)T\( a strong contraction near \)x\(. \)</p>
+<div class="remark_thmwrapper theorem-style-plain" id="a0000000017">
+  <div class="remark_thmheading">
+    <span class="remark_thmcaption">
+    Remark
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-newton.html#a0000000017">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="remark_thmcontent">
+  
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sec-mean_value.html" title="Mean Value Theorem"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="ch-foundations.html" title="Foundations"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sec-radii_poly_fd.html" title="Radii Polynomials in Finite Dimensions"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

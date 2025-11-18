@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RadiiPolynomial: Mean Value Theorem</title>
+<link rel="next" href="sec-newton.html" title="Newton’s Method" />
+<link rel="prev" href="sec-contraction.html" title="Contraction Mapping Theorem" />
+<link rel="up" href="ch-foundations.html" title="Foundations" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">RadiiPolynomial</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Notations</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000003"><span class="toc_ref"></span> <span class="toc_entry">General Notations</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000004"><span class="toc_ref"></span> <span class="toc_entry">Radii Polynomial Notations</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000005"><span class="toc_ref"></span> <span class="toc_entry">Special Cases</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active">
+  <a href="ch-foundations.html"><span class="toc_ref">1</span> <span class="toc_entry">Foundations</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sec-contraction.html"><span class="toc_ref">1</span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
+ </li>
+<li class=" active current">
+  <a href="sec-mean_value.html"><span class="toc_ref">2</span> <span class="toc_entry">Mean Value Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-newton.html"><span class="toc_ref">3</span> <span class="toc_entry">Newton’s Method</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_fd.html"><span class="toc_ref">4</span> <span class="toc_entry">Radii Polynomials in Finite Dimensions</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Banach Space Theory</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-radii_poly_banach.html"><span class="toc_ref">1</span> <span class="toc_entry">Radii Polynomial Approach on Banach Spaces</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-radii_poly_banach.html#<plasTeX.TeXFragment object at 0x103d16210>"><span class="toc_ref">1.1</span> <span class="toc_entry">Banach Space Setup</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:neumann_series"><span class="toc_ref">1.2</span> <span class="toc_entry">Neumann Series and Operator Invertibility</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:newton_ef"><span class="toc_ref">1.3</span> <span class="toc_entry">Newton-Like Operators for E to F Maps</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:radii_poly_defs_banach"><span class="toc_ref">1.4</span> <span class="toc_entry">Radii Polynomial Definitions</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:operator_bounds"><span class="toc_ref">1.5</span> <span class="toc_entry">Operator Bounds</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:helper_lemmas"><span class="toc_ref">1.6</span> <span class="toc_entry">Helper Lemmas</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:main_theorems"><span class="toc_ref">1.7</span> <span class="toc_entry">Main Theorems</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="sec:mean_value">2 Mean Value Theorem</h1>
+
+<p>The mean value theorem and its corollary provide the analytical tools needed to verify contraction properties of Newton-like operators. </p>
+<div class="definition_thmwrapper theorem-style-plain" id="def:operator_norm">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.1</span>
+    <span class="definition_thmtitle">Operator norm</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-mean_value.html#def:operator_norm">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContinuousLinearMap.opNorm" class="lean_decl">ContinuousLinearMap.opNorm</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  Let </p>
+
+  </div>
+</div>
+<p>\(\)(X, ·_X)\( and \)(Y, ·_Y)\( be normed linear spaces and let \)A: X Y\( be a linear map. The \emph{operator norm} on \)A\( is given by \[  \| A\|  := \sup _{x \in X \setminus \{ 0\} } \frac{\| Ax\| _Y}{\| x\| _X} = \sup _{\| x\| _X = 1} \| Ax\| _Y.  \] \)</p>
+<div class="definition_thmwrapper theorem-style-plain" id="a0000000008">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-mean_value.html#a0000000008">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  
+  </div>
+</div>
+<div class="proposition_thmwrapper theorem-style-plain" id="prop:operator_norm_properties">
+  <div class="proposition_thmheading">
+    <span class="proposition_thmcaption">
+    Proposition
+    </span>
+    <span class="proposition_thmlabel">2.2</span>
+    <span class="proposition_thmtitle">Properties of operator norm</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-mean_value.html#prop:operator_norm_properties">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContinuousLinearMap.opNorm_comp_le" class="lean_decl">ContinuousLinearMap.opNorm_comp_le</a></li>
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContinuousLinearMap.le_opNorm" class="lean_decl">ContinuousLinearMap.le_opNorm</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="proposition_thmcontent">
+  <p>  Let </p>
+
+  </div>
+</div>
+<p>\(\)(X, ·)\( be a normed linear space and let \)A, B: X X\( be linear maps. Then: \begin{enumerate} \item \end{enumerate}\)Ax ≤A x\( for all \)x X\( \item \)AB ≤A B\( (submultiplicativity) \)</p>
+<ol class="enumerate">
+</ol>
+<div class="proposition_thmwrapper theorem-style-plain" id="a0000000009">
+  <div class="proposition_thmheading">
+    <span class="proposition_thmcaption">
+    Proposition
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-mean_value.html#a0000000009">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="proposition_thmcontent">
+  
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:mean_value">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.3</span>
+    <span class="theorem_thmtitle">Mean Value Theorem</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-mean_value.html#thm:mean_value">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-mean_value.html#def:operator_norm">Definition 2.1</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>  Suppose that </p>
+
+  </div>
+</div>
+<p>\(\)U ⊂R^n\( is open and that \)f: U R^n\( is \)C^1\(. Consider \)x, y U\( such that the line segment \[  (1-t)x + ty, \quad t \in [0,1]  \] is contained in \)U\(. Then, \[  f(y) - f(x) = \left(\int _0^1 \text{Df}((1-t)x + ty) \,  dt\right)(y-x),  \] where \)Df\( denotes the Jacobian of \)f\(. \)</p>
+<div class="theorem_thmwrapper theorem-style-plain" id="a0000000010">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-mean_value.html#a0000000010">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  
+  </div>
+</div>
+<div class="corollary_thmwrapper theorem-style-plain" id="cor:mean_value_inequality">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    Corollary
+    </span>
+    <span class="corollary_thmlabel">2.4</span>
+    <span class="corollary_thmtitle">Mean Value Inequality</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-mean_value.html#cor:mean_value_inequality">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-mean_value.html#thm:mean_value">Theorem 2.3</a></li>
+          
+          <li><a href="sec-mean_value.html#def:operator_norm">Definition 2.1</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Convex.norm_image_sub_le_of_norm_fderiv_le" class="lean_decl">Convex.norm_image_sub_le_of_norm_fderiv_le</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="corollary_thmcontent">
+  <p>   Consider an open set </p>
+
+  </div>
+</div>
+<p>\(\)U ⊂R^n\(. Let \)f: U R^n\( be a \)C^1\( function. Fix a point \)x_0 U\( and assume \)B_ρ(x_0) ⊂U\( for some \)ρ&gt; 0\(. Then, for all \)x, y B_ρ(x_0)\(, \[  \| f(y) - f(x)\| _\infty \leq \left(\sup _{z \in \overline{B}_\rho (x_0)} \| \text{Df}(z)\| _\infty \right) \| y-x\| _\infty ,  \] where \)Df(·)_∞\( denotes the operator norm. \)</p>
+<div class="corollary_thmwrapper theorem-style-plain" id="a0000000011">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    Corollary
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-mean_value.html#a0000000011">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="corollary_thmcontent">
+  
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sec-contraction.html" title="Contraction Mapping Theorem"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="ch-foundations.html" title="Foundations"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sec-newton.html" title="Newton’s Method"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>
