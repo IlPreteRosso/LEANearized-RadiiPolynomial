@@ -32,6 +32,7 @@
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}  % Added for rationals
 \newcommand{\h}{\mathfrak{H}}
 \newcommand{\B}{\mathcal{B}}
 \newcommand{\Pa}{\mathcal{P}}  % Sphere packing
@@ -56,3 +57,39 @@
 \newcommand{\todo}[1]{{\color{red}{\textbf{#1}}}}
 
 \newif\ifplastex
+
+% ============================================================================
+% ADDITIONAL MACROS FOR RADII POLYNOMIAL PROJECT
+% ============================================================================
+% These macros eliminate plasTeX warnings and improve rendering
+
+% MATHEMATICAL OPERATORS AND SYMBOLS (fixes plasTeX warnings)
+\newcommand{\iff}{\Leftrightarrow}
+\renewcommand{\to}{\rightarrow}
+\providecommand{\text}[1]{\mathrm{#1}}
+
+% NOTATION FOR APPROXIMATE AND EXACT VALUES
+\newcommand{\xbar}{\bar{x}}      % Approximate zero
+\newcommand{\xtilde}{\tilde{x}}  % Exact zero
+
+% BALLS (for convenience in Banach spaces)
+\newcommand{\Ball}[2]{B_{#1}(#2)}              % Open ball
+\newcommand{\ClosedBall}[2]{\overline{B}_{#1}(#2)}  % Closed ball
+
+% BANACH SPACE OPERATORS
+\newcommand{\IE}{I_E}            % Identity on E
+\newcommand{\IF}{I_F}            % Identity on F
+\newcommand{\Bcal}{\mathcal{B}}  % Space of bounded operators
+
+% OPERATORS
+\DeclareMathOperator{\Df}{Df}   % Fréchet derivative
+\DeclareMathOperator{\opnorm}{op}  % Operator norm
+\newcommand{\comp}{\circ}        % Composition
+
+% FUNCTION SPACES (if needed)
+\newcommand{\Lp}[1]{L^{#1}}
+\newcommand{\Sobolev}[2]{W^{#1,#2}}
+
+% ============================================================================
+% END ADDITIONAL MACROS
+% ============================================================================

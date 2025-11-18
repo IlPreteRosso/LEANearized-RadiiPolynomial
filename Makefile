@@ -6,6 +6,7 @@ default:
 
 clean-build:
 	lake clean
+	lake exe cache get
 	lake build
 	leanblueprint web
 	lake exe checkdecls blueprint/lean_decls
