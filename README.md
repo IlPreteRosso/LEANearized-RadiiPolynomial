@@ -87,7 +87,7 @@ Configure the the LEAN version for VS Code Lean extension (InfoView), to check r
 cat .lake/packages/mathlib/lean-toolchain
 ```
 
-Set the VS Code Lean toolchain to that version (for example `4.24.0-rc1`) in the extension settings or via the InfoView selector. 
+Set the VS Code Lean toolchain to that version (for example `v4.26.0-rc1`) in the extension settings or via the InfoView selector. 
 
 ## Acknowledgments
 
