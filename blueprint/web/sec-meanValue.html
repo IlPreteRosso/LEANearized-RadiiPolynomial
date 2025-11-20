@@ -15,7 +15,7 @@
 <title>RadiiPolynomial: Mean Value Theorem</title>
 <link rel="next" href="sec-newton.html" title="Newton’s Method" />
 <link rel="prev" href="sec-contraction.html" title="Contraction Mapping Theorem" />
-<link rel="up" href="ch-foundations.html" title="Foundations" />
+<link rel="up" href="index.html" title="RadiiPolynomial" />
 <link rel="stylesheet" href="styles/theme-white.css" />
 <link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/showmore.css" />
@@ -48,56 +48,48 @@
 
   </ul>
  </li>
-<li class=" active">
+<li class="">
   <a href="ch-foundations.html"><span class="toc_ref">1</span> <span class="toc_entry">Foundations</span></a>
-  <span class="expand-toc">▼</span>
-  <ul class="sub-toc-1 active">
-     <li class="">
-  <a href="sec-contraction.html"><span class="toc_ref">1</span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-contraction.html"><span class="toc_ref">2</span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
  </li>
 <li class=" active current">
-  <a href="sec-mean_value.html"><span class="toc_ref">2</span> <span class="toc_entry">Mean Value Theorem</span></a>
+  <a href="sec-meanValue.html"><span class="toc_ref">3</span> <span class="toc_entry">Mean Value Theorem</span></a>
  </li>
 <li class="">
-  <a href="sec-newton.html"><span class="toc_ref">3</span> <span class="toc_entry">Newton’s Method</span></a>
+  <a href="sec-newton.html"><span class="toc_ref">4</span> <span class="toc_entry">Newton’s Method</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_fd.html"><span class="toc_ref">4</span> <span class="toc_entry">Radii Polynomials in Finite Dimensions</span></a>
- </li>
-
-  </ul>
+  <a href="sec-radiiPolyFd.html"><span class="toc_ref">5</span> <span class="toc_entry">Radii Polynomials in Finite Dimensions</span></a>
  </li>
 <li class="">
-  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Banach Space Theory</span></a>
+  <a href="ch-banach.html"><span class="toc_ref">6</span> <span class="toc_entry">Banach Space Theory</span></a>
+ </li>
+<li class="">
+  <a href="sec-radiiPolyBanach.html"><span class="toc_ref">7</span> <span class="toc_entry">Radii Polynomial Approach on Banach Spaces</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
-  <a href="sec-radii_poly_banach.html"><span class="toc_ref">1</span> <span class="toc_entry">Radii Polynomial Approach on Banach Spaces</span></a>
-  <span class="expand-toc">▶</span>
-  <ul class="sub-toc-2">
-     <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:banach_setup"><span class="toc_ref">1.1</span> <span class="toc_entry">Banach Space Setup</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:banachSetup"><span class="toc_ref">7.1</span> <span class="toc_entry">Banach Space Setup</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:neumann_series"><span class="toc_ref">1.2</span> <span class="toc_entry">Neumann Series and Operator Invertibility</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:neumannSeries"><span class="toc_ref">7.2</span> <span class="toc_entry">Neumann Series and Operator Invertibility</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:newton_ef"><span class="toc_ref">1.3</span> <span class="toc_entry">Newton-Like Operators for E to F Maps</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:newtonEf"><span class="toc_ref">7.3</span> <span class="toc_entry">Newton-Like Operators for E to F Maps</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:radii_poly_defs_banach"><span class="toc_ref">1.4</span> <span class="toc_entry">Radii Polynomial Definitions</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:radiiPolyDefsBanach"><span class="toc_ref">7.4</span> <span class="toc_entry">Radii Polynomial Definitions</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:operator_bounds"><span class="toc_ref">1.5</span> <span class="toc_entry">Operator Bounds</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:operatorBounds"><span class="toc_ref">7.5</span> <span class="toc_entry">Operator Bounds</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:helper_lemmas"><span class="toc_ref">1.6</span> <span class="toc_entry">Helper Lemmas</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:helperLemmas"><span class="toc_ref">7.6</span> <span class="toc_entry">Helper Lemmas</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:main_theorems"><span class="toc_ref">1.7</span> <span class="toc_entry">Main Theorems</span></a>
- </li>
-
-  </ul>
+  <a href="sec-radiiPolyBanach.html#subsec:mainTheorems"><span class="toc_ref">7.7</span> <span class="toc_entry">Main Theorems</span></a>
  </li>
 
   </ul>
@@ -111,15 +103,15 @@
 
 
 <div class="main-text">
-<h1 id="sec:mean_value">2 Mean Value Theorem</h1>
+<h1 id="sec:meanValue">3 Mean Value Theorem</h1>
 
 <p>The mean value theorem and its corollary provide the analytical tools needed to verify contraction properties of Newton-like operators. </p>
-<div class="definition_thmwrapper theorem-style-plain" id="def:operator_norm">
+<div class="definition_thmwrapper theorem-style-plain" id="def:operatorNorm">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">2.1</span>
+    <span class="definition_thmlabel">3.1</span>
     <span class="definition_thmtitle">Operator norm</span>
     <div class="thm_header_extras">
 
@@ -128,7 +120,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-mean_value.html#def:operator_norm">#</a>
+    <a class="icon proof" href="sec-meanValue.html#def:operatorNorm">#</a>
     
     
     
@@ -154,19 +146,37 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  Let \((X, \| \cdot \| _X)\) and \((Y, \| \cdot \| _Y)\) be normed linear spaces and let \(A: X \rightarrow Y\) be a linear map. The <i class="itshape">operator norm</i> on \(A\) is given by </p>
-<div class="displaymath" id="a0000000008">
-  \begin{equation*}  \| A\| := \sup _{x \in X \setminus \{ 0\} } \frac{\| Ax\| _Y}{\| x\| _X} = \sup _{\| x\| _X = 1} \| Ax\| _Y. \end{equation*}
-</div>
+  <p>   Let </p>
 
   </div>
 </div>
-<div class="proposition_thmwrapper theorem-style-plain" id="prop:operator_norm_properties">
+<p>\(\)(X, ·_X)\( and \)(Y, ·_Y)\( be normed linear spaces and let \)A: X →Y\( be a linear map. The \textit{operator norm} on \)A\( is given by \begin{equation*}  \| A\| := \sup _{x \in X, x \neq 0} \frac{\| Ax\| _Y}{\| x\| _X} = \sup _{\| x\| _X = 1} \| Ax\| _Y. \end{equation*} \)</p>
+<div class="definition_thmwrapper theorem-style-plain" id="a0000000007">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-meanValue.html#a0000000007">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  
+  </div>
+</div>
+<div class="proposition_thmwrapper theorem-style-plain" id="prop:operatorNormProperties">
   <div class="proposition_thmheading">
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">2.2</span>
+    <span class="proposition_thmlabel">3.2</span>
     <span class="proposition_thmtitle">Properties of operator norm</span>
     <div class="thm_header_extras">
 
@@ -175,7 +185,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-mean_value.html#prop:operator_norm_properties">#</a>
+    <a class="icon proof" href="sec-meanValue.html#prop:operatorNormProperties">#</a>
     
     
     
@@ -203,24 +213,52 @@
         </div>
   </div>
   <div class="proposition_thmcontent">
-  <p>  Let \((X, \| \cdot \| )\) be a normed linear space and let \(A, B: X \rightarrow X\) be linear maps. Then: </p>
-<p>(1) \(\| Ax\| \leq \| A\| \| x\| \) for all \(x \in X\) (2) \(\| AB\| \leq \| A\| \| B\| \) (submultiplicativity) </p>
+  <p>   Let </p>
 
   </div>
 </div>
-<div class="theorem_thmwrapper theorem-style-plain" id="thm:mean_value">
+<p>\(\)(X\(, \| \cdot \| )\) be a normed linear space and let \( A\), B: X →X\( be linear maps. Then: 
+
+(1) 
+
+\)Ax≤A·x\( for all \) x X\((2) 
+
+\)AB≤A·B\( (submultiplicativity) 
+
+\)</p>
+<div class="proposition_thmwrapper theorem-style-plain" id="a0000000008">
+  <div class="proposition_thmheading">
+    <span class="proposition_thmcaption">
+    Proposition
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-meanValue.html#a0000000008">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="proposition_thmcontent">
+  
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:meanValue">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">2.3</span>
+    <span class="theorem_thmlabel">3.3</span>
     <span class="theorem_thmtitle">Mean Value Theorem</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-mean_value.html#thm:mean_value">#</a>
+    <a class="icon proof" href="sec-meanValue.html#thm:meanValue">#</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -235,7 +273,7 @@
         
         <ul class="uses">
           
-          <li><a href="sec-mean_value.html#def:operator_norm">Definition 2.1</a></li>
+          <li><a href="sec-meanValue.html#def:operatorNorm">Definition 3.1</a></li>
           
         </ul>
     
@@ -247,24 +285,41 @@
         </div>
   </div>
   <div class="theorem_thmcontent">
-  <p>  Suppose that \(U \subset \mathbb {R}^n\) is open and that \(f: U \rightarrow \mathbb {R}^n\) is \(C^1\). Consider \(x, y \in U\) such that the line segment </p>
-<div class="displaymath" id="a0000000009">
-  \begin{equation*}  (1-t)x + ty, \quad t \in [0,1] \end{equation*}
-</div>
-<p> is contained in \(U\). Then, </p>
-<div class="displaymath" id="a0000000010">
-  \begin{equation*}  f(y) - f(x) = \left(\int _0^1 \text{Df}((1-t)x + ty) \,  dt\right)(y-x), \end{equation*}
-</div>
-<p> where \(\text{Df}\) denotes the Jacobian of \(f\). </p>
+  <p>   Suppose that </p>
 
   </div>
 </div>
-<div class="corollary_thmwrapper theorem-style-plain" id="cor:mean_value_inequality">
+<p>\(\) U ⊂R^n\( is open and that \)f: U →R^n\( is \) C^1\(. Consider \) x\(, y \in U\) such that the line segment </p>
+<div class="displaymath" id="a0000000009">
+  \begin{equation*}  (1-t)x + ty, \quad t \in [0,1] \end{equation*}
+</div>
+<p> is contained in \( U\). Then\(, \begin{equation*}  f(y) - f(x) = \left(\int _0^1 \text{Df}((1-t)x + ty) \,  dt\right)(y-x), \end{equation*} where \)Df\( denotes the Jacobian of \) f. </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="a0000000010">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-meanValue.html#a0000000010">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  
+  </div>
+</div>
+<div class="corollary_thmwrapper theorem-style-plain" id="cor:meanValueInequality">
   <div class="corollary_thmheading">
     <span class="corollary_thmcaption">
     Corollary
     </span>
-    <span class="corollary_thmlabel">2.4</span>
+    <span class="corollary_thmlabel">3.4</span>
     <span class="corollary_thmtitle">Mean Value Inequality</span>
     <div class="thm_header_extras">
 
@@ -273,7 +328,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-mean_value.html#cor:mean_value_inequality">#</a>
+    <a class="icon proof" href="sec-meanValue.html#cor:meanValueInequality">#</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -288,9 +343,9 @@
         
         <ul class="uses">
           
-          <li><a href="sec-mean_value.html#thm:mean_value">Theorem 2.3</a></li>
+          <li><a href="sec-meanValue.html#thm:meanValue">Theorem 3.3</a></li>
           
-          <li><a href="sec-mean_value.html#def:operator_norm">Definition 2.1</a></li>
+          <li><a href="sec-meanValue.html#def:operatorNorm">Definition 3.1</a></li>
           
         </ul>
     
@@ -321,7 +376,7 @@
         </div>
   </div>
   <div class="corollary_thmcontent">
-  <p>   Consider an open set \(U \subset \mathbb {R}^n\). Let \(f: U \rightarrow \mathbb {R}^n\) be a \(C^1\) function. Fix a point \(x_0 \in U\) and assume \(\overline{B}_\rho (x_0) \subset U\) for some \(\rho {\gt} 0\). Then, for all \(x, y \in \overline{B}_\rho (x_0)\), </p>
+  <p>    Consider an open set \( U \subset \mathbb {R}^n. Let \)f: U →R^n\( be a \) C^1\( function. Fix a point \) x_0 U\( and assume \)B_ρ(x_0) ⊂U\( for some \)ρ&gt; 0\(. Then, for all \) x\(, y \in \overline{B}_\rho (x_0)\), </p>
 <div class="displaymath" id="a0000000011">
   \begin{equation*}  \| f(y) - f(x)\| _\infty \leq \left(\sup _{z \in \overline{B}_\rho (x_0)} \| \text{Df}(z)\| _\infty \right) \| y-x\| _\infty , \end{equation*}
 </div>
@@ -342,7 +397,7 @@
 
   <a href="sec-contraction.html" title="Contraction Mapping Theorem"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
-  <a href="ch-foundations.html" title="Foundations"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+  <a href="index.html" title="RadiiPolynomial"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
 </a>
   <a href="sec-newton.html" title="Newton’s Method"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>

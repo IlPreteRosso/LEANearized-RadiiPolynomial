@@ -15,7 +15,7 @@
 <title>RadiiPolynomial: Radii Polynomials in Finite Dimensions</title>
 <link rel="next" href="ch-banach.html" title="Banach Space Theory" />
 <link rel="prev" href="sec-newton.html" title="Newton’s Method" />
-<link rel="up" href="ch-foundations.html" title="Foundations" />
+<link rel="up" href="index.html" title="RadiiPolynomial" />
 <link rel="stylesheet" href="styles/theme-white.css" />
 <link rel="stylesheet" href="styles/amsthm.css" />
 <link rel="stylesheet" href="styles/showmore.css" />
@@ -48,56 +48,48 @@
 
   </ul>
  </li>
-<li class=" active">
+<li class="">
   <a href="ch-foundations.html"><span class="toc_ref">1</span> <span class="toc_entry">Foundations</span></a>
-  <span class="expand-toc">▼</span>
-  <ul class="sub-toc-1 active">
-     <li class="">
-  <a href="sec-contraction.html"><span class="toc_ref">1</span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
  </li>
 <li class="">
-  <a href="sec-mean_value.html"><span class="toc_ref">2</span> <span class="toc_entry">Mean Value Theorem</span></a>
+  <a href="sec-contraction.html"><span class="toc_ref">2</span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
  </li>
 <li class="">
-  <a href="sec-newton.html"><span class="toc_ref">3</span> <span class="toc_entry">Newton’s Method</span></a>
+  <a href="sec-meanValue.html"><span class="toc_ref">3</span> <span class="toc_entry">Mean Value Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-newton.html"><span class="toc_ref">4</span> <span class="toc_entry">Newton’s Method</span></a>
  </li>
 <li class=" active current">
-  <a href="sec-radii_poly_fd.html"><span class="toc_ref">4</span> <span class="toc_entry">Radii Polynomials in Finite Dimensions</span></a>
- </li>
-
-  </ul>
+  <a href="sec-radiiPolyFd.html"><span class="toc_ref">5</span> <span class="toc_entry">Radii Polynomials in Finite Dimensions</span></a>
  </li>
 <li class="">
-  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Banach Space Theory</span></a>
+  <a href="ch-banach.html"><span class="toc_ref">6</span> <span class="toc_entry">Banach Space Theory</span></a>
+ </li>
+<li class="">
+  <a href="sec-radiiPolyBanach.html"><span class="toc_ref">7</span> <span class="toc_entry">Radii Polynomial Approach on Banach Spaces</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
-  <a href="sec-radii_poly_banach.html"><span class="toc_ref">1</span> <span class="toc_entry">Radii Polynomial Approach on Banach Spaces</span></a>
-  <span class="expand-toc">▶</span>
-  <ul class="sub-toc-2">
-     <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:banach_setup"><span class="toc_ref">1.1</span> <span class="toc_entry">Banach Space Setup</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:banachSetup"><span class="toc_ref">7.1</span> <span class="toc_entry">Banach Space Setup</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:neumann_series"><span class="toc_ref">1.2</span> <span class="toc_entry">Neumann Series and Operator Invertibility</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:neumannSeries"><span class="toc_ref">7.2</span> <span class="toc_entry">Neumann Series and Operator Invertibility</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:newton_ef"><span class="toc_ref">1.3</span> <span class="toc_entry">Newton-Like Operators for E to F Maps</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:newtonEf"><span class="toc_ref">7.3</span> <span class="toc_entry">Newton-Like Operators for E to F Maps</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:radii_poly_defs_banach"><span class="toc_ref">1.4</span> <span class="toc_entry">Radii Polynomial Definitions</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:radiiPolyDefsBanach"><span class="toc_ref">7.4</span> <span class="toc_entry">Radii Polynomial Definitions</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:operator_bounds"><span class="toc_ref">1.5</span> <span class="toc_entry">Operator Bounds</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:operatorBounds"><span class="toc_ref">7.5</span> <span class="toc_entry">Operator Bounds</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:helper_lemmas"><span class="toc_ref">1.6</span> <span class="toc_entry">Helper Lemmas</span></a>
+  <a href="sec-radiiPolyBanach.html#subsec:helperLemmas"><span class="toc_ref">7.6</span> <span class="toc_entry">Helper Lemmas</span></a>
  </li>
 <li class="">
-  <a href="sec-radii_poly_banach.html#subsec:main_theorems"><span class="toc_ref">1.7</span> <span class="toc_entry">Main Theorems</span></a>
- </li>
-
-  </ul>
+  <a href="sec-radiiPolyBanach.html#subsec:mainTheorems"><span class="toc_ref">7.7</span> <span class="toc_entry">Main Theorems</span></a>
  </li>
 
   </ul>
@@ -111,22 +103,22 @@
 
 
 <div class="main-text">
-<h1 id="sec:radii_poly_fd">4 Radii Polynomials in Finite Dimensions</h1>
+<h1 id="sec:radiiPolyFd">5 Radii Polynomials in Finite Dimensions</h1>
 
 <p>This section develops the radii polynomial method for proving existence of zeros in finite dimensions. The method provides explicit domains of existence and uniqueness. </p>
-<div class="theorem_thmwrapper theorem-style-plain" id="thm:fixed_point_radii">
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:fixedPointRadii">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">4.1</span>
+    <span class="theorem_thmlabel">5.1</span>
     <span class="theorem_thmtitle">Fixed point theorem with radii polynomial</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-radii_poly_fd.html#thm:fixed_point_radii">#</a>
+    <a class="icon proof" href="sec-radiiPolyFd.html#thm:fixedPointRadii">#</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -141,9 +133,9 @@
         
         <ul class="uses">
           
-          <li><a href="sec-contraction.html#def:contraction">Definition 1.2</a></li>
+          <li><a href="sec-contraction.html#def:contraction">Definition 2.2</a></li>
           
-          <li><a href="sec-mean_value.html#cor:mean_value_inequality">Corollary 2.4</a></li>
+          <li><a href="sec-meanValue.html#cor:meanValueInequality">Corollary 3.4</a></li>
           
         </ul>
     
@@ -155,27 +147,16 @@
         </div>
   </div>
   <div class="theorem_thmcontent">
-  <p>  Consider a map \(T \in C^1(\mathbb {R}^n, \mathbb {R}^n)\) and let \(\bar{x} \in \mathbb {R}^n\). Let \(Y_0 \geq 0\) and \(Z: (0,\infty ) \rightarrow [0,\infty )\) be a non-negative function satisfying </p>
-<div class="displaymath" id="a0000000017">
-  \begin{equation*}  \| T(\bar{x}) - \bar{x}\| \leq Y_0 \end{equation*}
-</div>
-<div class="displaymath" id="a0000000018">
-  \begin{equation*}  \| \text{DT}(c)\| \leq Z(r), \quad \text{for all } c \in \overline{B}_r(\bar{x}) \text{ and all } r {\gt} 0. \end{equation*}
-</div>
-<p> Define </p>
-<div class="displaymath" id="a0000000019">
-  \begin{equation*}  p(r) := (Z(r) - 1)r + Y_0. \end{equation*}
-</div>
-<p> If there exists \(r_0 {\gt} 0\) such that \(p(r_0) {\lt} 0\), then there exists a unique \(\tilde{x} \in \overline{B}_{r_0}(\bar{x})\) such that \(T(\tilde{x}) = \tilde{x}\). </p>
+  <p>   Consider a map \( T \in C^1(\mathbb {R}^n\), R^n)\( and let \)x R^n. Let \( Y_0 \geq 0\) and \(Z\): (0,∞) →[0,∞)\( be a non-negative function satisfying \begin{equation*}  \| T(\bar{x}) - \bar{x}\| \leq Y_0 \end{equation*} \begin{equation*}  \| \text{DT}(c)\| \leq Z(r), \quad \text{for all} c \in \overline{B}_r(\bar{x}) \text{and all} r {\gt} 0. \end{equation*} Define \begin{equation*}  p(r) := (Z(r) - 1)r + Y_0. \end{equation*} If there exists \) r_0 &gt; 0\( such that \) p(r_0) &lt; 0\(, then there exists a unique \)x B_r_0(x)\( such that \) T(x) = x\(. \)</p>
 
   </div>
 </div>
-<div class="definition_thmwrapper theorem-style-plain" id="def:radii_polynomial">
+<div class="definition_thmwrapper theorem-style-plain" id="def:radiiPolynomial">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">4.2</span>
+    <span class="definition_thmlabel">5.2</span>
     <span class="definition_thmtitle">Radii polynomial</span>
     <div class="thm_header_extras">
 
@@ -184,7 +165,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-radii_poly_fd.html#def:radii_polynomial">#</a>
+    <a class="icon proof" href="sec-radiiPolyFd.html#def:radiiPolynomial">#</a>
     
     
     
@@ -210,19 +191,37 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  Given constants \(Y_0, Z_0 \geq 0\) and a function \(Z_2: (0,\infty ) \rightarrow [0,\infty )\), the <i class="itshape">radii polynomial</i> is defined by </p>
-<div class="displaymath" id="a0000000020">
-  \begin{equation*}  p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0. \end{equation*}
-</div>
+  <p>   Given constants </p>
 
   </div>
 </div>
-<div class="definition_thmwrapper theorem-style-plain" id="def:Z_bound">
+<p>\(\) Y_0\(, Z_0 \geq 0\) and a function \( Z_2\): (0,∞) →[0,∞)\(, the \textit{radii polynomial} is defined by \begin{equation*}  p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0. \end{equation*} \)</p>
+<div class="definition_thmwrapper theorem-style-plain" id="a0000000017">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">4.3</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radiiPolyFd.html#a0000000017">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:ZBound">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">5.3</span>
     <span class="definition_thmtitle">Combined bound</span>
     <div class="thm_header_extras">
 
@@ -231,7 +230,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-radii_poly_fd.html#def:Z_bound">#</a>
+    <a class="icon proof" href="sec-radiiPolyFd.html#def:ZBound">#</a>
     
     
     
@@ -257,19 +256,19 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  The <i class="itshape">combined bound</i> is defined as </p>
-<div class="displaymath" id="a0000000021">
+  <p>   The <i class="itshape">combined bound</i> is defined as </p>
+<div class="displaymath" id="a0000000018">
   \begin{equation*}  Z(r) := Z_0 + Z_2(r) \cdot r. \end{equation*}
 </div>
 
   </div>
 </div>
-<div class="lemma_thmwrapper theorem-style-plain" id="lem:radii_poly_alt_form">
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:radiiPolyAltForm">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.4</span>
+    <span class="lemma_thmlabel">5.4</span>
     <span class="lemma_thmtitle">Alternative form of radii polynomial</span>
     <div class="thm_header_extras">
 
@@ -278,7 +277,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-radii_poly_fd.html#lem:radii_poly_alt_form">#</a>
+    <a class="icon proof" href="sec-radiiPolyFd.html#lem:radiiPolyAltForm">#</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -293,9 +292,9 @@
         
         <ul class="uses">
           
-          <li><a href="sec-radii_poly_fd.html#def:radii_polynomial">Definition 4.2</a></li>
+          <li><a href="sec-radiiPolyFd.html#def:radiiPolynomial">Definition 5.2</a></li>
           
-          <li><a href="sec-radii_poly_fd.html#def:Z_bound">Definition 4.3</a></li>
+          <li><a href="sec-radiiPolyFd.html#def:ZBound">Definition 5.3</a></li>
           
         </ul>
     
@@ -326,19 +325,19 @@
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   The radii polynomial can be rewritten as </p>
-<div class="displaymath" id="a0000000022">
+  <p>    The radii polynomial can be rewritten as </p>
+<div class="displaymath" id="a0000000019">
   \begin{equation*}  p(r) = (Z(r) - 1)r + Y_0. \end{equation*}
 </div>
 
   </div>
 </div>
-<div class="lemma_thmwrapper theorem-style-plain" id="lem:poly_neg_implies_contraction">
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:polyNegImpliesContraction">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.5</span>
+    <span class="lemma_thmlabel">5.5</span>
     <span class="lemma_thmtitle">Polynomial negativity implies contraction</span>
     <div class="thm_header_extras">
 
@@ -347,7 +346,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-radii_poly_fd.html#lem:poly_neg_implies_contraction">#</a>
+    <a class="icon proof" href="sec-radiiPolyFd.html#lem:polyNegImpliesContraction">#</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -362,9 +361,9 @@
         
         <ul class="uses">
           
-          <li><a href="sec-radii_poly_fd.html#def:radii_polynomial">Definition 4.2</a></li>
+          <li><a href="sec-radiiPolyFd.html#def:radiiPolynomial">Definition 5.2</a></li>
           
-          <li><a href="sec-radii_poly_fd.html#def:Z_bound">Definition 4.3</a></li>
+          <li><a href="sec-radiiPolyFd.html#def:ZBound">Definition 5.3</a></li>
           
         </ul>
     
@@ -395,16 +394,37 @@
         </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   If \(Y_0 \geq 0\), \(r_0 {\gt} 0\), and \(p(r_0) {\lt} 0\), then \(Z(r_0) {\lt} 1\). </p>
+  <p>    If </p>
 
   </div>
 </div>
-<div class="theorem_thmwrapper theorem-style-plain" id="thm:radii_poly_fd">
+<p>\(\) Y_0 ≥0\(, \) r_0 &gt; 0\(, and \) p(r_0) &lt; 0\(, then \) Z(r_0) &lt; 1\(. \)</p>
+<div class="lemma_thmwrapper theorem-style-plain" id="a0000000020">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radiiPolyFd.html#a0000000020">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:radiiPolyFd">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
-    <span class="theorem_thmlabel">4.6</span>
+    <span class="theorem_thmlabel">5.6</span>
     <span class="theorem_thmtitle">Radii polynomial theorem in finite dimensions</span>
     <div class="thm_header_extras">
 
@@ -413,10 +433,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-radii_poly_fd.html#thm:radii_poly_fd">#</a>
-    
-    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000023"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
-</a>
+    <a class="icon proof" href="sec-radiiPolyFd.html#thm:radiiPolyFd">#</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -431,15 +448,11 @@
         
         <ul class="uses">
           
-          <li><a href="sec-newton.html#def:newton_like_map">Definition 3.1</a></li>
+          <li><a href="sec-newton.html#def:newtonLikeMap">Definition 4.1</a></li>
           
-          <li><a href="sec-radii_poly_fd.html#def:radii_polynomial">Definition 4.2</a></li>
+          <li><a href="sec-radiiPolyFd.html#def:radiiPolynomial">Definition 5.2</a></li>
           
-          <li><a href="sec-newton.html#prop:fixed_point_iff_zero">Proposition 3.2</a></li>
-          
-          <li><a href="sec-radii_poly_fd.html#thm:fixed_point_radii">Theorem 4.1</a></li>
-          
-          <li><a href="sec-radii_poly_fd.html#lem:poly_neg_implies_contraction">Lemma 4.5</a></li>
+          <li><a href="sec-newton.html#prop:fixedPointIffZero">Proposition 4.2</a></li>
           
         </ul>
     
@@ -470,24 +483,67 @@
         </div>
   </div>
   <div class="theorem_thmcontent">
-  <p>   Consider \(f \in C^1(\mathbb {R}^n, \mathbb {R}^n)\). Let \(\bar{x} \in \mathbb {R}^n\) and \(A \in M_n(\mathbb {R})\). Let \(Y_0\) and \(Z_0\) be non-negative constants and \(Z_2: (0,\infty ) \rightarrow [0,\infty )\) be a non-negative function satisfying </p>
-<div class="displaymath" id="a0000000024">
-  \begin{equation*}  \| Af(\bar{x})\| \leq Y_0 \end{equation*}
-</div>
-<div class="displaymath" id="a0000000025">
-  \begin{equation*}  \| I - A\text{Df}(\bar{x})\| \leq Z_0 \end{equation*}
-</div>
-<div class="displaymath" id="a0000000026">
-  \begin{equation*}  \| A[\text{Df}(c) - \text{Df}(\bar{x})]\| \leq Z_2(r) \cdot r, \quad \text{for all } c \in \overline{B}_r(\bar{x}) \text{ and all } r {\gt} 0. \end{equation*}
-</div>
-<p> Define </p>
-<div class="displaymath" id="a0000000027">
-  \begin{equation*}  p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0. \end{equation*}
-</div>
-<p> If there exists \(r_0 {\gt} 0\) such that \(p(r_0) {\lt} 0\), then there exists a unique \(\tilde{x} \in \overline{B}_{r_0}(\bar{x})\) satisfying \(f(\tilde{x}) = 0\) and \(\text{Df}(\tilde{x})\) is invertible (hence \(\tilde{x}\) is a nondegenerate zero). </p>
+  <p>    Consider </p>
 
   </div>
 </div>
+<p>\(\) f C^1(R^n\(, \mathbb {R}^n)\). Let \(\bar{x} \in \mathbb {R}^n\) and \( A \in M_n(\mathbb {R})\). Let \( Y_0\) and \( Z_0\) be non-negative constants and \( Z_2\): (0,∞) →[0,∞)\( be a non-negative function satisfying \begin{equation*}  \| Af(\bar{x})\| \leq Y_0 \end{equation*} \begin{equation*}  \| I - A\text{Df}(\bar{x})\| \leq Z_0 \end{equation*} \begin{equation*}  \| A[\text{Df}(c) - \text{Df}(\bar{x})]\| \leq Z_2(r) \cdot r, \quad \text{for all} c \in \overline{B}_r(\bar{x}) \text{and all} r {\gt} 0. \end{equation*} Define \begin{equation*}  p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0. \end{equation*} If there exists \) r_0 &gt; 0\( such that \) p(r_0) &lt; 0\(, then there exists a unique \)x B_r_0(x)\( satisfying \) f(x) = 0\( and \)Df(x)\( is invertible (hence \)x\( is a nondegenerate zero)\). </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="a0000000021">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radiiPolyFd.html#a0000000021">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000022">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p> Define the Newton-like mapping \( T(x) = x - Af(x)\). </p>
+<p><b class="bfseries">Step 1: Verify bounds.</b> We have \(\| T(\bar{x}) - \bar{x}\| = \| Af(\bar{x})\| \leq Y_0\) by ??. </p>
+<p>For </p>
+
+  </div>
+</div>
+<p>\(\) c B_r_0(x)\(, 
+
+\begin{equation*}  \| \text{DT}(c)\| = \| I - A\text{Df}(c)\| \end{equation*}
+
+\begin{equation*}  \leq \| I - A\text{Df}(\bar{x})\| + \| A[\text{Df}(\bar{x}) - \text{Df}(c)]\| \end{equation*}
+
+\begin{equation*}  \leq Z_0 + Z_2(r_0) \cdot r_0 \quad \text{by \eqref{eq:2.15} and \eqref{eq:2.16}} \end{equation*}
+
+\begin{equation*}  = Z(r_0). \end{equation*}
+
+\textbf{Step 2: Apply fixed point theorem.} Since 
+
+\) p(r_0) = (Z(r_0) - 1)r_0 + Y_0 &lt; 0\( by assumption\), Theorem&#160;<a href="sec-radiiPolyFd.html#thm:fixedPointRadii">5.1</a> gives a unique fixed point \(\tilde{x} \in \overline{B}_{r_0}(\bar{x})\) with \( T(\tilde{x}) = \tilde{x}\). </p>
+<p><b class="bfseries">Step 3: Show \(A\) is invertible.</b> From \( p(r_0) {\lt} 0\) we get \( Z(r_0) {\lt} 1\) by Lemma&#160;??. In particular, \(\)I - A Df(x)≤Z_0 ≤Z(r_0) &lt; 1\(, so \) A Df(x)\( is invertible by the Neumann series. Since \)Df(x)\( is square and finite-dimensional, this implies \)A\( is invertible. 
+
+\textbf{Step 4: Convert fixed point to zero.} By Proposition~ \ref{prop:fixedPointIffZero} and invertibility of 
+
+\) A\(, \) T(x) = x\( implies \) f(x) = 0\(. 
+
+\textbf{Step 5: Show $\text{Df}(\tilde{x})$ is invertible.} Since 
+
+\)x B_r_0(x)\(, we have \)DT(x)= I - A Df(x)≤Z(r_0) &lt; 1\(. By the Neumann series, \) A Df(x)\( is invertible\), which implies \(\text{Df}(\tilde{x})\) is invertible (using that \(A\) is invertible)\(. \)</p>
 <div class="proof_wrapper" id="a0000000023">
   <div class="proof_heading">
     <span class="proof_caption">
@@ -496,70 +552,72 @@
     <span class="expand-proof">▶</span>
   </div>
   <div class="proof_content">
-  <p> Define the Newton-like mapping \(T(x) = x - Af(x)\). </p>
-<p><b class="bfseries">Step 1: Verify bounds.</b> We have \(\| T(\bar{x}) - \bar{x}\| = \| Af(\bar{x})\| \leq Y_0\) by ??. </p>
-<p>For \(c \in \overline{B}_{r_0}(\bar{x})\), </p>
-<div class="displaymath" id="a0000000028">
-  \begin{equation*}  \| \text{DT}(c)\| = \| I - A\text{Df}(c)\| \end{equation*}
-</div>
-<div class="displaymath" id="a0000000029">
-  \begin{equation*}  \leq \| I - A\text{Df}(\bar{x})\| + \| A[\text{Df}(\bar{x}) - \text{Df}(c)]\| \end{equation*}
-</div>
-<div class="displaymath" id="a0000000030">
-  \begin{equation*}  \leq Z_0 + Z_2(r_0) \cdot r_0 \quad \text{by \eqref{eq:2.15} and \eqref{eq:2.16}} \end{equation*}
-</div>
-<div class="displaymath" id="a0000000031">
-  \begin{equation*}  = Z(r_0). \end{equation*}
-</div>
-<p><b class="bfseries">Step 2: Apply fixed point theorem.</b> Since \(p(r_0) = (Z(r_0) - 1)r_0 + Y_0 {\lt} 0\) by assumption, Theorem&#160;<a href="sec-radii_poly_fd.html#thm:fixed_point_radii">4.1</a> gives a unique fixed point \(\tilde{x} \in \overline{B}_{r_0}(\bar{x})\) with \(T(\tilde{x}) = \tilde{x}\). </p>
-<p><b class="bfseries">Step 3: Show \(A\) is invertible.</b> From \(p(r_0) {\lt} 0\) we get \(Z(r_0) {\lt} 1\) by Lemma&#160;<a href="sec-radii_poly_fd.html#lem:poly_neg_implies_contraction">4.5</a>. In particular, \(\| I - A\text{Df}(\bar{x})\| \leq Z_0 \leq Z(r_0) {\lt} 1\), so \(A\text{Df}(\bar{x})\) is invertible by the Neumann series. Since \(\text{Df}(\bar{x})\) is square and finite-dimensional, this implies \(A\) is invertible. </p>
-<p><b class="bfseries">Step 4: Convert fixed point to zero.</b> By Proposition&#160;<a href="sec-newton.html#prop:fixed_point_iff_zero">3.2</a> and invertibility of \(A\), \(T(\tilde{x}) = \tilde{x}\) implies \(f(\tilde{x}) = 0\). </p>
-<p><b class="bfseries">Step 5: Show \(\text{Df}(\tilde{x})\) is invertible.</b> Since \(\tilde{x} \in \overline{B}_{r_0}(\bar{x})\), we have \(\| \text{DT}(\tilde{x})\| = \| I - A\text{Df}(\tilde{x})\| \leq Z(r_0) {\lt} 1\). By the Neumann series, \(A\text{Df}(\tilde{x})\) is invertible, which implies \(\text{Df}(\tilde{x})\) is invertible (using that \(A\) is invertible). </p>
-
+  
   </div>
 </div>
-<div class="definition_thmwrapper theorem-style-plain" id="def:existence_interval">
+<div class="definition_thmwrapper theorem-style-plain" id="def:existenceInterval">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
-    <span class="definition_thmlabel">4.7</span>
+    <span class="definition_thmlabel">5.7</span>
     <span class="definition_thmtitle">Existence interval</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-radii_poly_fd.html#def:existence_interval">#</a>
+    <a class="icon proof" href="sec-radiiPolyFd.html#def:existenceInterval">#</a>
     
     
     
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p> Consider a radii polynomial \(p(r) = Z_2(r)r^2 - (1-Z_0)r + Y_0\) for a function \(f: \mathbb {R}^n \rightarrow \mathbb {R}^n\) where \(Z_2(r)\) is a polynomial with non-negative coefficients (or a non-decreasing function of \(r\)). The maximal interval \((r_-, r_+) \subset (0,\infty )\) over which \(p(r) {\lt} 0\) is called the <i class="itshape">existence interval</i> for the radii polynomial \(p\), denoted by \(\text{EI}(p)\). </p>
+  <p>  Consider a radii polynomial </p>
 
   </div>
 </div>
-<div class="remark_thmwrapper theorem-style-plain" id="rem:existence_interval_interpretation">
-  <div class="remark_thmheading">
-    <span class="remark_thmcaption">
-    Remark
+<p>\(\) p(r) = Z_2(r)r^2 - (1-Z_0)r + Y_0\( for a function \)f\(: \mathbb {R}^n \rightarrow \mathbb {R}^n\) where \( Z_2(r)\) is a polynomial with non-negative coefficients (or a non-decreasing function of \( r\))\(. The maximal interval \)(r_-\(, r_+) \subset (0,\infty )\) over which \( p(r) {\lt} 0\) is called the <i class="itshape">existence interval</i> for the radii polynomial \( p\), denoted by \(\text{EI}(p)\). </p>
+<div class="definition_thmwrapper theorem-style-plain" id="a0000000024">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
     </span>
-    <span class="remark_thmlabel">4.8</span>
     <div class="thm_header_extras">
 
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-radii_poly_fd.html#rem:existence_interval_interpretation">#</a>
+    <a class="icon proof" href="sec-radiiPolyFd.html#a0000000024">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  
+  </div>
+</div>
+<div class="remark_thmwrapper theorem-style-plain" id="rem:existenceIntervalInterpretation">
+  <div class="remark_thmheading">
+    <span class="remark_thmcaption">
+    Remark
+    </span>
+    <span class="remark_thmlabel">5.8</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-radiiPolyFd.html#rem:existenceIntervalInterpretation">#</a>
     
     
     
         </div>
   </div>
   <div class="remark_thmcontent">
-  <p> If the existence interval for a radii polynomial is nonempty, then: (1) \(r_-\) provides tight bounds on the location of \(\tilde{x}\) (2) \(r_+\) provides information about the domain of isolation of \(\tilde{x}\) (3) The unique zero \(\tilde{x}\) satisfies \(\tilde{x} \in \overline{B}_r(\bar{x})\) for all \(r \in \text{EI}(p)\) </p>
+  <p> If the existence interval for a radii polynomial is nonempty, then: (1) \( r_-\) provides tight bounds on the location of \(\tilde{x}\) (2) \( r_+\) provides information about the domain of isolation of \(\tilde{x}\) (3) The unique zero \(\tilde{x}\) satisfies \(\tilde{x} \in \overline{B}_r(\bar{x})\) for all \( r \in \text{EI}(p)\) </p>
 
   </div>
 </div>
@@ -577,7 +635,7 @@
 
   <a href="sec-newton.html" title="Newton’s Method"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
 </a>
-  <a href="ch-foundations.html" title="Foundations"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+  <a href="index.html" title="RadiiPolynomial"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
 </a>
   <a href="ch-banach.html" title="Banach Space Theory"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>

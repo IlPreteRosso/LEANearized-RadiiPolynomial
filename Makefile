@@ -10,3 +10,9 @@ clean-build:
 	lake build
 	leanblueprint web
 	lake exe checkdecls blueprint/lean_decls
+
+open:
+	open blueprint/web/index.html
+
+web:
+	leanblueprint web

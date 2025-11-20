@@ -127,14 +127,14 @@ end NewtonLikeOperator
 
 section Proposition_2_3_1
 /-!
-## Fixed Points ⟺ Zeros (Proposition 2.3.1)
+# Fixed Points ⟺ Zeros (Proposition 2.3.1)
 
 This fundamental equivalence holds in the general E to F setting:
   T(x) = x  ⟺  f(x) = 0
 
 when A : F →L[ℝ] E is injective.
 
-The proof is identical to the E to E case - injectivity of A is the key requirement,
+The proof is **identical** to the E to E case - injectivity of A is the key requirement,
 not invertibility.
 -/
 
@@ -149,10 +149,7 @@ omit [CompleteSpace E] [CompleteSpace F] in
 
     This fundamental equivalence allows us to:
     - Convert zero-finding problems (f(x) = 0) to fixed point problems (T(x) = x)
-    - Apply fixed point theorems (like Banach's) to find zeros of f
-
-    This works in the E to F setting because injectivity of A is sufficient;
-    we don't need A to be invertible (which wouldn't even make sense when E ≠ F). -/
+    - Apply fixed point theorems (like Banach's) to find zeros of f -/
 lemma fixedPoint_injective_iff_zero
   {f : E → F} {A : F →L[ℝ] E}
   (hA : Function.Injective A)
@@ -333,7 +330,7 @@ end RadiiPolynomialImplications
 
 section OperatorBounds
 /-!
-## Operator Bounds for Newton-Like Map
+# Operator Bounds for Newton-Like Map
 
 These lemmas establish the key bounds needed to apply the contraction mapping theorem:
 1. Y₀ bound: ‖T(x̄) - x̄‖ ≤ Y₀ (initial displacement)
@@ -493,7 +490,7 @@ end OperatorBounds
 
 section HelperLemmas
 /-!
-## Helper Lemmas for Fixed Point Theorems
+# Helper Lemmas for Fixed Point Theorems
 
 These technical lemmas are needed to apply the Banach fixed point theorem:
 - Completeness of closed balls
@@ -651,16 +648,16 @@ This is used as a key step in proving Theorem 7.6.2.
 
 /-- **Theorem 7.6.1**: General Fixed Point Theorem for Banach Spaces
 
-    Let T : E → E be Fr´echet differentiable and x̄ ∈ E. Suppose:
-    - ‖T(x̄) - x̄‖ ≤ Y₀                      (eq. 7.27: initial displacement)
-    - ‖DT(x)‖ ≤ Z(r) for all x ∈ B̄ᵣ(x̄)     (eq. 7.28: derivative bound)
+    Let T : E → E be Fréchet differentiable and x̄ ∈ E. Suppose:
+    - ‖T(x̄) - x̄‖ ≤ Y₀                      (eq. 7.27)
+    - ‖DT(x)‖ ≤ Z(r) for all x ∈ B̄ᵣ(x̄)     (eq. 7.28)
 
     Define p(r) := (Z(r) - 1)r + Y₀.
 
     If there exists r₀ > 0 such that p(r₀) < 0, then there exists a unique
     x̃ ∈ B̄ᵣ₀(x̄) such that T(x̃) = x̃.
 
-    This is the Banach space version of Theorem 2.4.1. -/
+    This is the Banach space version of Theorem 2.4.1. (which is in ℝⁿ) -/
 theorem general_fixed_point_theorem
   {T : E → E} {xBar : E}
   {Y₀ : ℝ} {Z : ℝ → ℝ} {r₀ : ℝ}
@@ -668,7 +665,7 @@ theorem general_fixed_point_theorem
   (hr₀ : 0 < r₀)
   (h_bound_Y : ‖T xBar - xBar‖ ≤ Y₀)                        -- eq. 7.27
   (h_bound_Z : ∀ c ∈ Metric.closedBall xBar r₀, ‖fderiv ℝ T c‖ ≤ Z r₀)  -- eq. 7.28
-  (h_radii : simpleRadiiPolynomial Y₀ Z r₀ < 0) :           -- p(r₀) < 0
+  (h_radii : simpleRadiiPolynomial Y₀ Z r₀ < 0) :           -- p(r₀) < 0, assumption
   ∃! xTilde ∈ Metric.closedBall xBar r₀, T xTilde = xTilde := by
 
   -- Y₀ ≥ 0 from norm bound

@@ -12,7 +12,7 @@
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RadiiPolynomial: Mean Value Theorem</title>
+<title>RadiiPolynomial: Contraction Mapping Theorem</title>
 <link rel="next" href="sec-newton.html" title="Newton’s Method" />
 <link rel="prev" href="sec-contraction.html" title="Contraction Mapping Theorem" />
 <link rel="up" href="ch-foundations.html" title="Foundations" />
@@ -56,7 +56,7 @@
   <a href="sec-contraction.html"><span class="toc_ref">1</span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
  </li>
 <li class=" active current">
-  <a href="sec-mean_value.html"><span class="toc_ref">2</span> <span class="toc_entry">Mean Value Theorem</span></a>
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
  </li>
 <li class="">
   <a href="sec-newton.html"><span class="toc_ref">3</span> <span class="toc_entry">Newton’s Method</span></a>
@@ -111,16 +111,16 @@
 
 
 <div class="main-text">
-<h1 id="sec:mean_value">2 Mean Value Theorem</h1>
+<h1 id="sec:contraction">2 Contraction Mapping Theorem</h1>
 
-<p>The mean value theorem and its corollary provide the analytical tools needed to verify contraction properties of Newton-like operators. </p>
-<div class="definition_thmwrapper theorem-style-plain" id="def:operator_norm">
+<p>The contraction mapping theorem is a fundamental tool for proving existence and uniqueness of fixed points. This section establishes the basic definitions and the classical theorem. </p>
+<div class="definition_thmwrapper theorem-style-plain" id="def:complete_metric_space">
   <div class="definition_thmheading">
     <span class="definition_thmcaption">
     Definition
     </span>
     <span class="definition_thmlabel">2.1</span>
-    <span class="definition_thmtitle">Operator norm</span>
+    <span class="definition_thmtitle">Complete metric space</span>
     <div class="thm_header_extras">
 
     
@@ -128,7 +128,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-mean_value.html#def:operator_norm">#</a>
+    <a class="icon proof" href="sect0002.html#def:complete_metric_space">#</a>
     
     
     
@@ -143,7 +143,7 @@
         
         <ul class="uses">
           
-          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContinuousLinearMap.opNorm" class="lean_decl">ContinuousLinearMap.opNorm</a></li>
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/CompleteSpace" class="lean_decl">CompleteSpace</a></li>
           
         </ul>
     
@@ -154,20 +154,38 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  Let \((X, \| \cdot \| _X)\) and \((Y, \| \cdot \| _Y)\) be normed linear spaces and let \(A: X \rightarrow Y\) be a linear map. The <i class="itshape">operator norm</i> on \(A\) is given by </p>
-<div class="displaymath" id="a0000000008">
-  \begin{equation*}  \| A\| := \sup _{x \in X \setminus \{ 0\} } \frac{\| Ax\| _Y}{\| x\| _X} = \sup _{\| x\| _X = 1} \| Ax\| _Y. \end{equation*}
-</div>
+  <p>   A metric space </p>
 
   </div>
 </div>
-<div class="proposition_thmwrapper theorem-style-plain" id="prop:operator_norm_properties">
-  <div class="proposition_thmheading">
-    <span class="proposition_thmcaption">
-    Proposition
+<p>\(\)(X, d)\( is \textit{complete} if every Cauchy sequence converges in \)X\(, i.e., if given any \)ε&gt; 0\( there exists \)N(ε)\( such that \)n, m &gt; N(ε)\( implies \)d(x_n, x_m) &lt; ε\(, then there is some \)y X\( with \)_n→∞ x_n = y\(. \)</p>
+<div class="definition_thmwrapper theorem-style-plain" id="a0000000008">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
     </span>
-    <span class="proposition_thmlabel">2.2</span>
-    <span class="proposition_thmtitle">Properties of operator norm</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#a0000000008">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:contraction">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2</span>
+    <span class="definition_thmtitle">Contraction mapping</span>
     <div class="thm_header_extras">
 
     
@@ -175,7 +193,7 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-mean_value.html#prop:operator_norm_properties">#</a>
+    <a class="icon proof" href="sect0002.html#def:contraction">#</a>
     
     
     
@@ -190,9 +208,7 @@
         
         <ul class="uses">
           
-          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContinuousLinearMap.opNorm_comp_le" class="lean_decl">ContinuousLinearMap.opNorm_comp_le</a></li>
-          
-          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContinuousLinearMap.le_opNorm" class="lean_decl">ContinuousLinearMap.le_opNorm</a></li>
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContractingWith" class="lean_decl">ContractingWith</a></li>
           
         </ul>
     
@@ -202,70 +218,39 @@
     
         </div>
   </div>
-  <div class="proposition_thmcontent">
-  <p>  Let \((X, \| \cdot \| )\) be a normed linear space and let \(A, B: X \rightarrow X\) be linear maps. Then: </p>
-<p>(1) \(\| Ax\| \leq \| A\| \| x\| \) for all \(x \in X\) (2) \(\| AB\| \leq \| A\| \| B\| \) (submultiplicativity) </p>
+  <div class="definition_thmcontent">
+  <p>   Let </p>
 
   </div>
 </div>
-<div class="theorem_thmwrapper theorem-style-plain" id="thm:mean_value">
+<p>\(\)(X, d)\( be a metric space. A function \)T: X →X\( is a \textit{contraction} if there is a number \)κ[0, 1)\(, called a \textit{contraction constant}, such that \begin{equation*}  d(T(x), T(y)) \leq \kappa \cdot d(x, y) \end{equation*} for all \)x, y X\(. \)</p>
+<div class="definition_thmwrapper theorem-style-plain" id="a0000000009">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#a0000000009">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:contraction_mapping">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
     Theorem
     </span>
     <span class="theorem_thmlabel">2.3</span>
-    <span class="theorem_thmtitle">Mean Value Theorem</span>
-    <div class="thm_header_extras">
-
-        </div>
-    <div class="thm_header_hidden_extras">
-
-    <a class="icon proof" href="sec-mean_value.html#thm:mean_value">#</a>
-    
-    
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
-        <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Uses</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-        
-        <ul class="uses">
-          
-          <li><a href="sec-mean_value.html#def:operator_norm">Definition 2.1</a></li>
-          
-        </ul>
-    
-      </div>
-    </div>
-
-    
-    
-        </div>
-  </div>
-  <div class="theorem_thmcontent">
-  <p>  Suppose that \(U \subset \mathbb {R}^n\) is open and that \(f: U \rightarrow \mathbb {R}^n\) is \(C^1\). Consider \(x, y \in U\) such that the line segment </p>
-<div class="displaymath" id="a0000000009">
-  \begin{equation*}  (1-t)x + ty, \quad t \in [0,1] \end{equation*}
-</div>
-<p> is contained in \(U\). Then, </p>
-<div class="displaymath" id="a0000000010">
-  \begin{equation*}  f(y) - f(x) = \left(\int _0^1 \text{Df}((1-t)x + ty) \,  dt\right)(y-x), \end{equation*}
-</div>
-<p> where \(\text{Df}\) denotes the Jacobian of \(f\). </p>
-
-  </div>
-</div>
-<div class="corollary_thmwrapper theorem-style-plain" id="cor:mean_value_inequality">
-  <div class="corollary_thmheading">
-    <span class="corollary_thmcaption">
-    Corollary
-    </span>
-    <span class="corollary_thmlabel">2.4</span>
-    <span class="corollary_thmtitle">Mean Value Inequality</span>
+    <span class="theorem_thmtitle">Contraction Mapping Theorem</span>
     <div class="thm_header_extras">
 
     
@@ -273,30 +258,8 @@
         </div>
     <div class="thm_header_hidden_extras">
 
-    <a class="icon proof" href="sec-mean_value.html#cor:mean_value_inequality">#</a>
+    <a class="icon proof" href="sect0002.html#thm:contraction_mapping">#</a>
     
-    
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
-        <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Uses</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-        
-        <ul class="uses">
-          
-          <li><a href="sec-mean_value.html#thm:mean_value">Theorem 2.3</a></li>
-          
-          <li><a href="sec-mean_value.html#def:operator_norm">Definition 2.1</a></li>
-          
-        </ul>
-    
-      </div>
-    </div>
-
     
     
     <button class="modal lean">L∃∀N</button>
@@ -310,7 +273,7 @@
         
         <ul class="uses">
           
-          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Convex.norm_image_sub_le_of_norm_fderiv_le" class="lean_decl">Convex.norm_image_sub_le_of_norm_fderiv_le</a></li>
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContractingWith.exists_fixedPoint'" class="lean_decl">ContractingWith.exists_fixedPoint'</a></li>
           
         </ul>
     
@@ -320,13 +283,73 @@
     
         </div>
   </div>
-  <div class="corollary_thmcontent">
-  <p>   Consider an open set \(U \subset \mathbb {R}^n\). Let \(f: U \rightarrow \mathbb {R}^n\) be a \(C^1\) function. Fix a point \(x_0 \in U\) and assume \(\overline{B}_\rho (x_0) \subset U\) for some \(\rho {\gt} 0\). Then, for all \(x, y \in \overline{B}_\rho (x_0)\), </p>
-<div class="displaymath" id="a0000000011">
-  \begin{equation*}  \| f(y) - f(x)\| _\infty \leq \left(\sup _{z \in \overline{B}_\rho (x_0)} \| \text{Df}(z)\| _\infty \right) \| y-x\| _\infty , \end{equation*}
-</div>
-<p> where \(\| \text{Df}(\cdot )\| _\infty \) denotes the operator norm. </p>
+  <div class="theorem_thmcontent">
+  <p>   Let </p>
 
+  </div>
+</div>
+<p>\(\)(X, d)\( be a complete metric space. If \)T: X →X\( is a contraction with contraction constant \)κ\(, then there exists a unique fixed point \)x X\( of \)T\(. Furthermore, \)x\( is globally attracting, and for any \)x X\(, \begin{equation*}  d(T^n(x), \tilde{x}) \leq \frac{\kappa ^n}{1-\kappa } d(T(x), x). \end{equation*} \)</p>
+<div class="theorem_thmwrapper theorem-style-plain" id="a0000000010">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#a0000000010">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  
+  </div>
+</div>
+<div class="remark_thmwrapper theorem-style-plain" id="rem:contraction_rate">
+  <div class="remark_thmheading">
+    <span class="remark_thmcaption">
+    Remark
+    </span>
+    <span class="remark_thmlabel">2.4</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#rem:contraction_rate">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="remark_thmcontent">
+  <p> Given a contraction mapping </p>
+
+  </div>
+</div>
+<p>\(\)T: X →X\(, the rate at which points in \)X\( converge to the globally attracting fixed point \)x\( is determined by \)κ\(. In particular, the smaller \)κ\( is, the faster iterates under \)T\( converge to \)x. </p>
+<div class="remark_thmwrapper theorem-style-plain" id="a0000000011">
+  <div class="remark_thmheading">
+    <span class="remark_thmcaption">
+    Remark
+    </span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#a0000000011">#</a>
+    
+    
+    
+        </div>
+  </div>
+  <div class="remark_thmcontent">
+  
   </div>
 </div>
 

@@ -20,8 +20,8 @@ of fixed points. This section establishes the basic definitions and the classica
   Let $(X, d)$ be a metric space. A function $T: X \to X$ is a \textit{contraction} if 
   there is a number $\kappa \in [0, 1)$, called a \textit{contraction constant}, such that
   \begin{equation*}
-    d(T(x), T(y)) \leq \kappa \cdot d(x, y)
-  \end{equation*}
+  d(T(x), T(y)) \leq \kappa \cdot d(x, y)
+\end{equation*}
   for all $x, y \in X$.
 \end{definition}
 
@@ -32,12 +32,12 @@ of fixed points. This section establishes the basic definitions and the classica
   contraction constant $\kappa$, then there exists a unique fixed point $\tilde{x} \in X$ 
   of $T$. Furthermore, $\tilde{x}$ is globally attracting, and for any $x \in X$,
   \begin{equation*}
-    d(T^n(x), \tilde{x}) \leq \frac{\kappa^n}{1-\kappa} d(T(x), x).
-  \end{equation*}
+  d(T^n(x), \tilde{x}) \leq \frac{\kappa^n}{1-\kappa} d(T(x), x).
+\end{equation*}
 \end{theorem}
 
 \begin{remark}\label{rem:contraction_rate}
   Given a contraction mapping $T: X \to X$, the rate at which points in $X$ converge 
   to the globally attracting fixed point $\tilde{x}$ is determined by $\kappa$. 
-  In particular, the smaller $\kappa$ is, the faster iterates under $T$ converge to $\tilde{x}.
+  In particular, the smaller $\kappa$ is, the faster iterates under $T$ converge to $\tilde{x}$.
 \end{remark}
