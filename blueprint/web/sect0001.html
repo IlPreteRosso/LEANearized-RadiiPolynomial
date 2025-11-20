@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RadiiPolynomial: Notations</title>
+<link rel="next" href="ch-foundations.html" title="Foundations" />
+<link rel="prev" href="index.html" title="RadiiPolynomial" />
+<link rel="up" href="index.html" title="RadiiPolynomial" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">RadiiPolynomial</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class=" active current">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Notations</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sect0001.html#a0000000003"><span class="toc_ref"></span> <span class="toc_entry">General Notations</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000004"><span class="toc_ref"></span> <span class="toc_entry">Radii Polynomial Notations</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000005"><span class="toc_ref"></span> <span class="toc_entry">Special Cases</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="ch-foundations.html"><span class="toc_ref">1</span> <span class="toc_entry">Foundations</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-contraction.html"><span class="toc_ref">1.1</span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-mean_value.html"><span class="toc_ref">1.2</span> <span class="toc_entry">Mean Value Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-newton.html"><span class="toc_ref">1.3</span> <span class="toc_entry">Newton’s Method</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_fd.html"><span class="toc_ref">1.4</span> <span class="toc_entry">Radii Polynomials in Finite Dimensions</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Banach Space Theory</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-radii_poly_banach.html"><span class="toc_ref">2.1</span> <span class="toc_entry">Radii Polynomial Approach on Banach Spaces</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-radii_poly_banach.html#subsec:banach_setup"><span class="toc_ref">2.1.1</span> <span class="toc_entry">Banach Space Setup</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:neumann_series"><span class="toc_ref">2.1.2</span> <span class="toc_entry">Neumann Series and Operator Invertibility</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:newton_ef"><span class="toc_ref">2.1.3</span> <span class="toc_entry">Newton-Like Operators for E to F Maps</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:radii_poly_defs_banach"><span class="toc_ref">2.1.4</span> <span class="toc_entry">Radii Polynomial Definitions</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:operator_bounds"><span class="toc_ref">2.1.5</span> <span class="toc_entry">Operator Bounds</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:helper_lemmas"><span class="toc_ref">2.1.6</span> <span class="toc_entry">Helper Lemmas</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:main_theorems"><span class="toc_ref">2.1.7</span> <span class="toc_entry">Main Theorems</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000002">Notations</h1>
+
+<h2 id="a0000000003">General Notations</h2>
+<p>\(E, F, X, Y\) — Banach spaces over \(\mathbb {R}\) </p>
+<p>\(\| \cdot \| \) — norm on a normed space </p>
+<p>\(\| \cdot \| _{\mathcal{B}(X,Y)}\) — operator norm for continuous linear maps </p>
+<p>\(B_r(x)\) — open ball of radius \(r\) centered at \(x\) </p>
+<p>\(\overline{B}_r(x)\) — closed ball of radius \(r\) centered at \(x\) </p>
+<p>\(I_E\) — identity operator on space \(E\) </p>
+<p>\(\text{Df}(x)\) — Fréchet derivative of \(f\) at \(x\) </p>
+<h2 id="a0000000004">Radii Polynomial Notations</h2>
+<p>\(\bar{x}\) — approximate zero or initial guess </p>
+<p>\(\tilde{x}\) — exact zero of function \(f\) </p>
+<p>\(A\) — approximate inverse operator </p>
+<p>\(A^\dagger \) — approximate derivative operator </p>
+<p>\(Y_0\) — bound on \(\| A(f(\bar{x}))\| \) (initial defect) </p>
+<p>\(Z_0\) — bound on \(\| I_E - AA^\dagger \| \) (composition error) </p>
+<p>\(Z_1\) — bound on \(\| A[\text{Df}(\bar{x}) - A^\dagger ]\| \) (derivative approximation error) </p>
+<p>\(Z_2(r)\) — bound on \(\| A[\text{Df}(c) - \text{Df}(\bar{x})]\| \) for \(c \in \overline{B}_r(\bar{x})\) </p>
+<p>\(Z(r)\) — combined bound \(Z_0 + Z_1 + Z_2(r) \cdot r\) </p>
+<p>\(p(r)\) — radii polynomial </p>
+<h2 id="a0000000005">Special Cases</h2>
+<p>When \(E = F\) and \(A^\dagger = \text{Df}(\bar{x})\), we have \(Z_1 = 0\). </p>
+<p>Simple radii polynomial: \(p(r) = Z_2(r)r^2 - (1-Z_0)r + Y_0\) </p>
+<p>General radii polynomial: \(p(r) = Z_2(r)r^2 - (1-Z_0-Z_1)r + Y_0\)  <br /></p>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="index.html" title="RadiiPolynomial"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="RadiiPolynomial"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="ch-foundations.html" title="Foundations"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>
