@@ -1,4 +1,4 @@
-import Mathlib.Analysis.Matrix
+import Mathlib.Analysis.Matrix.Normed
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.CStarAlgebra.Matrix -- For L2Operator norm

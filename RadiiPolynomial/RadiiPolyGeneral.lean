@@ -127,7 +127,7 @@ end NewtonLikeOperator
 
 section Proposition_2_3_1
 /-!
-# Fixed Points ⟺ Zeros (Proposition 2.3.1)
+## Fixed Points ⟺ Zeros (Proposition 2.3.1)
 
 This fundamental equivalence holds in the general E to F setting:
   T(x) = x  ⟺  f(x) = 0
@@ -271,7 +271,7 @@ end RadiiPolynomialDefinitions
 
 section RadiiPolynomialImplications
 /-!
-# Key Implications of Radii Polynomial Negativity
+## Key Implications of Radii Polynomial Negativity
 
 If p(r₀) < 0, this implies the contraction constant Z(r₀) < 1,
 which is the key requirement for the Banach fixed point theorem.
@@ -330,7 +330,7 @@ end RadiiPolynomialImplications
 
 section OperatorBounds
 /-!
-# Operator Bounds for Newton-Like Map
+## Operator Bounds for Newton-Like Map
 
 These lemmas establish the key bounds needed to apply the contraction mapping theorem:
 1. Y₀ bound: ‖T(x̄) - x̄‖ ≤ Y₀ (initial displacement)
@@ -490,7 +490,7 @@ end OperatorBounds
 
 section HelperLemmas
 /-!
-# Helper Lemmas for Fixed Point Theorems
+## Helper Lemmas for Fixed Point Theorems
 
 These technical lemmas are needed to apply the Banach fixed point theorem:
 - Completeness of closed balls
@@ -792,6 +792,10 @@ omit [CompleteSpace F] in
 
     If p(r₀) < 0 where p(r) = Z₂(r)r² - (1-Z₀-Z₁)r + Y₀ (eq. 7.34),
     then there exists a unique x̃ ∈ B̄ᵣ₀(x̄) with f(x̃) = 0.
+
+    RM: It turns out we only need need there exists some r₀ > 0 such that p(r₀) < 0,
+    not that p(r) < 0 for all r ∈ (0, r₀]. This is a slight generalization over the
+    original statement.
 
     Proof strategy:
     1. Define Newton-like operator T(x) = x - A(f(x))
