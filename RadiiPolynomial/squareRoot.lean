@@ -29,14 +29,14 @@ The radii polynomial p(r) = 0.76r² - 0.988r + 0.12 is negative on (0.136, 1.164
 -/
 
 
-section OneDimensionalCLM
+section smulCLM
 /-!
 ## One-Dimensional Continuous Linear Maps
 
 In the one-dimensional case ℝ →L[ℝ] ℝ, every continuous linear map is
 scalar multiplication by some constant a ∈ ℝ.
 
-`smul` is rendered as • by LEAN in Unicode. We define `smulCLM a` as
+`smul`， scalar multiplication, is rendered as `•` by LEAN in Unicode. We define `smulCLM a` as
 the continuous linear map x ↦ a·x. First we establish key properties:
 - Operator norm: ‖smulCLM a‖ = |a|
 - Composition: (smulCLM a) ∘ (smulCLM b) = smulCLM (a·b)
@@ -110,7 +110,7 @@ lemma smulCLM_injective {a : ℝ} (ha : a ≠ 0) : Function.Injective (smulCLM a
   simp only [smulCLM_apply] at hxy
   exact mul_left_cancel₀ ha hxy
 
-end OneDimensionalCLM
+end smulCLM
 
 
 
@@ -168,7 +168,7 @@ noncomputable abbrev ex_r₀ : ℝ := 3 / 20
 lemma ex_bound_Y₀ : ‖ex_A (ex_f ex_xBar)‖ ≤ ex_Y₀ := by
   simp only [ex_A, ex_f, ex_xBar, ex_Y₀, smulCLM_apply, Real.norm_eq_abs]
   -- (19/50) * ((13/10)² - 2) = (19/50) * (-31/100) = -589/5000
-  -- |−589/5000| ≤ 3/25 = 600/5000 ✓
+  -- |−589/5000| ≤ 3/25 = 600/5000
   norm_num
 
 /-- eq. 2.15: ‖I - A ∘ Df(x̄)‖ ≤ Z₀ -/
@@ -204,13 +204,7 @@ lemma ex_bound_Z₂ {c : ℝ} (r : ℝ)
 /-- The radii polynomial is negative at r₀ = 0.15 -/
 lemma ex_radii_poly_neg : radiiPolynomial ex_Y₀ ex_Z₀ ex_Z₂ ex_r₀ < 0 := by
   unfold radiiPolynomial ex_Y₀ ex_Z₀ ex_Z₂ ex_r₀
-  -- (19/25)(3/20)² - (1 - 3/250)(3/20) + 3/25
-  -- = (19/25)(9/400) - (247/250)(3/20) + 3/25
-  -- = 171/10000 - 741/5000 + 1200/10000
-  -- = 171/10000 - 1482/10000 + 1200/10000
-  -- = -111/10000 < 0
-  -- norm_num also works here
-  linarith
+  norm_num
 
 /-- r₀ is positive -/
 lemma ex_r₀_pos : 0 < ex_r₀ := by simp [ex_r₀]
@@ -268,7 +262,7 @@ theorem example_2_4_5 :
 
 /-- Corollary: The zero is √2 (or -√2, but our ball only contains √2) -/
 theorem example_2_4_5_sqrt2 :
-    ∃! xTilde ∈ closedBall (13/10 : ℝ) (3/20), xTilde ^ 2 = 2 := by
+    ∃! xTilde ∈ closedBall (ex_xBar : ℝ) (ex_r₀), xTilde ^ 2 = 2 := by
   obtain ⟨xTilde, ⟨hMem, hZero, _⟩, hUniq⟩ := example_2_4_5
   refine ⟨xTilde, ⟨hMem, ?_⟩, ?_⟩
   · -- f(xTilde) = 0 means xTilde² - 2 = 0, so xTilde² = 2
