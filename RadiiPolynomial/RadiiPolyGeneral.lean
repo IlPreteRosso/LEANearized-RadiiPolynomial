@@ -156,38 +156,7 @@ lemma fixedPoint_injective_iff_zero
   (x : E) :
   NewtonLikeMap A f x = x ↔ f x = 0 := by
   unfold NewtonLikeMap
-
-  -- First equivalence: T(x) = x ⟺ A(f(x)) = 0
-  calc
-    x - A (f x) = x ↔ A (f x) = 0 := by
-      constructor
-      · -- Forward: x - A(f(x)) = x ⟹ A(f(x)) = 0
-        intro h
-        have h_sub : x - (x - A (f x)) = x - x := by rw [h]
-        calc
-          A (f x)
-            = x - (x - A (f x)) := by abel
-          _ = x - x             := by rw [h_sub]
-          _ = 0                 := by rw [sub_self x]
-      · -- Backward: A(f(x)) = 0 ⟹ x - A(f(x)) = x
-        intro h
-        simp [h]
-
-    -- Second equivalence: A(f(x)) = 0 ⟺ f(x) = 0
-    -- This uses injectivity of A
-    _ ↔ f x = 0 := by
-      constructor
-      · -- Forward: A(f(x)) = 0 ⟹ f(x) = 0
-        intro h
-        -- Key fact: A(0) = 0 for linear maps
-        have h_zero : A 0 = 0 := map_zero A
-        -- Build chain: A(f(x)) = 0 = A(0)
-        have : A (f x) = A 0 := h.trans h_zero.symm
-        -- Apply injectivity: A(f(x)) = A(0) ⟹ f(x) = 0
-        exact hA this
-      · -- Backward: f(x) = 0 ⟹ A(f(x)) = 0
-        intro h
-        simp [h]
+  simp only [sub_eq_self, map_eq_zero_iff A hA]
 
 end Proposition_2_3_1
 
@@ -506,7 +475,8 @@ lemma isComplete_closedBall (x : E) (r : ℝ) :
   exact isClosed_closedBall
 
 omit [NormedSpace ℝ E] [CompleteSpace E] in
-/-- Extended distance is finite in normed spaces -/
+/-- Extended distance is finite in normed spaces
+    Needed to apply Banach fixed point theorem -/
 lemma edist_ne_top_of_normed (x y : E) :
   edist x y ≠ ⊤ := by
   rw [edist_dist]
@@ -734,6 +704,10 @@ theorem general_fixed_point_theorem
       (edist_ne_top_of_normed xBar (T_restr ⟨xBar, mem_closedBall_self (le_of_lt hr₀)⟩))
 
   -- Lift the fixed point from the closed ball to E
+  -- `xTilde_sub`: a witness of the fixed point
+  -- `hxTilde_mem`: proof that xTilde_sub ∈ closedBall xBar r₀
+  -- `hxTilde_fixed`: proof that T_restr xTilde_sub = xTilde_sub
+  -- `?_`: placeholder for the uniqueness proof
   refine ⟨xTilde_sub, ⟨hxTilde_mem, hxTilde_fixed⟩, ?_⟩
 
   -- Uniqueness: if T z = z for z ∈ closedBall, then z = xTilde_sub

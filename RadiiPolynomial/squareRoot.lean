@@ -36,7 +36,7 @@ section smulCLM
 In the one-dimensional case ℝ →L[ℝ] ℝ, every continuous linear map is
 scalar multiplication by some constant a ∈ ℝ.
 
-`smul`， scalar multiplication, is rendered as `•` by LEAN in Unicode. We define `smulCLM a` as
+`smul`，scalar multiplication, typeclass behind `•` in LEAN. We define `smulCLM a` as
 the continuous linear map x ↦ a·x. First we establish key properties:
 - Operator norm: ‖smulCLM a‖ = |a|
 - Composition: (smulCLM a) ∘ (smulCLM b) = smulCLM (a·b)
@@ -49,9 +49,9 @@ where the approximate inverse A and derivative Df(x̄) are both scalar CLMs.
 
 /-- A scalar as a continuous linear map ℝ →L[ℝ] ℝ.
 
-    For a ∈ ℝ, `smulCLM a` is the map x ↦ a·x.
+    For a ∈ ℝ, `smulCLM a` is the map x ↦ a·x
 
-    This is noncomputable because ℝ arithmetic is noncomputable in Mathlib. -/
+    This is noncomputable because of ℝ. -/
 noncomputable abbrev smulCLM (a : ℝ) : ℝ →L[ℝ] ℝ := a • ContinuousLinearMap.id ℝ ℝ
 
 /-- Evaluation: (smulCLM a)(x) = a * x -/
@@ -154,13 +154,13 @@ All bounds use exact rational arithmetic for formal verification.
 
 /-! ### Parameter definitions -/
 
-noncomputable abbrev ex_f : ℝ → ℝ := fun x => x ^ 2 - 2
+noncomputable abbrev ex_f    : ℝ → ℝ := fun x => x ^ 2 - 2
 noncomputable abbrev ex_xBar : ℝ := 13 / 10
-noncomputable abbrev ex_A : ℝ →L[ℝ] ℝ := smulCLM (19 / 50)
-noncomputable abbrev ex_Y₀ : ℝ := 3 / 25
-noncomputable abbrev ex_Z₀ : ℝ := 3 / 250
-noncomputable abbrev ex_Z₂ : ℝ → ℝ := fun _ => 19 / 25
-noncomputable abbrev ex_r₀ : ℝ := 3 / 20
+noncomputable abbrev ex_A    : ℝ →L[ℝ] ℝ := smulCLM (19 / 50)
+noncomputable abbrev ex_Y₀   : ℝ := 3 / 25
+noncomputable abbrev ex_Z₀   : ℝ := 3 / 250
+noncomputable abbrev ex_Z₂   : ℝ → ℝ := fun _ => 19 / 25
+noncomputable abbrev ex_r₀   : ℝ := 3 / 20
 
 /-! ### Bound verification lemmas -/
 
@@ -207,7 +207,7 @@ lemma ex_radii_poly_neg : radiiPolynomial ex_Y₀ ex_Z₀ ex_Z₂ ex_r₀ < 0 :=
   norm_num
 
 /-- r₀ is positive -/
-lemma ex_r₀_pos : 0 < ex_r₀ := by simp [ex_r₀]
+lemma ex_r₀_pos : 0 < ex_r₀ := by unfold ex_r₀; norm_num
 
 /-- A is injective -/
 lemma ex_A_inj : Function.Injective ex_A := by
