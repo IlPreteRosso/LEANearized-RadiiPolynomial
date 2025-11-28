@@ -411,7 +411,7 @@ lemma newton_operator_derivative_bound_general
             ≤ ‖(I_E - A.comp A_dagger) + A.comp (A_dagger - fderiv ℝ f xBar)‖ +
               ‖A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ := norm_add_le _ _
           _ ≤ ‖I_E - A.comp A_dagger‖ + ‖A.comp (A_dagger - fderiv ℝ f xBar)‖ +
-              ‖A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ := add_le_add_right (norm_add_le _ _) _
+              ‖A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ := add_le_add (norm_add_le _ _) le_rfl
 
       -- Step 3: Apply the three bounds
       _ ≤ Z₀ + Z₁ + Z₂ r * r := by
@@ -590,8 +590,7 @@ lemma simple_maps_closedBall_to_itself
     _ ≤ Z r₀ * ‖x - xBar‖ + Y₀ := add_le_add h_mvt h_bound_Y
     -- Since ‖x - x̄‖ ≤ r₀ and Z(r₀) ≥ 0: Z(r₀)·‖x - x̄‖ ≤ Z(r₀)·r₀
     _ ≤ Z r₀ * r₀ + Y₀ := by
-        apply add_le_add_right
-        exact mul_le_mul_of_nonneg_left (hx) h_Z_nonneg
+        exact add_le_add (mul_le_mul_of_nonneg_left (hx) h_Z_nonneg) le_rfl
     -- Apply the key inequality from p(r₀) < 0
     _ ≤ r₀ := le_of_lt h_sum_bound
 
