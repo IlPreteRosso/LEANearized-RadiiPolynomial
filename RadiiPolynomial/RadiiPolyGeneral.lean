@@ -433,7 +433,7 @@ lemma newton_operator_derivative_bound_simple
   {f : E → F} {xBar : E} {A : F →L[ℝ] E}
   {Z₀ : ℝ} {Z₂ : ℝ → ℝ} {r : ℝ}
   (hf_diff : Differentiable ℝ f)
-  (h_Z₀ : ‖I_E - A.comp (fderiv ℝ f xBar)‖ ≤ Z₀)                  -- eq. 2.15
+  (h_Z₀ : ‖I_E - A.comp (fderiv ℝ f xBar)‖ ≤ Z₀)                   -- eq. 2.15
   (h_Z₂ : ∀ c ∈ Metric.closedBall xBar r,                          -- eq. 2.16
     ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r * r)
   (c : E) (hc : c ∈ Metric.closedBall xBar r) :
@@ -776,7 +776,7 @@ omit [CompleteSpace F] in
     3. Apply Theorem 7.6.1 to get unique fixed point x̃
     4. Use Proposition 2.3.1 to show f(x̃) = 0
 
-    The key requirement is that A is injective, not invertible. -/
+    The key requirement is that A is injective. -/
 theorem general_radii_polynomial_theorem
   {f : E → F} {xBar : E} {A : F →L[ℝ] E} {A_dagger : E →L[ℝ] F}
   {Y₀ Z₀ Z₁ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
