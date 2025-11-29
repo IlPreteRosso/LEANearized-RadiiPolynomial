@@ -872,7 +872,7 @@ theorem simple_radii_polynomial_theorem_EtoF
   {Y₀ Z₀ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
   (hr₀ : 0 < r₀)
   (h_Y₀ : ‖A (f xBar)‖ ≤ Y₀)                                      -- eq. 2.14
-  (h_Z₀ : ‖I_E - A.comp (fderiv ℝ f xBar)‖ ≤ Z₀)                 -- eq. 2.15
+  (h_Z₀ : ‖I_E - A.comp (fderiv ℝ f xBar)‖ ≤ Z₀)                  -- eq. 2.15
   (h_Z₂ : ∀ c ∈ Metric.closedBall xBar r₀,                        -- eq. 2.16
     ‖A.comp (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r₀ * r₀)
   (hf_diff : Differentiable ℝ f)
