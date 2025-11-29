@@ -30,17 +30,6 @@ jobs:
       - name: Install elan
         run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
 
-      # Cache Lean toolchain between runs
-      - name: Cache .lake directory
-        uses: actions/cache@v4
-        with:
-          path: .lake
-          key: lake-${{ runner.os }}-${{ hashFiles('lake-manifest.json') }}-${{ hashFiles('lakefile.toml') }}
-          restore-keys: |
-            lake-${{ runner.os }}-${{ hashFiles('lake-manifest.json') }}-
-            lake-${{ runner.os }}-
-
-
       - name: Get Mathlib cache
         run: ~/.elan/bin/lake exe cache get || true
 
