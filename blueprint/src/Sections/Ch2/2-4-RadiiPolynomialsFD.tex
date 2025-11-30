@@ -94,7 +94,7 @@ finite dimensions. The method provides explicit domains of existence and uniquen
 \begin{theorem}[Radii polynomial theorem in finite dimensions (Theorem 2.4.2)]\label{thm:radii_poly_fd}
   \lean{simple_radii_polynomial_theorem_same_space}
   \leanok
-  \uses{def:newton_like_map,def:radii_polynomial,prop:fixed_point_iff_zero,thm:fixed_point_radii,lem:poly_neg_implies_contraction,thm:neumann_series}
+  \uses{def:newton_like_map,def:radii_polynomial,prop:fixed_point_iff_zero,thm:fixed_point_radii,lem:poly_neg_implies_contraction,thm:neumann_series,def:nondegenerate_zero}
   Consider $f \in C^1(\mathbb{R}^n, \mathbb{R}^n)$. Let $\bar{x} \in \mathbb{R}^n$ and 
   $A \in M_n(\mathbb{R})$. Let $Y_0$ and $Z_0$ be non-negative constants and 
   $Z_2: (0,\infty) \to [0,\infty)$ be a non-negative function satisfying
@@ -171,7 +171,7 @@ $f(x) = x^2 - 2$, verifying the existence of a unique zero near $\bar{x} = 1.3$.
 \begin{example}[Square root verification]\label{ex:sqrt2}
   \lean{example_2_4_5}
   \leanok
-  \uses{thm:radii_poly_fd,def:radii_polynomial}
+  \uses{thm:radii_poly_fd,def:radii_polynomial,def:nondegenerate_zero}
   Consider $f(x) = x^2 - 2$. Choose initial guess $\bar{x} = \frac{13}{10} = 1.3$,
   approximate inverse $A = \frac{19}{50} = 0.38 \approx (f'(\bar{x}))^{-1} = (2\bar{x})^{-1}$,
   bounds $Y_0 = \frac{3}{25} = 0.12$, $Z_0 = \frac{3}{250} = 0.012$, $Z_2 = \frac{19}{25} = 0.76$,
@@ -204,7 +204,7 @@ $f(x) = x^2 - 2$, verifying the existence of a unique zero near $\bar{x} = 1.3$.
 \begin{corollary}\label{cor:sqrt2_unique}
   \lean{example_2_4_5_sqrt2}
   \leanok
-  \uses{ex:sqrt2}
+  \uses{thm:radii_poly_fd,ex:sqrt2}
   There exists a unique $\tilde{x} \in \overline{B}_{3/20}(13/10)$ with $\tilde{x}^2 = 2$.
 \end{corollary}
 
