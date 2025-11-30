@@ -63,12 +63,19 @@
  </li>
 <li class="">
   <a href="sec-radii_poly_fd.html"><span class="toc_ref">1.4</span> <span class="toc_entry">Radii Polynomials in Finite Dimensions</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-radii_poly_fd.html#subsec:example_sqrt2"><span class="toc_ref">1.4.1</span> <span class="toc_entry">Example 2.4.5: Finding \(\sqrt{2}\)</span></a>
+ </li>
+
+  </ul>
  </li>
 
   </ul>
  </li>
 <li class="">
-  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Banach Space Theory</span></a>
+  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Radii Polynomial of Banach Spaces</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
@@ -154,8 +161,8 @@
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  Let \((X, \| \cdot \| _X)\) and \((Y, \| \cdot \| _Y)\) be normed linear spaces and let \(A: X \rightarrow Y\) be a linear map. The <i class="itshape">operator norm</i> on \(A\) is given by </p>
-<div class="displaymath" id="a0000000008">
+  <p>  Let \((X, \| \cdot \| _X)\) and \((Y, \| \cdot \| _Y)\) be normed linear spaces and let \(A: X \rightarrow Y\) be a continuous linear map. The <i class="itshape">operator norm</i> on \(A\) is given by </p>
+<div class="displaymath" id="a0000000010">
   \begin{equation*}  \| A\| := \sup _{x \in X \setminus \{ 0\} } \frac{\| Ax\| _Y}{\| x\| _X} = \sup _{\| x\| _X = 1} \| Ax\| _Y. \end{equation*}
 </div>
 
@@ -177,6 +184,26 @@
 
     <a class="icon proof" href="sec-mean_value.html#prop:operator_norm_properties">#</a>
     
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-mean_value.html#def:operator_norm">Definition 1.2.1</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
     
     
     <button class="modal lean">L∃∀N</button>
@@ -203,8 +230,9 @@
         </div>
   </div>
   <div class="proposition_thmcontent">
-  <p>  Let \((X, \| \cdot \| )\) be a normed linear space and let \(A, B: X \rightarrow X\) be linear maps. Then: </p>
-<p>(1) \(\| Ax\| \leq \| A\| \| x\| \) for all \(x \in X\) (2) \(\| AB\| \leq \| A\| \| B\| \) (submultiplicativity) </p>
+  <p>   Let \((X, \| \cdot \| )\) be a normed linear space and let \(A, B: X \rightarrow X\) be linear maps. Then: </p>
+<p>(1) \(\| Ax\| \leq \| A\| \| x\| \) for all \(x \in X\) </p>
+<p>(2) \(\| AB\| \leq \| A\| \| B\| \) (submultiplicativity) </p>
 
   </div>
 </div>
@@ -221,6 +249,9 @@
     <div class="thm_header_hidden_extras">
 
     <a class="icon proof" href="sec-mean_value.html#thm:mean_value">#</a>
+    
+    <a class="icon proof" href="sec-mean_value.html#a0000000011"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -247,15 +278,27 @@
         </div>
   </div>
   <div class="theorem_thmcontent">
-  <p>  Suppose that \(U \subset \mathbb {R}^n\) is open and that \(f: U \rightarrow \mathbb {R}^n\) is \(C^1\). Consider \(x, y \in U\) such that the line segment </p>
-<div class="displaymath" id="a0000000009">
-  \begin{equation*}  (1-t)x + ty, \quad t \in [0,1] \end{equation*}
-</div>
-<p> is contained in \(U\). Then, </p>
-<div class="displaymath" id="a0000000010">
+  <p>  Suppose that \(U \subset \mathbb {R}^n\) is open and that \(f: U \rightarrow \mathbb {R}^n\) is \(C^1\). Consider \(x, y \in U\) such that the line segment \((1-t)x + ty\), \(t \in [0,1]\), is contained in \(U\). Then, </p>
+<div class="displaymath" id="a0000000012">
   \begin{equation*}  f(y) - f(x) = \left(\int _0^1 \text{Df}((1-t)x + ty) \,  dt\right)(y-x), \end{equation*}
 </div>
 <p> where \(\text{Df}\) denotes the Jacobian of \(f\). </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000011">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>For each \(i \in \{ 1,\ldots ,n\} \), define \(g_i: [0,1] \rightarrow \mathbb {R}\) by \(g_i(t) = f_i((1-t)x + ty)\). By the fundamental theorem of calculus and chain rule: </p>
+<div class="displaymath" id="a0000000013">
+  \begin{equation*}  f_i(y) - f_i(x) = g_i(1) - g_i(0) = \int _0^1 g’_i(t) \,  dt = \int _0^1 \text{D}f_i((1-t)x + ty) \cdot (y-x) \,  dt. \end{equation*}
+</div>
+<p> Collecting all components yields the result. </p>
 
   </div>
 </div>
@@ -274,6 +317,9 @@
     <div class="thm_header_hidden_extras">
 
     <a class="icon proof" href="sec-mean_value.html#cor:mean_value_inequality">#</a>
+    
+    <a class="icon proof" href="sec-mean_value.html#a0000000014"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
     
     
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -322,10 +368,26 @@
   </div>
   <div class="corollary_thmcontent">
   <p>   Consider an open set \(U \subset \mathbb {R}^n\). Let \(f: U \rightarrow \mathbb {R}^n\) be a \(C^1\) function. Fix a point \(x_0 \in U\) and assume \(\overline{B}_\rho (x_0) \subset U\) for some \(\rho {\gt} 0\). Then, for all \(x, y \in \overline{B}_\rho (x_0)\), </p>
-<div class="displaymath" id="a0000000011">
-  \begin{equation*}  \| f(y) - f(x)\| _\infty \leq \left(\sup _{z \in \overline{B}_\rho (x_0)} \| \text{Df}(z)\| _\infty \right) \| y-x\| _\infty , \end{equation*}
+<div class="displaymath" id="a0000000015">
+  \begin{equation*}  \| f(y) - f(x)\| \leq \left(\sup _{z \in \overline{B}_\rho (x_0)} \| \text{Df}(z)\| \right) \| y-x\| , \end{equation*}
 </div>
-<p> where \(\| \text{Df}(\cdot )\| _\infty \) denotes the operator norm. </p>
+<p> where \(\| \text{Df}(\cdot )\| \) denotes the operator norm. </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000014">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>The line segment from \(x\) to \(y\) lies in \(\overline{B}_\rho (x_0)\) by convexity. By the Mean Value Theorem: </p>
+<div class="displaymath" id="a0000000016">
+  \begin{equation*}  \| f(y) - f(x)\| = \left\| \int _0^1 \text{Df}((1-t)x + ty)(y-x) \,  dt \right\| \leq \int _0^1 \| \text{Df}((1-t)x + ty)\| \| y-x\| \,  dt. \end{equation*}
+</div>
+<p> Since \((1-t)x + ty \in \overline{B}_\rho (x_0)\) for all \(t \in [0,1]\), we have \(\| \text{Df}((1-t)x + ty)\| \leq \sup _{z \in \overline{B}_\rho (x_0)} \| \text{Df}(z)\| \), yielding the result. </p>
 
   </div>
 </div>

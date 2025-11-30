@@ -21,40 +21,20 @@ of fixed points. This section establishes the basic definitions and the classica
   there is a number $\kappa \in [0, 1)$, called a \textit{contraction constant}, such that
   \begin{equation*}
   d(T(x), T(y)) \leq \kappa \cdot d(x, y)
-  \end{equation*}
+\end{equation*}
   for all $x, y \in X$.
 \end{definition}
 
 \begin{theorem}[Contraction Mapping Theorem]\label{thm:contraction_mapping}
   \lean{ContractingWith.exists_fixedPoint'}
   \leanok
-  \uses{def:complete_metric_space,def:contraction}
   Let $(X, d)$ be a complete metric space. If $T: X \to X$ is a contraction with 
   contraction constant $\kappa$, then there exists a unique fixed point $\tilde{x} \in X$ 
   of $T$. Furthermore, $\tilde{x}$ is globally attracting, and for any $x \in X$,
   \begin{equation*}
   d(T^n(x), \tilde{x}) \leq \frac{\kappa^n}{1-\kappa} d(T(x), x).
-  \end{equation*}
+\end{equation*}
 \end{theorem}
-
-\begin{proof}
-  \leanok
-  Choose $x_0 \in X$ and recursively define $x_{n+1} := T(x_n)$. By the contraction property,
-  $d(x_{n+1}, x_n) \leq \kappa \cdot d(x_n, x_{n-1})$, so by induction 
-  $d(x_{n+1}, x_n) \leq \kappa^n d(x_1, x_0)$.
-  
-  For $n < m$, the triangle inequality and geometric series give
-  \begin{equation*}
-  d(x_n, x_m) \leq \sum_{j=n}^{m-1} d(x_{j+1}, x_j) \leq \frac{\kappa^n}{1-\kappa} d(x_1, x_0).
-  \end{equation*}
-  Thus $\{x_n\}$ is Cauchy. By completeness, there exists $\tilde{x} = \lim_{n\to\infty} x_n$.
-  
-  By continuity of $T$, $\tilde{x} = \lim T(x_{n-1}) = T(\tilde{x})$.
-  
-  For uniqueness, if $\tilde{y}$ is another fixed point with $d(\tilde{y}, \tilde{x}) > 0$, then
-  $d(\tilde{y}, \tilde{x}) = d(T(\tilde{y}), T(\tilde{x})) \leq \kappa \cdot d(\tilde{y}, \tilde{x})$,
-  giving $\kappa \geq 1$, a contradiction.
-\end{proof}
 
 \begin{remark}\label{rem:contraction_rate}
   Given a contraction mapping $T: X \to X$, the rate at which points in $X$ converge 

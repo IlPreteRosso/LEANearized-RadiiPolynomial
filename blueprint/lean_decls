@@ -12,6 +12,8 @@ Z_bound
 radiiPolynomial_alt_form
 radii_poly_neg_implies_Z_bound_lt_one
 simple_radii_polynomial_theorem_same_space
+example_2_4_5
+example_2_4_5_sqrt2
 isUnit_of_norm_sub_id_lt_one
 invertible_of_norm_sub_id_lt_one
 invertible_comp_form
@@ -20,7 +22,9 @@ fixedPoint_injective_iff_zero
 generalRadiiPolynomial
 Z_bound_general
 generalRadiiPolynomial_alt_form
+general_radii_poly_neg_implies_Z_lt_one
 simpleRadiiPolynomial
+simple_radii_poly_neg_implies_Z_lt_one
 newton_operator_Y_bound
 newton_operator_fderiv
 newton_operator_derivative_bound_general
@@ -31,4 +35,5 @@ construct_derivative_inverse
 simple_maps_closedBall_to_itself
 general_fixed_point_theorem
 general_radii_polynomial_theorem
+simple_radii_polynomial_theorem_EtoF
 simple_radii_polynomial_theorem_same_space

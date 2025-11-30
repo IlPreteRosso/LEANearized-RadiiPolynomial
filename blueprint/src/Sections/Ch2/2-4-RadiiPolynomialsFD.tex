@@ -5,24 +5,43 @@
 This section develops the radii polynomial method for proving existence of zeros in 
 finite dimensions. The method provides explicit domains of existence and uniqueness.
 
-\begin{theorem}[Fixed point theorem with radii polynomial]\label{thm:fixed_point_radii}
-  \uses{def:contraction,cor:mean_value_inequality}
+\begin{theorem}[Fixed point theorem with radii polynomial (Theorem 2.4.1)]\label{thm:fixed_point_radii}
+  \uses{def:contraction,cor:mean_value_inequality,thm:contraction_mapping}
   Consider a map $T \in C^1(\mathbb{R}^n, \mathbb{R}^n)$ and let $\bar{x} \in \mathbb{R}^n$. 
   Let $Y_0 \geq 0$ and $Z: (0,\infty) \to [0,\infty)$ be a non-negative function satisfying
   \begin{equation*}
   \lVert T(\bar{x}) - \bar{x}\rVert \leq Y_0
-\end{equation*}
-\begin{equation*}
+  \end{equation*}
+  \begin{equation*}
   \lVert \text{DT}(c)\rVert \leq Z(r), \quad \text{for all } c \in \overline{B}_r(\bar{x}) 
     \text{ and all } r > 0.
-\end{equation*}
+  \end{equation*}
   Define
   \begin{equation*}
   p(r) := (Z(r) - 1)r + Y_0.
-\end{equation*}
+  \end{equation*}
   If there exists $r_0 > 0$ such that $p(r_0) < 0$, then there exists a unique 
   $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ such that $T(\tilde{x}) = \tilde{x}$.
 \end{theorem}
+
+\begin{proof}
+  The assumption $p(r_0) < 0$ implies $Z(r_0)r_0 + Y_0 < r_0$ and hence $Z(r_0) < 1$.
+  
+  \textbf{Step 1: $T$ maps $\overline{B}_{r_0}(\bar{x})$ into itself.}
+  Let $x \in \overline{B}_{r_0}(\bar{x})$. By the Mean Value Inequality:
+  \begin{equation*}
+  \lVert T(x) - \bar{x}\rVert \leq \lVert T(x) - T(\bar{x})\rVert + \lVert T(\bar{x}) - \bar{x}\rVert
+  \leq Z(r_0)\lVert x - \bar{x}\rVert + Y_0 \leq Z(r_0)r_0 + Y_0 < r_0.
+  \end{equation*}
+  
+  \textbf{Step 2: $T$ is a contraction on $\overline{B}_{r_0}(\bar{x})$.}
+  For $a, b \in \overline{B}_{r_0}(\bar{x})$, by the Mean Value Inequality:
+  $\lVert T(a) - T(b)\rVert \leq Z(r_0)\lVert a - b\rVert$.
+  Since $Z(r_0) < 1$, $T$ is a contraction.
+  
+  \textbf{Step 3: Apply Contraction Mapping Theorem.}
+  By Theorem~\ref{thm:contraction_mapping}, there exists a unique $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ with $T(\tilde{x}) = \tilde{x}$.
+\end{proof}
 
 \begin{definition}[Radii polynomial]\label{def:radii_polynomial}
   \lean{radiiPolynomial}
@@ -31,7 +50,7 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   the \textit{radii polynomial} is defined by
   \begin{equation*}
   p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0.
-\end{equation*}
+  \end{equation*}
 \end{definition}
 
 \begin{definition}[Combined bound]\label{def:Z_bound}
@@ -40,7 +59,7 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   The \textit{combined bound} is defined as
   \begin{equation*}
   Z(r) := Z_0 + Z_2(r) \cdot r.
-\end{equation*}
+  \end{equation*}
 \end{definition}
 
 \begin{lemma}[Alternative form of radii polynomial]\label{lem:radii_poly_alt_form}
@@ -50,37 +69,47 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   The radii polynomial can be rewritten as
   \begin{equation*}
   p(r) = (Z(r) - 1)r + Y_0.
-\end{equation*}
+  \end{equation*}
 \end{lemma}
+
+\begin{proof}
+  \leanok
+  Direct calculation: $(Z_0 + Z_2(r)r - 1)r + Y_0 = Z_2(r)r^2 + Z_0 r - r + Y_0 = Z_2(r)r^2 - (1-Z_0)r + Y_0$.
+\end{proof}
 
 \begin{lemma}[Polynomial negativity implies contraction]\label{lem:poly_neg_implies_contraction}
   \lean{radii_poly_neg_implies_Z_bound_lt_one}
   \leanok
-  \uses{def:radii_polynomial,def:Z_bound}
+  \uses{def:radii_polynomial,def:Z_bound,lem:radii_poly_alt_form}
   If $Y_0 \geq 0$, $r_0 > 0$, and $p(r_0) < 0$, then $Z(r_0) < 1$.
 \end{lemma}
 
-\begin{theorem}[Radii polynomial theorem in finite dimensions]\label{thm:radii_poly_fd}
+\begin{proof}
+  \leanok
+  By Lemma~\ref{lem:radii_poly_alt_form}, $p(r_0) = (Z(r_0) - 1)r_0 + Y_0 < 0$.
+  Since $Y_0 \geq 0$, we have $(Z(r_0) - 1)r_0 < 0$.
+  Since $r_0 > 0$, dividing gives $Z(r_0) - 1 < 0$, i.e., $Z(r_0) < 1$.
+\end{proof}
+
+\begin{theorem}[Radii polynomial theorem in finite dimensions (Theorem 2.4.2)]\label{thm:radii_poly_fd}
   \lean{simple_radii_polynomial_theorem_same_space}
   \leanok
-  \uses{def:newton_like_map,def:radii_polynomial,prop:fixed_point_iff_zero}
+  \uses{def:newton_like_map,def:radii_polynomial,prop:fixed_point_iff_zero,thm:fixed_point_radii,lem:poly_neg_implies_contraction,thm:neumann_series}
   Consider $f \in C^1(\mathbb{R}^n, \mathbb{R}^n)$. Let $\bar{x} \in \mathbb{R}^n$ and 
   $A \in M_n(\mathbb{R})$. Let $Y_0$ and $Z_0$ be non-negative constants and 
   $Z_2: (0,\infty) \to [0,\infty)$ be a non-negative function satisfying
   \begin{equation*}
   \lVert Af(\bar{x})\rVert \leq Y_0
-\end{equation*}
-\begin{equation*}
+  \end{equation*}
+  \begin{equation*}
   \lVert I - A\text{Df}(\bar{x})\rVert \leq Z_0
-\end{equation*}
-\begin{equation*}
+  \end{equation*}
+  \begin{equation*}
   \lVert A[\text{Df}(c) - \text{Df}(\bar{x})]\rVert \leq Z_2(r) \cdot r, 
     \quad \text{for all } c \in \overline{B}_r(\bar{x}) \text{ and all } r > 0.
-\end{equation*}
-  Define
-  \begin{equation*}
-  p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0.
-\end{equation*}
+  \end{equation*}
+  Define $p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0$.
+  
   If there exists $r_0 > 0$ such that $p(r_0) < 0$, then there exists a unique 
   $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ satisfying $f(\tilde{x}) = 0$ and 
   $\text{Df}(\tilde{x})$ is invertible (hence $\tilde{x}$ is a nondegenerate zero).
@@ -88,61 +117,103 @@ finite dimensions. The method provides explicit domains of existence and uniquen
 
 \begin{proof}
   \leanok
-  \uses{thm:fixed_point_radii,lem:poly_neg_implies_contraction}
-  Define the Newton-like mapping $T(x) = x - Af(x)$.
+  \uses{thm:fixed_point_radii,lem:poly_neg_implies_contraction,prop:fixed_point_iff_zero}
+  \textbf{Step 1: Define Newton-like operator.}
+  Let $T(x) = x - Af(x)$. Since $f$ is $C^1$ and $A$ is linear, $T$ is $C^1$.
   
-  \textbf{Step 1: Verify bounds.}
-  We have $\lVert T(\bar{x}) - \bar{x}\rVert = \lVert Af(\bar{x})\rVert \leq Y_0$ by \eqref{eq:2.14}.
-  
-  For $c \in \overline{B}_{r_0}(\bar{x})$,
+  \textbf{Step 2: Verify bounds.}
+  We have $\lVert T(\bar{x}) - \bar{x}\rVert = \lVert Af(\bar{x})\rVert \leq Y_0$.
+  For $c \in \overline{B}_{r_0}(\bar{x})$, $\text{DT}(c) = I - A\text{Df}(c)$, so
   \begin{equation*}
-  \lVert \text{DT}(c)\rVert = \lVert I - A\text{Df}(c)\rVert
-\end{equation*}
-\begin{equation*}
-  \leq \lVert I - A\text{Df}(\bar{x})\rVert + \lVert A[\text{Df}(\bar{x}) - \text{Df}(c)]\rVert
-\end{equation*}
-\begin{equation*}
-  \leq Z_0 + Z_2(r_0) \cdot r_0 \quad \text{by \eqref{eq:2.15} and \eqref{eq:2.16}}
-\end{equation*}
-\begin{equation*}
-  = Z(r_0).
-\end{equation*}
-  
-  \textbf{Step 2: Apply fixed point theorem.}
-  Since $p(r_0) = (Z(r_0) - 1)r_0 + Y_0 < 0$ by assumption, 
-  Theorem~\ref{thm:fixed_point_radii} gives a unique fixed point 
-  $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ with $T(\tilde{x}) = \tilde{x}$.
+  \lVert \text{DT}(c)\rVert \leq \lVert I - A\text{Df}(\bar{x})\rVert + \lVert A[\text{Df}(\bar{x}) - \text{Df}(c)]\rVert
+  \leq Z_0 + Z_2(r_0)r_0 = Z(r_0).
+  \end{equation*}
   
   \textbf{Step 3: Show $A$ is invertible.}
-  From $p(r_0) < 0$ we get $Z(r_0) < 1$ by Lemma~\ref{lem:poly_neg_implies_contraction}. 
-  In particular, $\lVert I - A\text{Df}(\bar{x})\rVert \leq Z_0 \leq Z(r_0) < 1$, so 
-  $A\text{Df}(\bar{x})$ is invertible by the Neumann series. Since $\text{Df}(\bar{x})$ 
-  is square and finite-dimensional, this implies $A$ is invertible.
+  From $p(r_0) < 0$, Lemma~\ref{lem:poly_neg_implies_contraction} gives $Z(r_0) < 1$.
+  Since $\lVert I - A\text{Df}(\bar{x})\rVert \leq Z_0 \leq Z(r_0) < 1$, by Theorem~\ref{thm:neumann_series},
+  $A\text{Df}(\bar{x})$ is invertible. Since $\text{Df}(\bar{x})$ is square, $A$ is invertible.
   
-  \textbf{Step 4: Convert fixed point to zero.}
-  By Proposition~\ref{prop:fixed_point_iff_zero} and invertibility of $A$, 
-  $T(\tilde{x}) = \tilde{x}$ implies $f(\tilde{x}) = 0$.
+  \textbf{Step 4: Apply fixed point theorem.}
+  By Theorem~\ref{thm:fixed_point_radii}, there exists unique $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ with $T(\tilde{x}) = \tilde{x}$.
   
-  \textbf{Step 5: Show $\text{Df}(\tilde{x})$ is invertible.}
-  Since $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$, we have 
-  $\lVert \text{DT}(\tilde{x})\rVert = \lVert I - A\text{Df}(\tilde{x})\rVert \leq Z(r_0) < 1$. 
-  By the Neumann series, $A\text{Df}(\tilde{x})$ is invertible, which implies 
-  $\text{Df}(\tilde{x})$ is invertible (using that $A$ is invertible).
+  \textbf{Step 5: Convert fixed point to zero.}
+  By Proposition~\ref{prop:fixed_point_iff_zero} (with $A$ injective since invertible), $f(\tilde{x}) = 0$.
+  
+  \textbf{Step 6: Show $\text{Df}(\tilde{x})$ is invertible.}
+  Since $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$, $\lVert I - A\text{Df}(\tilde{x})\rVert \leq Z(r_0) < 1$.
+  By Theorem~\ref{thm:neumann_series}, $A\text{Df}(\tilde{x})$ is invertible.
+  Since $A$ is invertible, $\text{Df}(\tilde{x})$ is invertible.
 \end{proof}
 
 \begin{definition}[Existence interval]\label{def:existence_interval}
-  Consider a radii polynomial $p(r) = Z_2(r)r^2 - (1-Z_0)r + Y_0$ for a function 
-  $f: \mathbb{R}^n \to \mathbb{R}^n$ where $Z_2(r)$ is a polynomial with non-negative 
-  coefficients (or a non-decreasing function of $r$). The maximal interval 
+  \uses{def:radii_polynomial}
+  Consider a radii polynomial $p(r) = Z_2(r)r^2 - (1-Z_0)r + Y_0$ where $Z_2(r)$ is a polynomial 
+  with non-negative coefficients (or a non-decreasing function of $r$). The maximal interval 
   $(r_-, r_+) \subset (0,\infty)$ over which $p(r) < 0$ is called the 
   \textit{existence interval} for the radii polynomial $p$, denoted by $\text{EI}(p)$.
 \end{definition}
 
 \begin{remark}\label{rem:existence_interval_interpretation}
+  \uses{def:existence_interval}
   If the existence interval for a radii polynomial is nonempty, then:
-    (1) $r_-$ provides tight bounds on the location of $\tilde{x}$
-    (2) $r_+$ provides information about the domain of isolation of $\tilde{x}$
-    (3) The unique zero $\tilde{x}$ satisfies $\tilde{x} \in \overline{B}_r(\bar{x})$ 
-          for all $r \in \text{EI}(p)$
+  (1) $r_-$ provides tight bounds on the location of $\tilde{x}$;
+  (2) $r_+$ provides information about the domain of isolation of $\tilde{x}$;
+  (3) the unique zero $\tilde{x}$ satisfies $\tilde{x} \in \overline{B}_r(\bar{x})$ 
+      for all $r \in \text{EI}(p)$.
+\end{remark}
 
+\subsection{Example 2.4.5: Finding $\sqrt{2}$}\label{subsec:example_sqrt2}
+
+We demonstrate the radii polynomial method on the simplest nonlinear function 
+$f(x) = x^2 - 2$, verifying the existence of a unique zero near $\bar{x} = 1.3$.
+
+\begin{example}[Square root verification]\label{ex:sqrt2}
+  \lean{example_2_4_5}
+  \leanok
+  \uses{thm:radii_poly_fd,def:radii_polynomial}
+  Consider $f(x) = x^2 - 2$. Choose initial guess $\bar{x} = \frac{13}{10} = 1.3$,
+  approximate inverse $A = \frac{19}{50} = 0.38 \approx (f'(\bar{x}))^{-1} = (2\bar{x})^{-1}$,
+  bounds $Y_0 = \frac{3}{25} = 0.12$, $Z_0 = \frac{3}{250} = 0.012$, $Z_2 = \frac{19}{25} = 0.76$,
+  and radius $r_0 = \frac{3}{20} = 0.15$.
+  
+  The radii polynomial $p(r) = 0.76r^2 - 0.988r + 0.12$ satisfies $p(0.15) < 0$.
+  
+  Therefore, there exists a unique $\tilde{x} \in \overline{B}_{0.15}(1.3) = [1.15, 1.45]$ 
+  with $\tilde{x}^2 = 2$ and $f'(\tilde{x}) = 2\tilde{x}$ invertible.
+\end{example}
+
+\begin{proof}
+  \leanok
+  \textbf{Step 1: Compute bounds.}
+  For the $Y_0$ bound: $|Af(\bar{x})| = |0.38(1.3^2 - 2)| = |0.38 \cdot (-0.31)| = 0.1178 \leq 0.12 = Y_0$.
+  
+  For the $Z_0$ bound: $|1 - A \cdot 2\bar{x}| = |1 - 0.38 \cdot 2.6| = |1 - 0.988| = 0.012 = Z_0$.
+  
+  For the $Z_2$ bound: If $c \in \overline{B}_r(\bar{x})$, then
+  $|A[f'(c) - f'(\bar{x})]| = |A(2c - 2\bar{x})| = 2|A||c - \bar{x}| \leq 2 \cdot 0.38 \cdot r = 0.76r = Z_2 r$.
+  
+  \textbf{Step 2: Verify polynomial negativity.}
+  $p(0.15) = 0.76 \cdot 0.15^2 - 0.988 \cdot 0.15 + 0.12 = 0.0171 - 0.1482 + 0.12 = -0.0111 < 0$.
+  
+  \textbf{Step 3: Apply Theorem~\ref{thm:radii_poly_fd}.}
+  The theorem guarantees a unique zero $\tilde{x} \in [1.15, 1.45]$ with invertible derivative.
+  Since $\sqrt{2} \approx 1.414 \in [1.15, 1.45]$, this zero is $\sqrt{2}$.
+\end{proof}
+
+\begin{corollary}\label{cor:sqrt2_unique}
+  \lean{example_2_4_5_sqrt2}
+  \leanok
+  \uses{ex:sqrt2}
+  There exists a unique $\tilde{x} \in \overline{B}_{3/20}(13/10)$ with $\tilde{x}^2 = 2$.
+\end{corollary}
+
+\begin{remark}\label{rem:optimal_vs_approximate}
+  \uses{ex:sqrt2}
+  \textbf{Optimal choice:} If $\bar{x} = \sqrt{2}$ (exact) and $A = (2\bar{x})^{-1}$ (exact inverse),
+  the radii polynomial becomes $p(r) = \frac{\sqrt{2}}{2}r^2 - r$, giving 
+  $\text{EI}(p) = (0, \sqrt{2})$.
+  
+  \textbf{Approximate choice:} With $\bar{x} = 1.3$ and $A = 0.38$, the existence interval 
+  is approximately $\text{EI}(p) \approx (0.136, 1.164)$, still sufficient to verify the zero.
 \end{remark}

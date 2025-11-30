@@ -63,12 +63,19 @@
  </li>
 <li class="">
   <a href="sec-radii_poly_fd.html"><span class="toc_ref">1.4</span> <span class="toc_entry">Radii Polynomials in Finite Dimensions</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-radii_poly_fd.html#subsec:example_sqrt2"><span class="toc_ref">1.4.1</span> <span class="toc_entry">Example 2.4.5: Finding \(\sqrt{2}\)</span></a>
+ </li>
+
+  </ul>
  </li>
 
   </ul>
  </li>
 <li class="">
-  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Banach Space Theory</span></a>
+  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Radii Polynomial of Banach Spaces</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
@@ -222,6 +229,31 @@
 
     <a class="icon proof" href="sec-contraction.html#thm:contraction_mapping">#</a>
     
+    <a class="icon proof" href="sec-contraction.html#a0000000007"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-contraction.html#def:complete_metric_space">Definition 1.1.1</a></li>
+          
+          <li><a href="sec-contraction.html#def:contraction">Definition 1.1.2</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
     
     
     <button class="modal lean">L∃∀N</button>
@@ -246,10 +278,29 @@
         </div>
   </div>
   <div class="theorem_thmcontent">
-  <p>  Let \((X, d)\) be a complete metric space. If \(T: X \rightarrow X\) is a contraction with contraction constant \(\kappa \), then there exists a unique fixed point \(\tilde{x} \in X\) of \(T\). Furthermore, \(\tilde{x}\) is globally attracting, and for any \(x \in X\), </p>
-<div class="displaymath" id="a0000000007">
+  <p>   Let \((X, d)\) be a complete metric space. If \(T: X \rightarrow X\) is a contraction with contraction constant \(\kappa \), then there exists a unique fixed point \(\tilde{x} \in X\) of \(T\). Furthermore, \(\tilde{x}\) is globally attracting, and for any \(x \in X\), </p>
+<div class="displaymath" id="a0000000008">
   \begin{equation*}  d(T^n(x), \tilde{x}) \leq \frac{\kappa ^n}{1-\kappa } d(T(x), x). \end{equation*}
 </div>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000007">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>Choose \(x_0 \in X\) and recursively define \(x_{n+1} := T(x_n)\). By the contraction property, \(d(x_{n+1}, x_n) \leq \kappa \cdot d(x_n, x_{n-1})\), so by induction \(d(x_{n+1}, x_n) \leq \kappa ^n d(x_1, x_0)\). </p>
+<p>For \(n {\lt} m\), the triangle inequality and geometric series give </p>
+<div class="displaymath" id="a0000000009">
+  \begin{equation*}  d(x_n, x_m) \leq \sum _{j=n}^{m-1} d(x_{j+1}, x_j) \leq \frac{\kappa ^n}{1-\kappa } d(x_1, x_0). \end{equation*}
+</div>
+<p> Thus \(\{ x_n\} \) is Cauchy. By completeness, there exists \(\tilde{x} = \lim _{n\rightarrow \infty } x_n\). </p>
+<p>By continuity of \(T\), \(\tilde{x} = \lim T(x_{n-1}) = T(\tilde{x})\). </p>
+<p>For uniqueness, if \(\tilde{y}\) is another fixed point with \(d(\tilde{y}, \tilde{x}) {\gt} 0\), then \(d(\tilde{y}, \tilde{x}) = d(T(\tilde{y}), T(\tilde{x})) \leq \kappa \cdot d(\tilde{y}, \tilde{x})\), giving \(\kappa \geq 1\), a contradiction. </p>
 
   </div>
 </div>

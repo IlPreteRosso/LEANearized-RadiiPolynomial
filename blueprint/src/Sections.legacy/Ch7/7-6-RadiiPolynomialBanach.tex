@@ -12,21 +12,15 @@ $X \in \{E, F\}$:
 
   (1) \texttt{NormedAddCommGroup X}: $X$ has a norm satisfying definiteness,
         symmetry, triangle inequality
-        
   (2) \texttt{NormedSpace $\mathbb{R}$ X}: The norm is compatible with scalar multiplication
-  
   (3) \texttt{CompleteSpace X}: Every Cauchy sequence converges
         (crucial for fixed point theorems)
 
 
 This framework supports:
-
   (4) Fréchet derivatives (via the norm structure)
-  
   (5) Fixed point theorems (via completeness)
-  
   (6) Mean Value Theorem (via the metric structure)
-  
   (7) Linear operator theory (via the vector space structure)
 
 
@@ -38,17 +32,9 @@ are invertible.
 \begin{theorem}[Neumann series invertibility]\label{thm:neumann_series}
   \lean{isUnit_of_norm_sub_id_lt_one}
   \leanok
-  \uses{def:operator_norm}
   Let $E$ be a Banach space and $B: E \to E$ a continuous linear operator.
   If $\lVert I_E - B\rVert < 1$, then $B$ is invertible (a unit in the multiplicative sense).
 \end{theorem}
-
-\begin{proof}
-  \leanok
-  Write $B = I_E - (I_E - B)$. Since $\lVert I_E - B \rVert < 1$, the Neumann series
-  $\sum_{n=0}^{\infty} (I_E - B)^n$ converges absolutely to $(I_E - (I_E - B))^{-1} = B^{-1}$.
-  This is a direct application of Mathlib's \texttt{isUnit\_one\_sub\_of\_norm\_lt\_one}.
-\end{proof}
 
 \begin{lemma}[Explicit two-sided inverse]\label{lem:explicit_inverse}
   \lean{invertible_of_norm_sub_id_lt_one}
@@ -57,7 +43,7 @@ are invertible.
   If $\lVert I_E - B\rVert < 1$ for $B: E \to E$, then there exists $B^{-1}: E \to E$ such that
   \begin{equation*}
   B \circ B^{-1} = I_E \quad \text{and} \quad B^{-1} \circ B = I_E.
-  \end{equation*}
+\end{equation*}
 \end{lemma}
 
 \begin{lemma}[Composition form]\label{lem:invertible_comp_form}
@@ -66,8 +52,8 @@ are invertible.
   \uses{lem:explicit_inverse}
   If $\lVert I_E - B\rVert < 1$, then there exists $B^{-1}$ such that
   \begin{equation*}
-  B.\text{comp}(B^{-1}) = I_E \quad \text{and} \quad B^{-1}.\text{comp}(B) = I_E.
-  \end{equation*}
+  B.comp(B^{-1}) = I_E \quad \text{and} \quad B^{-1}.comp(B) = I_E.
+\end{equation*}
 \end{lemma}
 
 \subsection{Newton-Like Operators for E to F Maps}\label{subsec:newton_ef}
@@ -79,7 +65,7 @@ are invertible.
   \textit{Newton-like map} is
   \begin{equation*}
   T(x) = x - A(f(x)).
-  \end{equation*}
+\end{equation*}
   Note that $T: E \to E$ even though $f$ maps between different spaces.
 \end{definition}
 
@@ -91,7 +77,7 @@ are invertible.
   $T(x) = x - A(f(x))$:
   \begin{equation*}
   T(x) = x \quad \iff \quad f(x) = 0.
-  \end{equation*}
+\end{equation*}
   This holds even when $E \neq F$; injectivity of $A$ is sufficient.
 \end{proposition}
 
@@ -104,7 +90,7 @@ are invertible.
   the \textit{general radii polynomial} is
   \begin{equation*}
   p(r) := Z_2(r)r^2 - (1 - Z_0 - Z_1)r + Y_0.
-  \end{equation*}
+\end{equation*}
 \end{definition}
 
 \begin{definition}[Combined bound (general case)]\label{def:Z_bound_general}
@@ -113,21 +99,17 @@ are invertible.
   The \textit{combined bound} is
   \begin{equation*}
   Z(r) := Z_0 + Z_1 + Z_2(r) \cdot r.
-  \end{equation*}
+\end{equation*}
 \end{definition}
 
 \begin{lemma}[Alternative form (general)]\label{lem:general_poly_alt_form}
   \lean{generalRadiiPolynomial_alt_form}
   \leanok
   \uses{def:general_radii_poly,def:Z_bound_general}
-  The general radii polynomial can be rewritten as $p(r) = (Z(r) - 1)r + Y_0$.
-\end{lemma}
-
-\begin{lemma}[General polynomial negativity implies contraction]\label{lem:general_poly_neg_implies_contraction}
-  \lean{general_radii_poly_neg_implies_Z_lt_one}
-  \leanok
-  \uses{def:general_radii_poly,def:Z_bound_general,lem:general_poly_alt_form}
-  If $Y_0 \geq 0$, $r_0 > 0$, and $p(r_0) < 0$ for the general radii polynomial, then $Z(r_0) < 1$.
+  The general radii polynomial can be rewritten as
+  \begin{equation*}
+  p(r) = (Z(r) - 1)r + Y_0.
+\end{equation*}
 \end{lemma}
 
 \begin{definition}[Simple radii polynomial]\label{def:simple_radii_poly_banach}
@@ -136,15 +118,8 @@ are invertible.
   For $Y_0 \geq 0$ and $Z: (0,\infty) \to [0,\infty)$, the \textit{simple radii polynomial} is
   \begin{equation*}
   p(r) := (Z(r) - 1)r + Y_0.
-  \end{equation*}
+\end{equation*}
 \end{definition}
-
-\begin{lemma}[Simple polynomial negativity implies contraction]\label{lem:simple_poly_neg_implies_contraction}
-  \lean{simple_radii_poly_neg_implies_Z_lt_one}
-  \leanok
-  \uses{def:simple_radii_poly_banach}
-  If $Y_0 \geq 0$, $r_0 > 0$, and $p(r_0) < 0$ for the simple radii polynomial, then $Z(r_0) < 1$.
-\end{lemma}
 
 \subsection{Operator Bounds}\label{subsec:operator_bounds}
 
@@ -153,27 +128,20 @@ are invertible.
   \leanok
   \uses{def:newton_ef}
   If $\lVert A(f(\bar{x}))\rVert \leq Y_0$, then for $T(x) = x - A(f(x))$:
-  $\lVert T(\bar{x}) - \bar{x}\rVert \leq Y_0$.
+  \begin{equation*}
+  \lVert T(\bar{x}) - \bar{x}\rVert \leq Y_0.
+\end{equation*}
 \end{lemma}
-
-\begin{proof}
-  \leanok
-  $\lVert T(\bar{x}) - \bar{x}\rVert = \lVert (\bar{x} - A(f(\bar{x}))) - \bar{x}\rVert = \lVert -A(f(\bar{x}))\rVert = \lVert A(f(\bar{x}))\rVert \leq Y_0$.
-\end{proof}
 
 \begin{lemma}[Derivative of Newton operator]\label{lem:newton_fderiv}
   \lean{newton_operator_fderiv}
   \leanok
   \uses{def:newton_ef}
   For $T(x) = x - A(f(x))$ where $f: E \to F$ is differentiable:
-  $\text{DT}(x) = I_E - A \circ \text{Df}(x)$.
+  \begin{equation*}
+  \text{DT}(x) = I_E - A \circ \text{Df}(x).
+\end{equation*}
 \end{lemma}
-
-\begin{proof}
-  \leanok
-  By the chain rule: $\text{D}[x \mapsto A(f(x))] = A \circ \text{Df}(x)$.
-  Since $\text{D}[\text{id}] = I_E$, we have $\text{DT}(x) = I_E - A \circ \text{Df}(x)$.
-\end{proof}
 
 \begin{lemma}[General derivative bound]\label{lem:newton_deriv_bound_general}
   \lean{newton_operator_derivative_bound_general}
@@ -182,34 +150,49 @@ are invertible.
   Suppose for all $c \in \overline{B}_r(\bar{x})$:
   \begin{equation*}
   \lVert I_E - A \circ A^\dagger\rVert \leq Z_0
-  \end{equation*}
-  \begin{equation*}
+\end{equation*}
+\begin{equation*}
   \lVert A \circ (A^\dagger - \text{Df}(\bar{x}))\rVert \leq Z_1
-  \end{equation*}
-  \begin{equation*}
+\end{equation*}
+\begin{equation*}
   \lVert A \circ (\text{Df}(c) - \text{Df}(\bar{x}))\rVert \leq Z_2(r) \cdot r
-  \end{equation*}
-  Then $\lVert \text{DT}(c)\rVert \leq Z_0 + Z_1 + Z_2(r) \cdot r = Z(r)$.
+\end{equation*}
+  Then for $T(x) = x - A(f(x))$ and $c \in \overline{B}_r(\bar{x})$:
+  \begin{equation*}
+  \lVert \text{DT}(c)\rVert \leq Z_0 + Z_1 + Z_2(r) \cdot r = Z(r).
+\end{equation*}
 \end{lemma}
 
 \begin{proof}
   \leanok
-  Decompose using $A^\dagger$:
+  For $c \in \overline{B}_r(\bar{x})$, decompose using $A^\dagger$:
   \begin{equation*}
-  I_E - A \circ \text{Df}(c) = [I_E - A \circ A^\dagger] + A \circ [A^\dagger - \text{Df}(\bar{x})]
+  \text{DT}(c) = I_E - A \circ \text{Df}(c)
+\end{equation*}
+\begin{equation*}
+  = [I_E - A \circ A^\dagger] + A \circ [A^\dagger - \text{Df}(\bar{x})]
        + A \circ [\text{Df}(\bar{x}) - \text{Df}(c)].
-  \end{equation*}
-  By triangle inequality: $\lVert \text{DT}(c)\rVert \leq Z_0 + Z_1 + Z_2(r) \cdot r$.
+\end{equation*}
+  Apply triangle inequality and the three bounds \eqref{eq:7.31}, \eqref{eq:7.32},
+  \eqref{eq:7.33}:
+  \begin{equation*}
+  \lVert \text{DT}(c)\rVert \leq Z_0 + Z_1 + Z_2(r) \cdot r.
+\end{equation*}
 \end{proof}
 
 \begin{lemma}[Simple derivative bound]\label{lem:newton_deriv_bound_simple}
   \lean{newton_operator_derivative_bound_simple}
   \leanok
-  \uses{lem:newton_fderiv,def:Z_bound}
-  When $A^\dagger = \text{Df}(\bar{x})$ (so $Z_1 = 0$), for all $c \in \overline{B}_r(\bar{x})$:
-  if $\lVert I_E - A \circ \text{Df}(\bar{x})\rVert \leq Z_0$ and
-  $\lVert A \circ (\text{Df}(c) - \text{Df}(\bar{x}))\rVert \leq Z_2(r) \cdot r$,
-  then $\lVert \text{DT}(c)\rVert \leq Z_0 + Z_2(r) \cdot r$.
+  \uses{lem:newton_fderiv}
+  When $A^\dagger = \text{Df}(\bar{x})$ (so $Z_1 = 0$), for all
+  $c \in \overline{B}_r(\bar{x})$:
+  \begin{equation*}
+  \lVert I_E - A \circ \text{Df}(\bar{x})\rVert \leq Z_0
+\end{equation*}
+\begin{equation*}
+  \lVert A \circ (\text{Df}(c) - \text{Df}(\bar{x}))\rVert \leq Z_2(r) \cdot r
+\end{equation*}
+  imply $\lVert \text{DT}(c)\rVert \leq Z_0 + Z_2(r) \cdot r$.
 \end{lemma}
 
 \subsection{Helper Lemmas}\label{subsec:helper_lemmas}
@@ -217,7 +200,6 @@ are invertible.
 \begin{lemma}[Closed balls are complete]\label{lem:closed_ball_complete}
   \lean{isComplete_closedBall}
   \leanok
-  \uses{def:complete_metric_space}
   In a complete space $E$, closed balls $\overline{B}_r(x)$ are complete.
 \end{lemma}
 
@@ -230,45 +212,43 @@ are invertible.
 \begin{lemma}[Constructing derivative inverse]\label{lem:construct_deriv_inverse}
   \lean{construct_derivative_inverse}
   \leanok
-  \uses{lem:invertible_comp_form}
+  \uses{thm:neumann_series}
   If $A: F \to E$ is injective and $\lVert I_E - A \circ B\rVert < 1$ for $B: E \to F$,
   then $B$ is invertible with inverse $B^{-1} = (A \circ B)^{-1} \circ A$.
 \end{lemma}
 
-\begin{proof}
-  \leanok
-  By Lemma~\ref{lem:invertible_comp_form}, $A \circ B$ is invertible with inverse $(A \circ B)^{-1}$.
-  Let $B^{-1} = (A \circ B)^{-1} \circ A$.
-  
-  \textbf{Left inverse:} $B(B^{-1}(x)) = B((A \circ B)^{-1}(A(x)))$.
-  Apply $A$: $A(B(B^{-1}(x))) = (A \circ B)((A \circ B)^{-1}(A(x))) = A(x)$.
-  By injectivity of $A$: $B(B^{-1}(x)) = x$.
-  
-  \textbf{Right inverse:} $B^{-1}(B(x)) = (A \circ B)^{-1}(A(B(x))) = (A \circ B)^{-1}((A \circ B)(x)) = x$.
-\end{proof}
-
 \begin{lemma}[Ball mapping property]\label{lem:maps_ball_to_itself}
   \lean{simple_maps_closedBall_to_itself}
   \leanok
-  \uses{cor:mean_value_inequality,def:simple_radii_poly_banach}
+  \uses{cor:mean_value_inequality}
   Given $T: E \to E$ differentiable with:
-  (a) $\lVert T(\bar{x}) - \bar{x}\rVert \leq Y_0$;
-  (b) $\lVert \text{DT}(c)\rVert \leq Z(r_0)$ for all $c \in \overline{B}_{r_0}(\bar{x})$;
-  (c) $Z(r_0) \geq 0$;
-  (d) $p(r_0) = (Z(r_0) - 1)r_0 + Y_0 < 0$.
+    (8) $\lVert T(\bar{x}) - \bar{x}\rVert \leq Y_0$
+    (9) $\lVert \text{DT}(c)\rVert \leq Z(r_0)$ for all $c \in \overline{B}_{r_0}(\bar{x})$
+    (10) $p(r_0) = (Z(r_0) - 1)r_0 + Y_0 < 0$
+
   Then $T: \overline{B}_{r_0}(\bar{x}) \to \overline{B}_{r_0}(\bar{x})$.
 \end{lemma}
 
 \begin{proof}
   \leanok
-  From $p(r_0) < 0$: $Z(r_0) \cdot r_0 + Y_0 < r_0$.
-  The segment $[\bar{x}, x]$ lies in $\overline{B}_{r_0}(\bar{x})$ by convexity.
-  By Mean Value Theorem: $\lVert T(x) - T(\bar{x})\rVert \leq Z(r_0) \cdot \lVert x - \bar{x}\rVert \leq Z(r_0) \cdot r_0$.
+  Let $x \in \overline{B}_{r_0}(\bar{x})$. From $p(r_0) < 0$:
+  \begin{equation*}
+  Z(r_0) \cdot r_0 + Y_0 < r_0.
+\end{equation*}
+
+  By Mean Value Theorem:
+  \begin{equation*}
+  \lVert T(x) - T(\bar{x})\rVert \leq Z(r_0) \cdot \lVert x - \bar{x}\rVert \leq Z(r_0) \cdot r_0.
+\end{equation*}
+
   By triangle inequality:
   \begin{equation*}
   \lVert T(x) - \bar{x}\rVert \leq \lVert T(x) - T(\bar{x})\rVert + \lVert T(\bar{x}) - \bar{x}\rVert
+\end{equation*}
+\begin{equation*}
   \leq Z(r_0) \cdot r_0 + Y_0 < r_0.
-  \end{equation*}
+\end{equation*}
+  Therefore $T(x) \in \overline{B}_{r_0}(\bar{x})$.
 \end{proof}
 
 \subsection{Main Theorems}\label{subsec:main_theorems}
@@ -276,14 +256,14 @@ are invertible.
 \begin{theorem}[General Fixed Point Theorem (Theorem 7.6.1)]\label{thm:general_fixed_point}
   \lean{general_fixed_point_theorem}
   \leanok
-  \uses{def:simple_radii_poly_banach,lem:maps_ball_to_itself,thm:contraction_mapping,lem:closed_ball_complete,lem:edist_finite,lem:simple_poly_neg_implies_contraction}
+  \uses{def:simple_radii_poly_banach,lem:maps_ball_to_itself,thm:contraction_mapping}
   Let $T: E \to E$ be Fréchet differentiable and $\bar{x} \in E$. Suppose:
   \begin{equation*}
   \lVert T(\bar{x}) - \bar{x}\rVert \leq Y_0
-  \end{equation*}
-  \begin{equation*}
+\end{equation*}
+\begin{equation*}
   \lVert \text{DT}(x)\rVert \leq Z(r) \quad \text{for all } x \in \overline{B}_r(\bar{x})
-  \end{equation*}
+\end{equation*}
   Define $p(r) := (Z(r) - 1)r + Y_0$.
 
   If there exists $r_0 > 0$ such that $p(r_0) < 0$, then there exists a unique
@@ -292,41 +272,43 @@ are invertible.
 
 \begin{proof}
   \leanok
-  \textbf{Step 1:} From $p(r_0) < 0$ and Lemma~\ref{lem:simple_poly_neg_implies_contraction}: $Z(r_0) < 1$.
-  Also $Z(r_0) \geq 0$ since $\lVert \text{DT}(\bar{x})\rVert \geq 0$.
+  \textbf{Step 1:} From $p(r_0) < 0$, we get $Z(r_0) < 1$ (contraction constant).
 
-  \textbf{Step 2:} By Lemma~\ref{lem:maps_ball_to_itself}, $T: \overline{B}_{r_0}(\bar{x}) \to \overline{B}_{r_0}(\bar{x})$.
+  \textbf{Step 2:} By Lemma~\ref{lem:maps_ball_to_itself},
+  $T: \overline{B}_{r_0}(\bar{x}) \to \overline{B}_{r_0}(\bar{x})$.
 
-  \textbf{Step 3:} $T$ restricted to $\overline{B}_{r_0}(\bar{x})$ is a contraction with constant $Z(r_0) < 1$.
-  For $x, y \in \overline{B}_{r_0}(\bar{x})$, by Mean Value Theorem:
-  $\lVert T(x) - T(y)\rVert \leq Z(r_0) \lVert x - y\rVert$.
+  \textbf{Step 3:} $T$ restricted to $\overline{B}_{r_0}(\bar{x})$ is a contraction
+  with constant $Z(r_0) < 1$.
 
   \textbf{Step 4:} The closed ball is complete by Lemma~\ref{lem:closed_ball_complete}.
 
-  \textbf{Step 5:} Apply Theorem~\ref{thm:contraction_mapping} to get unique fixed point.
+  \textbf{Step 5:} Apply Banach Fixed Point Theorem to get unique fixed point.
 \end{proof}
 
 \begin{theorem}[General Radii Polynomial Theorem (Theorem 7.6.2)]\label{thm:general_radii_poly}
   \lean{general_radii_polynomial_theorem}
   \leanok
-  \uses{thm:general_fixed_point,prop:fixed_zero_ef,def:general_radii_poly,lem:newton_Y_bound,lem:newton_deriv_bound_general,lem:general_poly_alt_form}
+  \uses{thm:general_fixed_point,prop:fixed_zero_ef,def:general_radii_poly}
   Let $E$ and $F$ be Banach spaces and $f: E \to F$ be Fréchet differentiable.
   Suppose $\bar{x} \in E$, $A^\dagger: E \to F$, and $A: F \to E$ with $A$ injective.
   Assume:
   \begin{equation*}
   \lVert A(f(\bar{x}))\rVert \leq Y_0
-  \end{equation*}
-  \begin{equation*}
+\end{equation*}
+\begin{equation*}
   \lVert I_E - A \circ A^\dagger\rVert \leq Z_0
-  \end{equation*}
-  \begin{equation*}
+\end{equation*}
+\begin{equation*}
   \lVert A \circ [\text{Df}(\bar{x}) - A^\dagger]\rVert \leq Z_1
-  \end{equation*}
-  \begin{equation*}
+\end{equation*}
+\begin{equation*}
   \lVert A \circ [\text{Df}(c) - \text{Df}(\bar{x})]\rVert \leq Z_2(r) \cdot r
     \quad \text{for } c \in \overline{B}_r(\bar{x})
-  \end{equation*}
-  Define $p(r) := Z_2(r)r^2 - (1 - Z_0 - Z_1)r + Y_0$.
+\end{equation*}
+  Define
+  \begin{equation*}
+  p(r) := Z_2(r)r^2 - (1 - Z_0 - Z_1)r + Y_0.
+\end{equation*}
 
   If there exists $r_0 > 0$ such that $p(r_0) < 0$, then there exists a unique
   $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ with $f(\tilde{x}) = 0$.
@@ -334,38 +316,40 @@ are invertible.
 
 \begin{proof}
   \leanok
-  \textbf{Step 1:} Let $T(x) = x - A(f(x))$. Then $T: E \to E$ is differentiable.
+  \textbf{Step 1: Define Newton operator.}
+  Let $T(x) = x - A(f(x))$. Then $T: E \to E$ is differentiable.
 
-  \textbf{Step 2:} By Lemma~\ref{lem:newton_Y_bound}: $\lVert T(\bar{x}) - \bar{x}\rVert \leq Y_0$.
-  By Lemma~\ref{lem:newton_deriv_bound_general}: $\lVert \text{DT}(c)\rVert \leq Z(r_0)$ for $c \in \overline{B}_{r_0}(\bar{x})$.
-  By Lemma~\ref{lem:general_poly_alt_form}: $p(r_0) = (Z(r_0) - 1)r_0 + Y_0 < 0$.
+  \textbf{Step 2: Verify conditions of Theorem~\ref{thm:general_fixed_point}.}
+    (11) By Lemma~\ref{lem:newton_Y_bound}: $\lVert T(\bar{x}) - \bar{x}\rVert \leq Y_0$
+    (12) By Lemma~\ref{lem:newton_deriv_bound_general}:
+          $\lVert \text{DT}(c)\rVert \leq Z(r_0)$ for $c \in \overline{B}_{r_0}(\bar{x})$
+    (13) The polynomial condition:
+          $p(r_0) = (Z(r_0) - 1)r_0 + Y_0 < 0$ by Lemma~\ref{lem:general_poly_alt_form}
 
-  \textbf{Step 3:} Apply Theorem~\ref{thm:general_fixed_point}: unique $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ with $T(\tilde{x}) = \tilde{x}$.
 
-  \textbf{Step 4:} By Proposition~\ref{prop:fixed_zero_ef} with injectivity of $A$: $f(\tilde{x}) = 0$.
+  \textbf{Step 3: Apply Theorem~\ref{thm:general_fixed_point}.}
+  Get unique $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ with $T(\tilde{x}) = \tilde{x}$.
+
+  \textbf{Step 4: Convert to zero.}
+  By Proposition~\ref{prop:fixed_zero_ef} with injectivity of $A$: $f(\tilde{x}) = 0$.
 \end{proof}
-
-\begin{theorem}[Simple Radii Polynomial for E to F]\label{thm:simple_radii_poly_ef}
-  \lean{simple_radii_polynomial_theorem_EtoF}
-  \leanok
-  \uses{thm:general_fixed_point,prop:fixed_zero_ef,def:radii_polynomial,lem:newton_Y_bound,lem:newton_deriv_bound_simple,lem:radii_poly_alt_form}
-  Given $f: E \to F$ Fréchet differentiable and injective $A: F \to E$ satisfying
-  $\lVert A(f(\bar{x}))\rVert \leq Y_0$,
-  $\lVert I_E - A \circ \text{Df}(\bar{x})\rVert \leq Z_0$, and
-  $\lVert A \circ [\text{Df}(c) - \text{Df}(\bar{x})]\rVert \leq Z_2(r) \cdot r$ for $c \in \overline{B}_r(\bar{x})$.
-  If $p(r_0) = Z_2(r_0)r_0^2 - (1-Z_0)r_0 + Y_0 < 0$, then there exists unique
-  $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ with $f(\tilde{x}) = 0$.
-\end{theorem}
 
 \begin{theorem}[Simple Radii Polynomial (Same Space)]\label{thm:simple_radii_poly_same}
   \lean{simple_radii_polynomial_theorem_same_space}
   \leanok
-  \uses{thm:general_fixed_point,prop:fixed_zero_ef,lem:construct_deriv_inverse,def:radii_polynomial,lem:newton_Y_bound,lem:newton_deriv_bound_simple,lem:poly_neg_implies_contraction}
+  \uses{thm:general_fixed_point,lem:construct_deriv_inverse}
   Consider $f: E \to E$ Fréchet differentiable, $\bar{x} \in E$, and $A: E \to E$
-  injective. Assume
-  $\lVert A(f(\bar{x}))\rVert \leq Y_0$,
-  $\lVert I_E - A \circ \text{Df}(\bar{x})\rVert \leq Z_0$, and
-  $\lVert A \circ [\text{Df}(c) - \text{Df}(\bar{x})]\rVert \leq Z_2(r) \cdot r$ for $c \in \overline{B}_r(\bar{x})$.
+  injective. Assume:
+  \begin{equation*}
+  \lVert A(f(\bar{x}))\rVert \leq Y_0
+\end{equation*}
+\begin{equation*}
+  \lVert I_E - A \circ \text{Df}(\bar{x})\rVert \leq Z_0
+\end{equation*}
+\begin{equation*}
+  \lVert A \circ [\text{Df}(c) - \text{Df}(\bar{x})]\rVert \leq Z_2(r) \cdot r
+    \quad \text{for } c \in \overline{B}_r(\bar{x})
+\end{equation*}
   Define $p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0$.
 
   If $p(r_0) < 0$, then there exists unique $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$
@@ -374,10 +358,10 @@ are invertible.
 
 \begin{proof}
   \leanok
-  \textbf{Steps 1--4:} As in Theorem~\ref{thm:general_radii_poly}, get fixed point $\tilde{x}$ with $f(\tilde{x}) = 0$.
+  Apply Theorem~\ref{thm:general_fixed_point} to get fixed point $\tilde{x}$.
+  Convert to zero using Proposition~\ref{prop:fixed_zero_ef}.
 
-  \textbf{Step 5 (Invertibility):} Since $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ and $Z(r_0) < 1$
-  (by Lemma~\ref{lem:poly_neg_implies_contraction}),
-  $\lVert I_E - A \circ \text{Df}(\tilde{x})\rVert \leq Z(r_0) < 1$.
-  Apply Lemma~\ref{lem:construct_deriv_inverse}: $\text{Df}(\tilde{x})$ is invertible.
+  For invertibility: Since $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ and
+  $Z(r_0) < 1$, we have $\lVert I_E - A \circ \text{Df}(\tilde{x})\rVert < 1$.
+  Apply Lemma~\ref{lem:construct_deriv_inverse} to get $\text{Df}(\tilde{x})$ invertible.
 \end{proof}
