@@ -900,6 +900,10 @@ theorem simple_radii_polynomial_theorem_EtoF
           exact h_radii)
 
   -- Convert fixed point to zero via Proposition 2.3.1
+  -- ⊢ ∃! xTilde ∈ Metric.closedBall xBar r₀, f xTilde = 0
+  -- which converts to
+  -- ∃ xTilde, (xTilde ∈ closedBall xBar r₀ ∧ f xTilde = 0) ∧
+  -- (∀ z, (z ∈ closedBall xBar r₀ ∧ f z = 0) → z = xTilde)
   refine ⟨xTilde, ⟨hxTilde_mem, ?_⟩, ?_⟩
 
   -- Show f(x̃) = 0
