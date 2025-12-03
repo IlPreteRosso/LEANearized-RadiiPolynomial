@@ -75,6 +75,7 @@ are invertible.
 \begin{definition}[Newton-like map for E to F]\label{def:newton_ef}
   \lean{NewtonLikeMap}
   \leanok
+  \uses{def:newton_like_map}
   For a function $f: E \to F$ and an approximate inverse $A: F \to E$, the
   \textit{Newton-like map} is
   \begin{equation*}
@@ -86,7 +87,7 @@ are invertible.
 \begin{proposition}[Fixed points ⟺ Zeros for E to F]\label{prop:fixed_zero_ef}
   \lean{fixedPoint_injective_iff_zero}
   \leanok
-  \uses{def:newton_ef}
+  \uses{def:newton_ef,prop:fixed_point_iff_zero}
   Let $f: E \to F$ and $A: F \to E$ be injective. Then for the Newton-like operator
   $T(x) = x - A(f(x))$:
   \begin{equation*}

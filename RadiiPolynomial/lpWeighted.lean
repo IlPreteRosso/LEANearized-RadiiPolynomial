@@ -319,38 +319,27 @@ lemma antidiagonal_weight (n : ℕ) (k l : ℕ) (h : k + l = n) :
 lemma mem (ha : lpWeighted.Mem ν 1 a) (hb : lpWeighted.Mem ν 1 b) :
     lpWeighted.Mem ν 1 (a ⋆ b) := by
   rw [l1Weighted.mem_iff] at ha hb ⊢
-  -- Define the weighted sequences
   let f := fun k => |a k| * (ν : ℝ) ^ k
   let g := fun l => |b l| * (ν : ℝ) ^ l
   have hf_nn : ∀ k, 0 ≤ f k := fun k => mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) k)
   have hg_nn : ∀ l, 0 ≤ g l := fun l => mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) l)
-  -- Product summability (Mertens' theorem)
   have hprod : Summable (fun x : ℕ × ℕ => f x.1 * g x.2) :=
     Summable.mul_of_nonneg ha hb hf_nn hg_nn
-  -- Convert to sigma over antidiagonal
-  have hsigma : Summable (fun x : (n : ℕ) × Finset.antidiagonal n => f x.2.1.1 * g x.2.1.2) :=
-    (summable_mul_prod_iff_summable_mul_sigma_antidiagonal.mp hprod)
-  -- Summability of antidiagonal sums
-  have hsum : Summable (fun n => ∑ kl ∈ Finset.antidiagonal n, f kl.1 * g kl.2) := by
-    have h := hsigma.sigma' (fun n => (hasSum_fintype _).summable)
-    convert h using 1
-    ext n
-    rw [tsum_fintype, Finset.sum_coe_sort]
-  -- Bound the Cauchy product
+  have hsum := summable_sum_mul_antidiagonal_of_summable_mul hprod
   apply Summable.of_nonneg_of_le
   · intro n; exact mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) n)
   · intro n
     calc |cauchyProduct a b n| * (ν : ℝ) ^ n
-        = |∑ kl ∈ Finset.antidiagonal n, a kl.1 * b kl.2| * (ν : ℝ) ^ n := rfl
-      _ ≤ (∑ kl ∈ Finset.antidiagonal n, |a kl.1 * b kl.2|) * (ν : ℝ) ^ n :=
-          mul_le_mul_of_nonneg_right (Finset.abs_sum_le_sum_abs _ _)
-            (pow_nonneg (PosReal.coe_nonneg ν) n)
-      _ = ∑ kl ∈ Finset.antidiagonal n, |a kl.1| * |b kl.2| * (ν : ℝ) ^ n := by
-          rw [Finset.sum_mul]; congr 1; ext kl; rw [abs_mul]
+        ≤ (∑ kl ∈ Finset.antidiagonal n, |a kl.1| * |b kl.2|) * (ν : ℝ) ^ n := by
+          apply mul_le_mul_of_nonneg_right _ (pow_nonneg (PosReal.coe_nonneg ν) n)
+          calc |cauchyProduct a b n|
+              = |∑ kl ∈ Finset.antidiagonal n, a kl.1 * b kl.2| := rfl
+            _ ≤ ∑ kl ∈ Finset.antidiagonal n, |a kl.1 * b kl.2| := Finset.abs_sum_le_sum_abs _ _
+            _ = ∑ kl ∈ Finset.antidiagonal n, |a kl.1| * |b kl.2| := by simp_rw [abs_mul]
       _ = ∑ kl ∈ Finset.antidiagonal n, f kl.1 * g kl.2 := by
+          rw [Finset.sum_mul]
           apply Finset.sum_congr rfl; intro kl hkl
-          have h := Finset.mem_antidiagonal.mp hkl
-          simp only [f, g, ← antidiagonal_weight n kl.1 kl.2 h]; ring
+          simp only [f, g, ← antidiagonal_weight n kl.1 kl.2 (Finset.mem_antidiagonal.mp hkl)]; ring
   · exact hsum
 
 /-- Submultiplicativity: ‖a ⋆ b‖₁,ν ≤ ‖a‖₁,ν · ‖b‖₁,ν
@@ -362,44 +351,34 @@ lemma mem (ha : lpWeighted.Mem ν 1 a) (hb : lpWeighted.Mem ν 1 b) :
 
     For geometric weights ωₙ = νⁿ, we have ωₙ = ωₙ₋ₖ · ωₖ (equality, not just ≤). -/
 lemma norm_mul_le (a b : l1Weighted ν) :
-    ‖lpWeighted.mk (a.toSeq ⋆ b.toSeq) (mem a.2 b.2)‖ ≤ ‖a‖ * ‖b‖ := by
+    ‖lpWeighted.mk (lpWeighted.toSeq a ⋆ lpWeighted.toSeq b) (mem a.2 b.2)‖ ≤ ‖a‖ * ‖b‖ := by
   rw [l1Weighted.norm_eq_tsum, l1Weighted.norm_eq_tsum, l1Weighted.norm_eq_tsum]
-  -- Define weighted sequences
-  let f := fun k => |a.toSeq k| * (ν : ℝ) ^ k
-  let g := fun l => |b.toSeq l| * (ν : ℝ) ^ l
+  let f := fun k => |lpWeighted.toSeq a k| * (ν : ℝ) ^ k
+  let g := fun l => |lpWeighted.toSeq b l| * (ν : ℝ) ^ l
   have hf_nn : ∀ k, 0 ≤ f k := fun k => mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) k)
   have hg_nn : ∀ l, 0 ≤ g l := fun l => mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) l)
   have hf : Summable f := (l1Weighted.mem_iff _).mp a.2
   have hg : Summable g := (l1Weighted.mem_iff _).mp b.2
-  -- Product summability
   have hprod : Summable (fun x : ℕ × ℕ => f x.1 * g x.2) :=
     Summable.mul_of_nonneg hf hg hf_nn hg_nn
-  -- Use Cauchy product formula
   rw [hf.tsum_mul_tsum_eq_tsum_sum_antidiagonal hg hprod]
   apply tsum_le_tsum
   · intro n
     simp only [lpWeighted.mk_apply]
-    calc |cauchyProduct a.toSeq b.toSeq n| * (ν : ℝ) ^ n
-        ≤ (∑ kl ∈ Finset.antidiagonal n, |a.toSeq kl.1| * |b.toSeq kl.2|) * (ν : ℝ) ^ n := by
+    calc |cauchyProduct (lpWeighted.toSeq a) (lpWeighted.toSeq b) n| * (ν : ℝ) ^ n
+        ≤ (∑ kl ∈ Finset.antidiagonal n, |lpWeighted.toSeq a kl.1| * |lpWeighted.toSeq b kl.2|) * (ν : ℝ) ^ n := by
           apply mul_le_mul_of_nonneg_right _ (pow_nonneg (PosReal.coe_nonneg ν) n)
-          calc |cauchyProduct a.toSeq b.toSeq n|
-              = |∑ kl ∈ Finset.antidiagonal n, a.toSeq kl.1 * b.toSeq kl.2| := rfl
-            _ ≤ ∑ kl ∈ Finset.antidiagonal n, |a.toSeq kl.1 * b.toSeq kl.2| :=
+          calc |cauchyProduct (lpWeighted.toSeq a) (lpWeighted.toSeq b) n|
+              = |∑ kl ∈ Finset.antidiagonal n, lpWeighted.toSeq a kl.1 * lpWeighted.toSeq b kl.2| := rfl
+            _ ≤ ∑ kl ∈ Finset.antidiagonal n, |lpWeighted.toSeq a kl.1 * lpWeighted.toSeq b kl.2| :=
                 Finset.abs_sum_le_sum_abs _ _
-            _ = ∑ kl ∈ Finset.antidiagonal n, |a.toSeq kl.1| * |b.toSeq kl.2| := by
-                congr 1; ext; rw [abs_mul]
+            _ = ∑ kl ∈ Finset.antidiagonal n, |lpWeighted.toSeq a kl.1| * |lpWeighted.toSeq b kl.2| := by simp_rw [abs_mul]
       _ = ∑ kl ∈ Finset.antidiagonal n, f kl.1 * g kl.2 := by
           rw [Finset.sum_mul]
           apply Finset.sum_congr rfl; intro kl hkl
-          have h := Finset.mem_antidiagonal.mp hkl
-          simp only [f, g, ← antidiagonal_weight n kl.1 kl.2 h]; ring
+          simp only [f, g, ← antidiagonal_weight n kl.1 kl.2 (Finset.mem_antidiagonal.mp hkl)]; ring
   · exact (l1Weighted.mem_iff _).mp (mem a.2 b.2)
-  · have hsigma : Summable (fun x : (n : ℕ) × Finset.antidiagonal n => f x.2.1.1 * g x.2.1.2) :=
-      (summable_mul_prod_iff_summable_mul_sigma_antidiagonal.mp hprod)
-    have h := hsigma.sigma' (fun n => (hasSum_fintype _).summable)
-    convert h using 1
-    ext n
-    rw [tsum_fintype, Finset.sum_coe_sort]
+  · exact summable_sum_mul_antidiagonal_of_summable_mul hprod
 
 end cauchyProduct
 
@@ -418,7 +397,7 @@ variable {ν : PosReal}
 /-- Multiplication via Cauchy product.
     See Corollary 7.4.5: ℓ¹_ν is a commutative Banach algebra. -/
 def mul (a b : l1Weighted ν) : l1Weighted ν :=
-  lpWeighted.mk (a.toSeq ⋆ b.toSeq) (cauchyProduct.mem a.2 b.2)
+  lpWeighted.mk (lpWeighted.toSeq a ⋆ lpWeighted.toSeq b) (cauchyProduct.mem a.2 b.2)
 
 /-- Norm submultiplicativity for Cauchy product.
     This is Equation (7.14) from Definition 7.4.1: ‖x · y‖ ≤ ‖x‖ ‖y‖ -/
