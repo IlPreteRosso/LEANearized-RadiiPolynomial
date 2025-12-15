@@ -308,7 +308,7 @@ structure BlockDiagOp (ν : PosReal) (N : ℕ) where
 
     (A·a)ₙ = (finBlock · a_{[0,N]})ₙ  for n ≤ N
     (A·a)ₙ = tailScalar · aₙ          for n > N -/
-def BlockDiagOp.action (A : BlockDiagOp ν N) (a : ℕ → ℝ) : ℕ → ℝ := fun n =>
+def BlockDiagOp.action {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) (a : ℕ → ℝ) : ℕ → ℝ := fun n =>
   if h : n ≤ N then
     ∑ j : Fin (N + 1), A.finBlock ⟨n, Nat.lt_succ_of_le h⟩ j * a j
   else
@@ -327,7 +327,7 @@ def projTail (a : l1Weighted ν) : ℕ → ℝ :=
   fun n => if n ≤ N then 0 else lpWeighted.toSeq a n
 
 /-- Direct sum decomposition: a = embedFin(projFin a) + projTail a -/
-lemma direct_sum_decomp (a : l1Weighted ν) (n : ℕ) :
+lemma direct_sum_decomp {ν : PosReal} {N : ℕ} (a : l1Weighted ν) (n : ℕ) :
     lpWeighted.toSeq a n = embedFin (N := N) (projFin (N := N) a) n + projTail (N := N) a n := by
   simp only [embedFin, projFin, projTail]
   split_ifs with h
@@ -337,7 +337,7 @@ lemma direct_sum_decomp (a : l1Weighted ν) (n : ℕ) :
 /-- Bound on the finite block contribution.
 
     For the finite part, we use the weighted matrix norm. -/
-lemma finBlock_norm_bound (A : BlockDiagOp ν N) (a : l1Weighted ν) :
+lemma finBlock_norm_bound {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) (a : l1Weighted ν) :
     ∑ n : Fin (N + 1), |∑ j : Fin (N + 1), A.finBlock n j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ) ≤
     l1Weighted.finWeightedMatrixNorm ν A.finBlock *
     ∑ j : Fin (N + 1), |lpWeighted.toSeq a j| * (ν : ℝ) ^ (j : ℕ) := by
@@ -370,7 +370,7 @@ lemma finBlock_norm_bound (A : BlockDiagOp ν N) (a : l1Weighted ν) :
         rw [Finset.mul_sum]; congr 1; ext j; ring
 
 /-- Equality version: factoring out the scalar from tail -/
-lemma tailScalar_norm_eq (A : BlockDiagOp ν N) (a : l1Weighted ν) :
+lemma tailScalar_norm_eq {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) (a : l1Weighted ν) :
     ∑' n : {n : ℕ // N < n}, |A.tailScalar * lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) =
     |A.tailScalar| * ∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) := by
   calc ∑' n : {n : ℕ // N < n}, |A.tailScalar * lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ)
@@ -380,7 +380,7 @@ lemma tailScalar_norm_eq (A : BlockDiagOp ν N) (a : l1Weighted ν) :
         rw [← tsum_mul_left]; congr 1; ext n; ring
 
 /-- Split the ℓ¹ norm into finite and tail parts -/
-lemma norm_split (a : l1Weighted ν) :
+lemma norm_split {ν : PosReal} {N : ℕ} (a : l1Weighted ν) :
     ‖a‖ = (∑ n : Fin (N + 1), |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ)) +
           (∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ)) := by
   rw [l1Weighted.norm_eq_tsum]
@@ -424,7 +424,7 @@ lemma norm_split (a : l1Weighted ν) :
     The function g is summable since:
     - 𝟙_{n≤N} · M has finite support
     - |c| · |aₙ| · νⁿ is summable (a ∈ ℓ¹_ν) -/
-lemma BlockDiagOp.action_mem (A : BlockDiagOp ν N) (a : l1Weighted ν) :
+lemma BlockDiagOp.action_mem {ν : PosReal} {N : ℕ}(A : BlockDiagOp ν N) (a : l1Weighted ν) :
     lpWeighted.Mem ν 1 (A.action (lpWeighted.toSeq a)) := by
   rw [l1Weighted.mem_iff]
   have ha := (l1Weighted.mem_iff _).mp a.2
@@ -469,7 +469,7 @@ lemma BlockDiagOp.action_mem (A : BlockDiagOp ν N) (a : l1Weighted ν) :
     · exact ha.mul_left |A.tailScalar|
 
 /-- The action as a linear map -/
-def BlockDiagOp.toLinearMap (A : BlockDiagOp ν N) : l1Weighted ν →ₗ[ℝ] l1Weighted ν where
+def BlockDiagOp.toLinearMap {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) : l1Weighted ν →ₗ[ℝ] l1Weighted ν where
   toFun a := lpWeighted.mk (A.action (lpWeighted.toSeq a)) (A.action_mem a)
   map_add' a b := by
     apply lpWeighted.ext; intro n
@@ -487,7 +487,7 @@ def BlockDiagOp.toLinearMap (A : BlockDiagOp ν N) : l1Weighted ν →ₗ[ℝ] l
     · ring
 
 /-- The block-diagonal operator as a continuous linear map -/
-def BlockDiagOp.toCLM (A : BlockDiagOp ν N) : l1Weighted ν →L[ℝ] l1Weighted ν :=
+def BlockDiagOp.toCLM {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) : l1Weighted ν →L[ℝ] l1Weighted ν :=
   LinearMap.mkContinuous A.toLinearMap
     (max (l1Weighted.finWeightedMatrixNorm ν A.finBlock) |A.tailScalar|)
     (fun a => by
@@ -524,7 +524,7 @@ def BlockDiagOp.toCLM (A : BlockDiagOp ν N) : l1Weighted ν →L[ℝ] l1Weighte
 
 /-- The CLM action matches the BlockDiagOp action -/
 @[simp]
-lemma BlockDiagOp.toCLM_apply (A : BlockDiagOp ν N) (a : l1Weighted ν) (n : ℕ) :
+lemma BlockDiagOp.toCLM_apply {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) (a : l1Weighted ν) (n : ℕ) :
     lpWeighted.toSeq (A.toCLM a) n = A.action (lpWeighted.toSeq a) n := by
   simp only [toCLM, toLinearMap, LinearMap.mkContinuous_apply, LinearMap.coe_mk, AddHom.coe_mk,
              lpWeighted.mk_apply]

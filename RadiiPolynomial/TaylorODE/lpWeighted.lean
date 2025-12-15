@@ -54,6 +54,16 @@ namespace lpWeighted
 
 variable {ν : PosReal} {p : ℝ≥0∞}
 
+/-- `lpWeighted ν p` inherits its uniform structure from Mathlib's `lp` space. -/
+instance instUniformSpace [Fact (1 ≤ p)] : UniformSpace (lpWeighted ν p) := by
+  change UniformSpace (lp (ScaledReal ν) p)
+  infer_instance
+
+/-- `lpWeighted ν p` inherits completeness from Mathlib's `lp` space. -/
+instance instCompleteSpace [Fact (1 ≤ p)] : CompleteSpace (lpWeighted ν p) := by
+  change CompleteSpace (lp (ScaledReal ν) p)
+  infer_instance
+
 /-- Extract the underlying ℝ sequence -/
 def toSeq (a : lpWeighted ν p) : ℕ → ℝ := fun n => ScaledReal.toReal (a n)
 

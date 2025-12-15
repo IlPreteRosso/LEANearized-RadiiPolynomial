@@ -53,6 +53,50 @@ lemma comm (a b : ℕ → ℝ) : (a ⋆ b) = (b ⋆ a) := by
     · simp only [Prod.mk.eta]
   · intro kl _; ring
 
+/-- If both sequences vanish beyond M, their Cauchy product vanishes beyond 2M -/
+lemma zero_of_support {a b : ℕ → ℝ} {M : ℕ}
+    (ha : ∀ n, M < n → a n = 0) (hb : ∀ n, M < n → b n = 0)
+    (n : ℕ) (hn : 2 * M < n) :
+    (a ⋆ b) n = 0 := by
+  rw [apply]
+  apply Finset.sum_eq_zero
+  intro ⟨k, l⟩ hkl
+  simp only [Finset.mem_antidiagonal] at hkl
+  by_cases hk : M < k
+  · simp [ha k hk]
+  · push_neg at hk
+    have hl : M < l := by omega
+    simp [hb l hl]
+
+/-- Cauchy product split when first sequence has support in [0,N] and n > N:
+    (a⋆h)_n = a_0 h_n + ∑_{k=1}^N a_k h_{n-k} -/
+lemma apply_of_support_le_split {a h : ℕ → ℝ} {N n : ℕ}
+    (ha : ∀ k, N < k → a k = 0) (hn : N < n) :
+    (a ⋆ h) n = a 0 * h n + ∑ k ∈ Finset.Icc 1 N, a k * h (n - k) := by
+  rw [apply]
+  rw [Finset.Nat.sum_antidiagonal_eq_sum_range_succ (fun k l => a k * h l)]
+  -- Restrict to range(N+1) since a_k = 0 for k > N
+  have h_restrict : ∑ k ∈ Finset.range (n + 1), a k * h (n - k) =
+      ∑ k ∈ Finset.range (N + 1), a k * h (n - k) := by
+    symm
+    apply Finset.sum_subset
+    · intro k hk
+      simp only [Finset.mem_range] at hk ⊢
+      omega
+    · intro k hk hk'
+      simp only [Finset.mem_range] at hk hk'
+      push_neg at hk'
+      rw [ha k hk', zero_mul]
+  rw [h_restrict]
+  -- Split off k=0 term: range(N+1) = {0} ∪ Icc 1 N
+  have h_range_eq : Finset.range (N + 1) = insert 0 (Finset.Icc 1 N) := by
+    ext k
+    simp only [Finset.mem_range, Finset.mem_insert, Finset.mem_Icc]
+    omega
+  rw [h_range_eq, Finset.sum_insert]
+  · simp only [Nat.sub_zero]
+  · simp only [Finset.mem_Icc]; omega
+
 end CauchyProduct
 
 end nonComp

@@ -1,4 +1,6 @@
 import Mathlib.Analysis.Normed.Lp.lpSpace
+import Mathlib.LinearAlgebra.FiniteDimensional.Defs
+import Mathlib.Topology.Algebra.Module.FiniteDimension
 
 open scoped BigOperators Topology NNReal ENNReal
 
@@ -133,6 +135,14 @@ instance instNormedAddCommGroup : NormedAddCommGroup (ScaledReal ν n) where
     - Integration with Mathlib's analysis library -/
 instance instNormedSpace : NormedSpace ℝ (ScaledReal ν n) where
   norm_smul_le c x := by rw [norm_smul']; rfl
+
+/-- `ScaledReal ν n` is finite-dimensional over ℝ since it is just ℝ with a rescaled norm. -/
+instance instFiniteDimensional : FiniteDimensional ℝ (ScaledReal ν n) :=
+  inferInstanceAs (FiniteDimensional ℝ ℝ)
+
+/-- Completeness of `ScaledReal ν n`, inherited from finite dimensionality. -/
+instance instCompleteSpace : CompleteSpace (ScaledReal ν n) := by
+  simpa using (FiniteDimensional.complete (𝕜 := ℝ) (E := ScaledReal ν n))
 
 /-- Additive isomorphism from ℝ to ScaledReal -/
 def ofReal : ℝ ≃+ ScaledReal ν n := AddEquiv.refl ℝ
