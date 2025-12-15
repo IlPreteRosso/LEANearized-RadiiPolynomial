@@ -686,7 +686,142 @@ lemma A_DF_sub_approxDeriv_tail {N : ℕ} (lam0 : ℝ) (sol : ApproxSolution N)
   rw [DF_sub_approxDeriv_tail lam0 sol h n hn]
   field_simp [sol.aBar_zero_ne]
 
+/-- The shifted sequence â = (0, ā₁, ..., āₙ, 0, ...) used in Z₁ bound -/
+def shiftedSeq {N : ℕ} (sol : ApproxSolution N) : ℕ → ℝ :=
+  fun k => if k ∈ Finset.Icc 1 N then sol.toSeq k else 0
+
+/-- The shifted sequence has finite support in [1, N] -/
+lemma shiftedSeq_support {N : ℕ} (sol : ApproxSolution N) (k : ℕ) (hk : k ∉ Finset.Icc 1 N) :
+    shiftedSeq sol k = 0 := by simp [shiftedSeq, hk]
+
+/-- Inner sum equals Cauchy product for n > N -/
+lemma inner_sum_eq_cauchy {N : ℕ} (sol : ApproxSolution N) (h : l1Weighted ν) (n : ℕ) (hn : N < n) :
+    ∑ j ∈ Finset.Icc 1 N, lpWeighted.toSeq h (n - j) * sol.toSeq j =
+    (lpWeighted.toSeq h ⋆ shiftedSeq sol) n := by
+  rw [CauchyProduct.apply_range]
+  -- Goal: ∑ j ∈ range(n+1), h(n-j) * shiftedSeq(j) = ∑ j ∈ Icc 1 N, h(n-j) * sol(j)
+  apply Finset.sum_subset_zero_on_sdiff
+  · -- Icc 1 N ⊆ range (n + 1)
+    intro k hk; simp only [Finset.mem_Icc] at hk; simp only [Finset.mem_range]; omega
+  · -- Terms outside Icc 1 N are zero
+    intro k hk
+    simp only [Finset.mem_sdiff, Finset.mem_range, Finset.mem_Icc, not_and, not_le] at hk
+    simp only [shiftedSeq]
+    have : k ∉ Finset.Icc 1 N := by simp only [Finset.mem_Icc, not_and, not_le]; omega
+    simp [this]
+  · -- Summands match on Icc 1 N
+    intro k hk
+    simp only [shiftedSeq, hk, ↓reduceIte]
+
+/-- The shifted sequence is in ℓ¹_ν (finite support) -/
+lemma shiftedSeq_mem {N : ℕ} (sol : ApproxSolution N) : lpWeighted.Mem ν 1 (shiftedSeq sol) := by
+  rw [l1Weighted.mem_iff]
+  apply summable_of_ne_finset_zero (s := Finset.Icc 1 N)
+  intro n hn
+  simp only [shiftedSeq_support sol n hn, abs_zero, zero_mul]
+
+/-- The shifted sequence as an element of ℓ¹_ν -/
+def shiftedL1 {N : ℕ} (sol : ApproxSolution N) : l1Weighted ν :=
+  lpWeighted.mk (shiftedSeq sol) (shiftedSeq_mem sol)
+
+/-- Norm of shifted sequence equals finite sum -/
+lemma shiftedL1_norm {N : ℕ} (sol : ApproxSolution N) :
+    ‖@shiftedL1 ν N sol‖ = ∑ n ∈ Finset.Icc 1 N, |sol.toSeq n| * (ν : ℝ) ^ n := by
+  rw [l1Weighted.norm_eq_tsum]
+  have h_eq : ∀ n, |lpWeighted.toSeq (@shiftedL1 ν N sol) n| * (ν : ℝ) ^ n =
+      if n ∈ Finset.Icc 1 N then |sol.toSeq n| * (ν : ℝ) ^ n else 0 := by
+    intro n
+    simp only [shiftedL1, lpWeighted.mk_apply, shiftedSeq]
+    split_ifs with h
+    · rfl
+    · simp [abs_zero]
+  simp_rw [h_eq]
+  rw [tsum_eq_sum]
+  · apply Finset.sum_congr rfl; intro n hn; simp [hn]
+  · intro n hn; simp [hn]
+
+/-- Key bound for Z₁: tail sum bounded by Cauchy product norm -/
+lemma tail_cauchy_bound {N : ℕ} (sol : ApproxSolution N) (h : l1Weighted ν) :
+    ∑' n : {n : ℕ // N < n}, |∑ j ∈ Finset.Icc 1 N, lpWeighted.toSeq h (n - j) * sol.toSeq j| * (ν : ℝ) ^ (n : ℕ) ≤
+    ‖h‖ * ∑ n ∈ Finset.Icc 1 N, |sol.toSeq n| * (ν : ℝ) ^ n := by
+  -- Rewrite inner sum as Cauchy product
+  have h_inner : ∀ n : {n : ℕ // N < n},
+      |∑ j ∈ Finset.Icc 1 N, lpWeighted.toSeq h (n - j) * sol.toSeq j| * (ν : ℝ) ^ (n : ℕ) =
+      |(lpWeighted.toSeq h ⋆ shiftedSeq sol) n| * (ν : ℝ) ^ (n : ℕ) := by
+    intro ⟨n, hn⟩; rw [inner_sum_eq_cauchy sol h n hn]
+  simp_rw [h_inner]
+  -- Bound tail by full norm using norm_split
+  have h_tail_le : ∑' n : {n : ℕ // N < n}, |(lpWeighted.toSeq h ⋆ shiftedSeq sol) n| * (ν : ℝ) ^ (n : ℕ) ≤
+      ‖CauchyProductBanachAlgebra.mul h (@shiftedL1 ν N sol)‖ := by
+    rw [BlockDiag.norm_split (N := N)]
+    apply le_add_of_nonneg_left
+    apply Finset.sum_nonneg; intro n _
+    exact mul_nonneg (abs_nonneg _) (pow_nonneg (le_of_lt ν.property) _)
+  -- Apply submultiplicativity
+  calc ∑' n : {n : ℕ // N < n}, |(lpWeighted.toSeq h ⋆ shiftedSeq sol) n| * (ν : ℝ) ^ (n : ℕ)
+    ≤ ‖CauchyProductBanachAlgebra.mul h (@shiftedL1 ν N sol)‖ := h_tail_le
+    _ ≤ ‖h‖ * ‖@shiftedL1 ν N sol‖ := CauchyProductBanachAlgebra.norm_mul_le h _
+    _ = ‖h‖ * ∑ n ∈ Finset.Icc 1 N, |sol.toSeq n| * (ν : ℝ) ^ n := by rw [shiftedL1_norm]
+
 end Z1BoundLemmas
+
+/-! ### Z₂ Bound Helper Lemmas
+
+From the textbook proof (page 174):
+1. Since DF(a)h = 2a⋆h, we have DF(c) - DF(ā) = 2(c-ā)⋆(·)
+2. Thus ‖A(DF(c) - DF(ā))‖ ≤ 2‖A‖·‖c-ā‖ ≤ 2‖A‖·r
+3. For block-diagonal A: ‖A‖ ≤ max(‖A_fin‖_{1,ν}, 1/(2|ā₀|)) by Proposition 7.3.14
+4. Hence Z₂ = 2·max(‖A_fin‖_{1,ν}, 1/(2|ā₀|))
+-/
+
+section Z2BoundLemmas
+
+/-- Subtraction distributes over leftMul: leftMul (a - b) = leftMul a - leftMul b
+    Follows from leftMul_add and leftMul_smul. -/
+lemma leftMul_sub {ν : PosReal} (a b : l1Weighted ν) :
+    l1Weighted.leftMul (a - b) = l1Weighted.leftMul a - l1Weighted.leftMul b := by
+  rw [sub_eq_add_neg, l1Weighted.leftMul_add]
+  rw [← neg_one_smul ℝ b, l1Weighted.leftMul_smul]
+  simp only [neg_one_smul]
+  abel
+
+/-- The difference of Fréchet derivatives equals 2·leftMul(c - ā).
+    From textbook: Since DF(a)h = 2a⋆h, we have DF(c) - DF(ā) = 2(c-ā)⋆(·) -/
+lemma fderiv_F_diff_eq_leftMul_diff {ν : PosReal} {N : ℕ} (lam0 : ℝ) (sol : ApproxSolution N) (c : l1Weighted ν) :
+    fderiv ℝ (F lam0) c - fderiv ℝ (F lam0) sol.toL1 =
+    (2 : ℝ) • l1Weighted.leftMul (c - sol.toL1) := by
+  rw [fderiv_F lam0 c, fderiv_F lam0 sol.toL1]
+  rw [← smul_sub, leftMul_sub]
+
+/-- Operator norm bound on the derivative difference: ‖DF(c) - DF(ā)‖ ≤ 2·‖c - ā‖
+    Uses: ‖2·leftMul(c-ā)‖ ≤ 2·‖leftMul(c-ā)‖ ≤ 2·‖c-ā‖ -/
+lemma norm_fderiv_F_diff_le {ν : PosReal} {N : ℕ} (lam0 : ℝ) (sol : ApproxSolution N) (c : l1Weighted ν) :
+    ‖fderiv ℝ (F lam0) c - fderiv ℝ (F lam0) sol.toL1‖ ≤ 2 * ‖c - sol.toL1‖ := by
+  rw [fderiv_F_diff_eq_leftMul_diff lam0 sol c]
+  calc ‖(2 : ℝ) • l1Weighted.leftMul (c - sol.toL1)‖
+      = |2| * ‖l1Weighted.leftMul (c - sol.toL1)‖ := norm_smul 2 _
+    _ = 2 * ‖l1Weighted.leftMul (c - sol.toL1)‖ := by norm_num
+    _ ≤ 2 * ‖c - sol.toL1‖ := by
+        apply mul_le_mul_of_nonneg_left (l1Weighted.norm_leftMul_le _) (by norm_num)
+
+/-- Operator norm bound for approxInverse A: ‖A‖ ≤ max(‖A_fin‖_{1,ν}, 1/(2|ā₀|))
+    This is Proposition 7.3.14 applied to the specific block-diagonal structure of A. -/
+lemma approxInverse_norm_le {ν : PosReal} {N : ℕ} (sol : ApproxSolution N)
+    (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
+    ‖(@approxInverse ν N sol A_fin).toCLM‖ ≤
+    max (l1Weighted.finWeightedMatrixNorm ν A_fin) (1 / (2 * |sol.aBar_fin 0|)) := by
+  have h := BlockDiag.BlockDiagOp.norm_toCLM_le (@approxInverse ν N sol A_fin)
+  simp only [approxInverse] at h
+  convert h using 2
+  rw [abs_one_div, abs_mul, abs_of_pos (by norm_num : (0:ℝ) < 2)]
+
+/-- The Z₂ bound equals 2 times the operator norm bound for A -/
+lemma Z₂_bound_eq_two_mul_max {ν : PosReal} {N : ℕ} (sol : ApproxSolution N)
+    (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
+    @Z₂_bound ν N sol A_fin =
+    2 * max (l1Weighted.finWeightedMatrixNorm ν A_fin) (1 / (2 * |sol.aBar_fin 0|)) := rfl
+
+end Z2BoundLemmas
 
 /-! ## Bound Verification Lemmas (Theorem 7.7.1)
 
@@ -765,85 +900,6 @@ lemma Z₀_bound_valid (sol : ApproxSolution N)
         rw [BlockDiag.norm_split (N := N)]
         exact le_add_of_nonneg_right (tsum_nonneg (fun _ => mul_nonneg (abs_nonneg _) (pow_nonneg ν.coe_nonneg _)))
 
-/-! ### Z₁ Bound Helper Lemmas -/
-
-/-- The shifted sequence â = (0, ā₁, ..., āₙ, 0, ...) used in Z₁ bound -/
-def shiftedSeq {N : ℕ} (sol : ApproxSolution N) : ℕ → ℝ :=
-  fun k => if k ∈ Finset.Icc 1 N then sol.toSeq k else 0
-
-/-- The shifted sequence has finite support in [1, N] -/
-lemma shiftedSeq_support {N : ℕ} (sol : ApproxSolution N) (k : ℕ) (hk : k ∉ Finset.Icc 1 N) :
-    shiftedSeq sol k = 0 := by simp [shiftedSeq, hk]
-
-/-- Inner sum equals Cauchy product for n > N -/
-lemma inner_sum_eq_cauchy {N : ℕ} (sol : ApproxSolution N) (h : l1Weighted ν) (n : ℕ) (hn : N < n) :
-    ∑ j ∈ Finset.Icc 1 N, lpWeighted.toSeq h (n - j) * sol.toSeq j =
-    (lpWeighted.toSeq h ⋆ shiftedSeq sol) n := by
-  rw [CauchyProduct.apply_range]
-  -- Goal: ∑ j ∈ range(n+1), h(n-j) * shiftedSeq(j) = ∑ j ∈ Icc 1 N, h(n-j) * sol(j)
-  apply Finset.sum_subset_zero_on_sdiff
-  · -- Icc 1 N ⊆ range (n + 1)
-    intro k hk; simp only [Finset.mem_Icc] at hk; simp only [Finset.mem_range]; omega
-  · -- Terms outside Icc 1 N are zero
-    intro k hk
-    simp only [Finset.mem_sdiff, Finset.mem_range, Finset.mem_Icc, not_and, not_le] at hk
-    simp only [shiftedSeq]
-    have : k ∉ Finset.Icc 1 N := by simp only [Finset.mem_Icc, not_and, not_le]; omega
-    simp [this]
-  · -- Summands match on Icc 1 N
-    intro k hk
-    simp only [shiftedSeq, hk, ↓reduceIte]
-
-/-- The shifted sequence is in ℓ¹_ν (finite support) -/
-lemma shiftedSeq_mem {N : ℕ} (sol : ApproxSolution N) : lpWeighted.Mem ν 1 (shiftedSeq sol) := by
-  rw [l1Weighted.mem_iff]
-  apply summable_of_ne_finset_zero (s := Finset.Icc 1 N)
-  intro n hn
-  simp only [shiftedSeq_support sol n hn, abs_zero, zero_mul]
-
-/-- The shifted sequence as an element of ℓ¹_ν -/
-def shiftedL1 {N : ℕ} (sol : ApproxSolution N) : l1Weighted ν :=
-  lpWeighted.mk (shiftedSeq sol) (shiftedSeq_mem sol)
-
-/-- Norm of shifted sequence equals finite sum -/
-lemma shiftedL1_norm {N : ℕ} (sol : ApproxSolution N) :
-    ‖@shiftedL1 ν N sol‖ = ∑ n ∈ Finset.Icc 1 N, |sol.toSeq n| * (ν : ℝ) ^ n := by
-  rw [l1Weighted.norm_eq_tsum]
-  have h_eq : ∀ n, |lpWeighted.toSeq (@shiftedL1 ν N sol) n| * (ν : ℝ) ^ n =
-      if n ∈ Finset.Icc 1 N then |sol.toSeq n| * (ν : ℝ) ^ n else 0 := by
-    intro n
-    simp only [shiftedL1, lpWeighted.mk_apply, shiftedSeq]
-    split_ifs with h
-    · rfl
-    · simp [abs_zero]
-  simp_rw [h_eq]
-  rw [tsum_eq_sum]
-  · apply Finset.sum_congr rfl; intro n hn; simp [hn]
-  · intro n hn; simp [hn]
-
-/-- Key bound for Z₁: tail sum bounded by Cauchy product norm -/
-lemma tail_cauchy_bound {N : ℕ} (sol : ApproxSolution N) (h : l1Weighted ν) :
-    ∑' n : {n : ℕ // N < n}, |∑ j ∈ Finset.Icc 1 N, lpWeighted.toSeq h (n - j) * sol.toSeq j| * (ν : ℝ) ^ (n : ℕ) ≤
-    ‖h‖ * ∑ n ∈ Finset.Icc 1 N, |sol.toSeq n| * (ν : ℝ) ^ n := by
-  -- Rewrite inner sum as Cauchy product
-  have h_inner : ∀ n : {n : ℕ // N < n},
-      |∑ j ∈ Finset.Icc 1 N, lpWeighted.toSeq h (n - j) * sol.toSeq j| * (ν : ℝ) ^ (n : ℕ) =
-      |(lpWeighted.toSeq h ⋆ shiftedSeq sol) n| * (ν : ℝ) ^ (n : ℕ) := by
-    intro ⟨n, hn⟩; rw [inner_sum_eq_cauchy sol h n hn]
-  simp_rw [h_inner]
-  -- Bound tail by full norm using norm_split
-  have h_tail_le : ∑' n : {n : ℕ // N < n}, |(lpWeighted.toSeq h ⋆ shiftedSeq sol) n| * (ν : ℝ) ^ (n : ℕ) ≤
-      ‖CauchyProductBanachAlgebra.mul h (@shiftedL1 ν N sol)‖ := by
-    rw [BlockDiag.norm_split (N := N)]
-    apply le_add_of_nonneg_left
-    apply Finset.sum_nonneg; intro n _
-    exact mul_nonneg (abs_nonneg _) (pow_nonneg (le_of_lt ν.property) _)
-  -- Apply submultiplicativity
-  calc ∑' n : {n : ℕ // N < n}, |(lpWeighted.toSeq h ⋆ shiftedSeq sol) n| * (ν : ℝ) ^ (n : ℕ)
-    ≤ ‖CauchyProductBanachAlgebra.mul h (@shiftedL1 ν N sol)‖ := h_tail_le
-    _ ≤ ‖h‖ * ‖@shiftedL1 ν N sol‖ := CauchyProductBanachAlgebra.norm_mul_le h _
-    _ = ‖h‖ * ∑ n ∈ Finset.Icc 1 N, |sol.toSeq n| * (ν : ℝ) ^ n := by rw [shiftedL1_norm]
-
 /-- Z₁ bound verification: ‖A(A† - DF(ā))‖ ≤ Z₁
 
     From the textbook proof (page 173-174):
@@ -904,10 +960,31 @@ lemma Z₁_bound_valid (lam0 : ℝ) (sol : ApproxSolution N)
     Hence Z₂ = 2·max(‖A_fin‖_{1,ν}, 1/(2|ā₀|)) -/
 lemma Z₂_bound_valid (lam0 : ℝ) (sol : ApproxSolution N)
     (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
-    (r : ℝ) (hr : 0 < r) (c : l1Weighted ν) (hc : c ∈ Metric.closedBall sol.toL1 r) :
+    (r : ℝ) (c : l1Weighted ν) (hc : c ∈ Metric.closedBall sol.toL1 r) :
     ‖(@approxInverse ν N sol A_fin).toCLM.comp
       (fderiv ℝ (F lam0) c - fderiv ℝ (F lam0) sol.toL1)‖ ≤ @Z₂_bound ν N sol A_fin * r := by
-  sorry
+  -- Extract ‖c - ā‖ ≤ r from the closed ball condition
+  rw [Metric.mem_closedBall, dist_eq_norm] at hc
+  -- Use submultiplicativity: ‖A ∘ B‖ ≤ ‖A‖ · ‖B‖
+  calc ‖(@approxInverse ν N sol A_fin).toCLM.comp
+        (fderiv ℝ (F lam0) c - fderiv ℝ (F lam0) sol.toL1)‖
+      ≤ ‖(@approxInverse ν N sol A_fin).toCLM‖ *
+        ‖fderiv ℝ (F lam0) c - fderiv ℝ (F lam0) sol.toL1‖ :=
+          ContinuousLinearMap.opNorm_comp_le _ _
+    _ ≤ ‖(@approxInverse ν N sol A_fin).toCLM‖ * (2 * ‖c - sol.toL1‖) := by
+          apply mul_le_mul_of_nonneg_left (norm_fderiv_F_diff_le lam0 sol c)
+          exact norm_nonneg _
+    _ ≤ max (l1Weighted.finWeightedMatrixNorm ν A_fin) (1 / (2 * |sol.aBar_fin 0|)) *
+        (2 * ‖c - sol.toL1‖) := by
+          apply mul_le_mul_of_nonneg_right (approxInverse_norm_le sol A_fin)
+          apply mul_nonneg (by norm_num) (norm_nonneg _)
+    _ = 2 * max (l1Weighted.finWeightedMatrixNorm ν A_fin) (1 / (2 * |sol.aBar_fin 0|)) *
+        ‖c - sol.toL1‖ := by ring
+    _ ≤ 2 * max (l1Weighted.finWeightedMatrixNorm ν A_fin) (1 / (2 * |sol.aBar_fin 0|)) * r := by
+          apply mul_le_mul_of_nonneg_left hc
+          apply mul_nonneg (by norm_num)
+          exact le_max_of_le_left (l1Weighted.finWeightedMatrixNorm_nonneg _)
+    _ = @Z₂_bound ν N sol A_fin * r := by rw [Z₂_bound_eq_two_mul_max]
 
 /-- Injectivity of A follows from Proposition 7.6.5 when p(r₀) < 0
 
@@ -950,7 +1027,7 @@ theorem existence_theorem
     (@Z₀_bound_valid ν N sol A_fin)
     (@Z₁_bound_valid ν N lam0 sol A_fin)
     (fun c hc => by
-      have := @Z₂_bound_valid ν N lam0 sol A_fin r₀ hr₀ c hc
+      have := @Z₂_bound_valid ν N lam0 sol A_fin r₀ c hc
       simp only [mul_comm] at this ⊢
       exact this)
     (differentiable_F lam0)
