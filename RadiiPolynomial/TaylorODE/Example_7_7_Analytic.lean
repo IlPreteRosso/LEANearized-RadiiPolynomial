@@ -28,8 +28,6 @@ open scoped BigOperators NNReal ENNReal
 
 noncomputable section
 
-variable {ν : PosReal}
-
 namespace l1Weighted
 
 /-! ## Absolute Convergence of Power Series -/
