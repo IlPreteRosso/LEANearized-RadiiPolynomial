@@ -111,9 +111,17 @@ def lam0 : ℚ := (Dyadic.invAtPrec 3 prec).toRat
 def ν : ℚ := 1/4
 def r0 : ℚ := (Dyadic.ofIntWithPrec 102 10).toRat
 
-#eval ā₀  -- ≈ 0.577
-#eval ā₁  -- ≈ 0.866
-#eval r0  -- ≈ 0.0996
+#eval |ā₀-0.577|<1e-3   -- ≈ 0.577
+#eval |ā₁-0.866|<1e-3   -- ≈ 0.866
+#eval |ā₂+0.649|<1e-3   -- ≈ -0.649
+
+#eval |A₀₀-0.865|<1e-3  -- ≈ 0.865
+#eval |A₁₀+1.298|<1e-3  -- ≈ -1.298
+#eval |A₂₀-2.920|<1e-3  -- ≈ 2.920
+
+#eval |lam0-0.333|<1e-3  -- ≈ 0.333
+#eval |ν-0.25|<1e-4      -- = 0.25
+#eval |r0-0.0996|<1e-3  -- ≈ 0.0996
 
 /-! ### F(ā) computation -/
 
@@ -174,12 +182,11 @@ def Z₂ : ℚ :=
 
 def radiiPoly : ℚ := Z₂ * r0^2 - (1 - Z₀ - Z₁) * r0 + Y₀
 
-#eval Y₀
-#eval Z₀
-#eval Z₁
-#eval Z₂
-#eval radiiPoly
-#eval (radiiPoly < 0 : Bool)
+#eval |Y₀-0.016|<1e-3   -- ≈ 0.016
+#eval |Z₀-0.0016|<1e-4  -- ≈ 0.0016
+#eval |Z₁-0.446|<1e-3   -- ≈ 0.446
+#eval |Z₂-2.744|<1e-3   -- ≈ 2.744
+#eval (radiiPoly < 0 : Bool) -- should be true
 
 /-- The radii polynomial is negative -/
 theorem radiiPoly_neg : radiiPoly < 0 := by native_decide
@@ -239,12 +246,13 @@ def lam0_val : ℝ := lam0
 /-! ### Padded bound constants (simple rationals, slightly larger than computed) -/
 
 -- Check computed values
-#eval Y₀  -- check actual value
+#eval Y₀
 #eval Z₀
 #eval Z₁
 #eval Z₂
 
-def Y₀_pad : ℚ := 18/1000    -- adjust based on actual
+-- adjust based on actual
+def Y₀_pad : ℚ := 18/1000
 def Z₀_pad : ℚ := 2/1000
 def Z₁_pad : ℚ := 446/1000
 def Z₂_pad : ℚ := 275/100
