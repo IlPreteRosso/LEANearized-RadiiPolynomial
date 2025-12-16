@@ -126,8 +126,8 @@ theorem tsum_paramSeq (lam0 : ℝ) (z : ℝ) :
 /-! ## Main Theorem: Analytic Solution -/
 
 /-- The analytic function defined by the power series -/
-def analyticSolution (a : l1Weighted ν) (z : ℝ) : ℝ :=
-  ∑' n, lpWeighted.toSeq a n * z ^ n
+def analyticSolution (a : l1Weighted ν) (x : ℝ) : ℝ :=
+  ∑' n, lpWeighted.toSeq a n * x ^ n
 
 /-- If F(ã) = ã ⋆ ã - c = 0 coefficient-wise, then x̃(z)² = λ₀ + z pointwise -/
 theorem analyticSolution_sq_eq (a : l1Weighted ν) (lam0 : ℝ) {z : ℝ} (hz : |z| ≤ ν)
