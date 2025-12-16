@@ -752,15 +752,15 @@ lemma tail_cauchy_bound {N : ℕ} (sol : ApproxSolution N) (h : l1Weighted ν) :
   simp_rw [h_inner]
   -- Bound tail by full norm using norm_split
   have h_tail_le : ∑' n : {n : ℕ // N < n}, |(lpWeighted.toSeq h ⋆ shiftedSeq sol) n| * (ν : ℝ) ^ (n : ℕ) ≤
-      ‖CauchyProductBanachAlgebra.mul h (@shiftedL1 ν N sol)‖ := by
+      ‖l1Weighted.mul h (@shiftedL1 ν N sol)‖ := by
     rw [BlockDiag.norm_split (N := N)]
     apply le_add_of_nonneg_left
     apply Finset.sum_nonneg; intro n _
     exact mul_nonneg (abs_nonneg _) (pow_nonneg (le_of_lt ν.property) _)
   -- Apply submultiplicativity
   calc ∑' n : {n : ℕ // N < n}, |(lpWeighted.toSeq h ⋆ shiftedSeq sol) n| * (ν : ℝ) ^ (n : ℕ)
-    ≤ ‖CauchyProductBanachAlgebra.mul h (@shiftedL1 ν N sol)‖ := h_tail_le
-    _ ≤ ‖h‖ * ‖@shiftedL1 ν N sol‖ := CauchyProductBanachAlgebra.norm_mul_le h _
+    ≤ ‖l1Weighted.mul h (@shiftedL1 ν N sol)‖ := h_tail_le
+    _ ≤ ‖h‖ * ‖@shiftedL1 ν N sol‖ := l1Weighted.norm_mul_le h _
     _ = ‖h‖ * ∑ n ∈ Finset.Icc 1 N, |sol.toSeq n| * (ν : ℝ) ^ n := by rw [shiftedL1_norm]
 
 end Z1BoundLemmas
@@ -1107,7 +1107,7 @@ lemma approxInverse_injective (lam0 : ℝ) (sol : ApproxSolution N)
 
     In other words, x(λ) = Σₙ ãₙ(λ - lam0)ⁿ satisfies x(λ)² - λ = 0
     for |λ - lam0| < ν. -/
-theorem existence_theorem
+theorem example_7_7_main_theorem {ν : PosReal} {N : ℕ}
     (lam0 : ℝ)
     (sol : ApproxSolution N)
     (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
@@ -1128,34 +1128,6 @@ theorem existence_theorem
     (differentiable_F lam0)
     h_radii
     (@approxInverse_injective ν N lam0 sol A_fin r₀ hr₀ h_radii)
-
-
-/-! ## Concrete Example: lam0 = 1/3, N = 2
-
-From the textbook (page 175):
-- ā = (0.577..., 0.866..., 0.649...)
-- ν = 1/4
-- r₀ ∈ [0.0367, 0.165]
--/
-
-/-- Concrete values from the textbook example -/
-def example_lam0 : ℝ := 1 / 3
-
-def example_ν : PosReal := ⟨1 / 4, by norm_num⟩
-
-def example_N : ℕ := 2
-
-/-- The approximate solution from page 175 -/
-def example_aBar : Fin 3 → ℝ
-  | 0 => 0.57735026918962
-  | 1 => 0.86602540378443
-  | 2 => 0.64951905283832
-
-/-- The approximate inverse matrix from page 175 -/
-def example_A : Matrix (Fin 3) (Fin 3) ℝ :=
-  !![0.86602540378443, 0, 0;
-     1.29903810567665, 0.86602540378443, 0;
-     2.92283573777248, 1.29903810567665, 0.86602540378443]
 
 end Example_7_7
 

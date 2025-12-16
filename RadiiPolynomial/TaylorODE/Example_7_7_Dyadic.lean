@@ -400,13 +400,13 @@ open ConcreteExample
 
 /-- **Main Theorem**: Existence and uniqueness of Taylor series solution for x² - λ = 0.
 
-    For λ₀ = 1/3 and weight ν = 1/4, there exists a unique sequence ã ∈ ℓ¹_ν
+    For λ₀ = 1/3, N = 2, and weight ν = 1/4, there exists a unique sequence ã ∈ ℓ¹_ν
     within distance r₀ ≈ 0.1 of the approximate solution ā such that
     F(ã) = ã ⋆ ã - c = 0. -/
-theorem example_7_7_existence :
+theorem example_7_7_main_theorem_rat :
     ∃! aTilde ∈ Metric.closedBall (sol.toL1 : l1Weighted ν_val) r0_val,
       F lam0_val aTilde = 0 := by
-  apply existence_theorem
+  apply example_7_7_main_theorem
   · exact r0_val_pos
   · norm_num  -- 0 < 2
   · exact radiiPoly_7_7_neg

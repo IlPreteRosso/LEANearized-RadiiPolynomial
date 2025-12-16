@@ -296,7 +296,9 @@ in the submultiplicative estimate, not just an inequality.
 - Theorem 7.4.4: Weighted ℓ¹ is a Banach algebra under Cauchy product
 - Corollary 7.4.5: ℓ¹_ν specifically is a commutative Banach algebra
 -/
-namespace CauchyProductBanachAlgebra
+section CauchyProductBanachAlgebra
+
+namespace l1Weighted
 
 /-- Cauchy product preserves membership in ℓ¹_ν.
 
@@ -516,6 +518,8 @@ lemma norm_one (ν : PosReal) : ‖one ν‖ = 1 := by
       simp only [this, abs_zero, zero_mul,
         Nat.add_eq_zero_iff, one_ne_zero, and_false, ↓reduceIte]
   rw [h, tsum_ite_eq]
+
+end l1Weighted
 
 end CauchyProductBanachAlgebra
 

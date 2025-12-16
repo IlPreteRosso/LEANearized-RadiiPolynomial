@@ -61,12 +61,12 @@ def leftMul (a : l1Weighted ν) : l1Weighted ν →L[ℝ] l1Weighted ν :=
   LinearMap.mkContinuous
     -- First argument: the underlying linear map (→ₗ[ℝ], not →L[ℝ])
     { -- The function: h ↦ a ⋆ h
-      toFun := fun h => CauchyProductBanachAlgebra.mul a h
+      toFun := fun h => l1Weighted.mul a h
 
       -- Additivity: a ⋆ (h₁ + h₂) = a ⋆ h₁ + a ⋆ h₂
       map_add' := fun h₁ h₂ => by
         apply lpWeighted.ext; intro n
-        simp only [CauchyProductBanachAlgebra.mul, lpWeighted.mk_apply,
+        simp only [l1Weighted.mul, lpWeighted.mk_apply,
                    lpWeighted.add_toSeq, CauchyProduct]
         -- Σ aₖ(h₁ₗ + h₂ₗ) = Σ aₖh₁ₗ + Σ aₖh₂ₗ
         rw [← Finset.sum_add_distrib]
@@ -75,7 +75,7 @@ def leftMul (a : l1Weighted ν) : l1Weighted ν →L[ℝ] l1Weighted ν :=
       -- Scalar homogeneity: a ⋆ (c • h) = c • (a ⋆ h)
       map_smul' := fun c h => by
         apply lpWeighted.ext; intro n
-        simp only [CauchyProductBanachAlgebra.mul, lpWeighted.mk_apply,
+        simp only [l1Weighted.mul, lpWeighted.mk_apply,
                    lpWeighted.smul_toSeq, RingHom.id_apply, CauchyProduct]
         -- Σ aₖ(c·hₗ) = c · Σ aₖhₗ
         rw [Finset.mul_sum]
@@ -85,7 +85,7 @@ def leftMul (a : l1Weighted ν) : l1Weighted ν →L[ℝ] l1Weighted ν :=
     ‖a‖
 
     -- Third argument: proof that ‖a ⋆ h‖ ≤ ‖a‖ · ‖h‖ (submultiplicativity)
-    (fun h => CauchyProductBanachAlgebra.norm_mul_le a h)
+    (fun h => l1Weighted.norm_mul_le a h)
 
 /-- Operator norm bound for left multiplication: ‖leftMul a‖ ≤ ‖a‖
 
@@ -93,17 +93,17 @@ def leftMul (a : l1Weighted ν) : l1Weighted ν →L[ℝ] l1Weighted ν :=
 lemma norm_leftMul_le (a : l1Weighted ν) : ‖leftMul a‖ ≤ ‖a‖ := by
   apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg a)
   intro h
-  exact CauchyProductBanachAlgebra.norm_mul_le a h
+  exact l1Weighted.norm_mul_le a h
 
 /-- Left multiplication applied: (leftMul a) h = a ⋆ h -/
 @[simp]
 lemma leftMul_apply (a h : l1Weighted ν) :
-    leftMul a h = CauchyProductBanachAlgebra.mul a h := rfl
+    leftMul a h = l1Weighted.mul a h := rfl
 
 /-- The underlying sequence of (leftMul a) h -/
 lemma leftMul_toSeq (a h : l1Weighted ν) (n : ℕ) :
     lpWeighted.toSeq (leftMul a h) n = (lpWeighted.toSeq a ⋆ lpWeighted.toSeq h) n := by
-  simp only [leftMul_apply, CauchyProductBanachAlgebra.mul, lpWeighted.mk_apply]
+  simp only [leftMul_apply, l1Weighted.mul, lpWeighted.mk_apply]
 
 /-- Scalar multiplication on leftMul: leftMul (c • a) = c • leftMul a
 
@@ -118,7 +118,7 @@ lemma leftMul_smul (c : ℝ) (a : l1Weighted ν) :
   ext h n
   -- Unfold both sides to sequences
   simp only [leftMul_apply, coe_smul', Pi.smul_apply, lp.coeFn_smul, smul_eq_mul,
-             CauchyProductBanachAlgebra.mul]
+             l1Weighted.mul]
   -- Expand Cauchy product definition
   unfold CauchyProduct
   simp only [← lpWeighted.toSeq_apply, lpWeighted.mk_apply]
@@ -144,7 +144,7 @@ lemma leftMul_add (a b : l1Weighted ν) :
   ext h n
   -- Unfold both sides to sequences
   simp only [leftMul_apply, add_apply, lp.coeFn_add, Pi.add_apply,
-             CauchyProductBanachAlgebra.mul]
+             l1Weighted.mul]
   -- Expand Cauchy product definition
   unfold CauchyProduct
   simp only [← lpWeighted.toSeq_apply, lpWeighted.mk_apply]
@@ -157,12 +157,12 @@ lemma leftMul_add (a b : l1Weighted ν) :
   ring_nf
 
 /-- The squaring map: a ↦ a ⋆ a -/
-def sq (a : l1Weighted ν) : l1Weighted ν := CauchyProductBanachAlgebra.mul a a
+def sq (a : l1Weighted ν) : l1Weighted ν := l1Weighted.mul a a
 
 @[simp]
 lemma sq_toSeq (a : l1Weighted ν) (n : ℕ) :
     lpWeighted.toSeq (sq a) n = (lpWeighted.toSeq a ⋆ lpWeighted.toSeq a) n := by
-  simp only [sq, CauchyProductBanachAlgebra.mul, lpWeighted.mk_apply]
+  simp only [sq, l1Weighted.mul, lpWeighted.mk_apply]
 
 end l1Weighted
 
@@ -198,15 +198,15 @@ lemma sq_expansion (a h : l1Weighted ν) :
   apply Finset.sum_congr rfl; intro kl _
   ring
 
-/-- Commutativity: a ⋆ h = h ⋆ a in the weighted ℓ¹ space
+-- /-- Commutativity: a ⋆ h = h ⋆ a in the weighted ℓ¹ space
 
-    This follows from CauchyProduct.comm. -/
-lemma mul_comm (a b : l1Weighted ν) :
-    CauchyProductBanachAlgebra.mul a b = CauchyProductBanachAlgebra.mul b a := by
-  apply lpWeighted.ext
-  intro n
-  simp only [CauchyProductBanachAlgebra.mul, lpWeighted.mk_apply]
-  rw [CauchyProduct.comm]
+--     This follows from CauchyProduct.comm. -/
+-- lemma mul_comm (a b : l1Weighted ν) :
+--     l1Weighted.mul a b = l1Weighted.mul b a := by
+--   apply lpWeighted.ext
+--   intro n
+--   simp only [l1Weighted.mul, lpWeighted.mk_apply]
+--   rw [CauchyProduct.comm]
 
 /-- leftMul a h = leftMul h a (commutativity) -/
 lemma leftMul_comm (a h : l1Weighted ν) : leftMul a h = leftMul h a := by
@@ -227,8 +227,8 @@ lemma sq_expansion_comm (a h : l1Weighted ν) :
 lemma sq_remainder_norm (a h : l1Weighted ν) :
     ‖sq (a + h) - sq a - (2 : ℝ) • leftMul a h‖ ≤ ‖h‖ ^ 2 := by
   rw [sq_expansion_comm]
-  calc ‖sq h‖ = ‖CauchyProductBanachAlgebra.mul h h‖ := rfl
-    _ ≤ ‖h‖ * ‖h‖ := CauchyProductBanachAlgebra.norm_mul_le h h
+  calc ‖sq h‖ = ‖l1Weighted.mul h h‖ := rfl
+    _ ≤ ‖h‖ * ‖h‖ := l1Weighted.norm_mul_le h h
     _ = ‖h‖ ^ 2 := by ring
 
 /-- **Theorem 7.4.7 (for ℓ¹_ν)**: The squaring map has Fréchet derivative 2·(a ⋆ ·)
