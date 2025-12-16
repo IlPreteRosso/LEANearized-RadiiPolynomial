@@ -14,7 +14,7 @@ noncomputable section nonComp
 
 /-! ## Positive Reals -/
 
-/-- Positive real numbers as a subtype -/
+/-- Positive real numbers asx a subtype -/
 abbrev PosReal := {x : ℝ // 0 < x}
 
 namespace PosReal
@@ -56,6 +56,9 @@ instance : AddLeftMono (ScaledReal ν n) := inferInstanceAs (AddLeftMono ℝ)
 
 /-- Cast to ℝ (identity map) -/
 @[coe] def toReal (x : ScaledReal ν n) : ℝ := x
+
+/-- Coercion from ScaledReal to ℝ. This is the identity since ScaledReal is definitionally ℝ. -/
+instance : CoeOut (ScaledReal ν n) ℝ := ⟨toReal⟩
 
 /-- The instance of type Norm for ScaledReal: ‖x‖ = |x| · νⁿ -/
 instance instNorm : Norm (ScaledReal ν n) where
@@ -149,6 +152,14 @@ def ofReal : ℝ ≃+ ScaledReal ν n := AddEquiv.refl ℝ
 
 @[simp] lemma toReal_apply (x : ScaledReal ν n) : toReal x = x := rfl
 @[simp] lemma ofReal_apply (x : ℝ) : (ofReal x : ScaledReal ν n) = x := rfl
+
+-- Simp lemmas for the coercion
+@[simp] lemma coe_zero : ((0 : ScaledReal ν n) : ℝ) = 0 := rfl
+@[simp] lemma coe_one : ((1 : ScaledReal ν n) : ℝ) = 1 := rfl
+@[simp] lemma coe_add (x y : ScaledReal ν n) : ((x + y : ScaledReal ν n) : ℝ) = x + y := rfl
+@[simp] lemma coe_sub (x y : ScaledReal ν n) : ((x - y : ScaledReal ν n) : ℝ) = x - y := rfl
+@[simp] lemma coe_neg (x : ScaledReal ν n) : ((-x : ScaledReal ν n) : ℝ) = -x := rfl
+@[simp] lemma coe_mul (x y : ScaledReal ν n) : ((x * y : ScaledReal ν n) : ℝ) = x * y := rfl
 
 end ScaledReal
 

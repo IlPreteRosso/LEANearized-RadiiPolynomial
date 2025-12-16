@@ -65,7 +65,7 @@ instance instCompleteSpace [Fact (1 ≤ p)] : CompleteSpace (lpWeighted ν p) :=
   infer_instance
 
 /-- Extract the underlying ℝ sequence -/
-def toSeq (a : lpWeighted ν p) : ℕ → ℝ := fun n => ScaledReal.toReal (a n)
+def toSeq {ν : PosReal} (a : lpWeighted ν p) : ℕ → ℝ := fun n => ScaledReal.toReal (a n)
 
 lemma ext {a b : lpWeighted ν p} (h : ∀ n, toSeq a n = toSeq b n) : a = b :=
   lp.ext (funext h)

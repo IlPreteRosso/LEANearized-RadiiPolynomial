@@ -986,6 +986,80 @@ lemma Z₂_bound_valid (lam0 : ℝ) (sol : ApproxSolution N)
           exact le_max_of_le_left (l1Weighted.finWeightedMatrixNorm_nonneg _)
     _ = @Z₂_bound ν N sol A_fin * r := by rw [Z₂_bound_eq_two_mul_max]
 
+/-! ### Injectivity Helper Lemmas
+
+From the textbook (page 168), Proposition 7.6.5:
+1. p(r₀) < 0 with r₀ > 0 implies Z₀ + Z₁ + Z₂r₀ < 1
+2. Since Z₂r₀ ≥ 0, we have Z₀ + Z₁ < 1
+3. Since Z₁ ≥ 0, we have Z₀ < 1
+4. Z₀ < 1 implies ‖I - A_fin · DF_fin‖ < 1, so A_fin · DF_fin is invertible
+5. For square matrices, if AB is invertible then A is invertible
+6. Block-diagonal operator is injective if A_fin is invertible and tailScalar ≠ 0
+-/
+
+section InjectivityLemmas
+
+/-- Y₀ is non-negative (it's a norm) -/
+lemma Y₀_bound_nonneg {ν : PosReal} {N : ℕ} (lam0 : ℝ) (sol : ApproxSolution N)
+    (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
+    0 ≤ @Y₀_bound ν N lam0 sol A_fin := by
+  unfold Y₀_bound
+  apply add_nonneg
+  · apply Finset.sum_nonneg; intro n _
+    exact mul_nonneg (abs_nonneg _) (pow_nonneg ν.coe_nonneg _)
+  · apply mul_nonneg
+    · apply one_div_nonneg.mpr (mul_nonneg (by norm_num) (abs_nonneg _))
+    · apply Finset.sum_nonneg; intro n _
+      apply mul_nonneg _ (pow_nonneg ν.coe_nonneg _)
+      apply Finset.sum_nonneg; intro k _
+      exact mul_nonneg (abs_nonneg _) (abs_nonneg _)
+
+/-- Z₂ is non-negative (it's 2 times a max of non-negative values) -/
+lemma Z₂_bound_nonneg {ν : PosReal} {N : ℕ} (sol : ApproxSolution N)
+    (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
+    0 ≤ @Z₂_bound ν N sol A_fin := by
+  unfold Z₂_bound
+  apply mul_nonneg (by norm_num)
+  exact le_max_of_le_left (l1Weighted.finWeightedMatrixNorm_nonneg _)
+
+/-- From p(r₀) < 0, derive Z₀ + Z₁ < 1.
+    Uses general_radii_poly_neg_implies_Z_lt_one and Z₂r₀ ≥ 0. -/
+lemma radiiPoly_neg_implies_Z₀_Z₁_lt_one {ν : PosReal} {N : ℕ}
+    (lam0 : ℝ) (sol : ApproxSolution N)
+    (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
+    (r₀ : ℝ) (hr₀ : 0 < r₀)
+    (h_radii : @radiiPoly_7_7 ν N lam0 sol A_fin r₀ < 0) :
+    @Z₀_bound ν N sol A_fin + @Z₁_bound ν N sol < 1 := by
+  have hY₀ := Y₀_bound_nonneg (ν := ν) lam0 sol A_fin
+  have hZ := general_radii_poly_neg_implies_Z_lt_one hY₀ hr₀ h_radii
+  -- Z_bound_general = Z₀ + Z₁ + Z₂·r₀ < 1
+  -- Since Z₂·r₀ ≥ 0, we have Z₀ + Z₁ < 1
+  unfold Z_bound_general at hZ
+  have hZ₂r₀ : 0 ≤ @Z₂_bound ν N sol A_fin * r₀ :=
+    mul_nonneg (Z₂_bound_nonneg (ν := ν) sol A_fin) (le_of_lt hr₀)
+  linarith
+
+/-- From Z₀ + Z₁ < 1 and Z₁ ≥ 0, derive Z₀ < 1 -/
+lemma Z₀_lt_one_of_sum_lt_one {ν : PosReal} {N : ℕ} (sol : ApproxSolution N)
+    (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
+    (h : @Z₀_bound ν N sol A_fin + @Z₁_bound ν N sol < 1) :
+    @Z₀_bound ν N sol A_fin < 1 := by
+  have hZ₁ : 0 ≤ @Z₁_bound ν N sol := by
+    unfold Z₁_bound
+    apply mul_nonneg (one_div_nonneg.mpr (abs_nonneg _))
+    apply Finset.sum_nonneg; intro n _
+    exact mul_nonneg (abs_nonneg _) (pow_nonneg ν.coe_nonneg _)
+  linarith
+
+/-- The tail scalar of approxInverse is nonzero -/
+lemma approxInverse_tailScalar_ne_zero {ν : PosReal} {N : ℕ} (sol : ApproxSolution N)
+    (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
+    (@approxInverse ν N sol A_fin).tailScalar ≠ 0 := by
+  simp only [approxInverse, ne_eq, one_div, inv_eq_zero, mul_eq_zero, OfNat.ofNat_ne_zero,
+             sol.aBar_zero_ne, or_self, not_false_eq_true]
+
+end InjectivityLemmas
+
 /-- Injectivity of A follows from Proposition 7.6.5 when p(r₀) < 0
 
     From page 168: If p(r₀) < 0 then Z₀ + Z₁ < 1 by Corollary 7.6.3, hence ‖I - AA†‖ < 1.
@@ -996,7 +1070,28 @@ lemma approxInverse_injective (lam0 : ℝ) (sol : ApproxSolution N)
     (r₀ : ℝ) (hr₀ : 0 < r₀)
     (h_radii : @radiiPoly_7_7 ν N lam0 sol A_fin r₀ < 0) :
     Function.Injective (@approxInverse ν N sol A_fin).toCLM := by
-  sorry
+  -- Step 1: p(r₀) < 0 implies Z₀ + Z₁ < 1
+  have h_Z₀_Z₁ := radiiPoly_neg_implies_Z₀_Z₁_lt_one lam0 sol A_fin r₀ hr₀ h_radii
+  -- Step 2: Since Z₁ ≥ 0, we have Z₀ < 1
+  have h_Z₀ := Z₀_lt_one_of_sum_lt_one sol A_fin h_Z₀_Z₁
+  -- Step 3: Z₀ = ‖I - A_fin * DF_fin‖ < 1 implies A_fin * DF_fin is invertible
+  unfold Z₀_bound at h_Z₀
+  have h_prod_unit : IsUnit (A_fin * DF_fin sol) := FinWeightedMatrix.matrix_invertible_of_norm_lt_one _ h_Z₀
+  -- Step 4: If A_fin * DF_fin is invertible, then A_fin is invertible
+  have h_A_fin_unit : IsUnit A_fin := by
+    -- Matrices are non-commutative, so we go through determinants (in ℝ, which is commutative)
+    rw [Matrix.isUnit_iff_isUnit_det _]
+    have h_det_prod : IsUnit (A_fin * DF_fin sol).det :=
+      (Matrix.isUnit_iff_isUnit_det _).mp h_prod_unit
+    rw [Matrix.det_mul] at h_det_prod
+    exact isUnit_of_mul_isUnit_left h_det_prod
+  -- Step 5: Apply BlockDiag.BlockDiagOp.injective_of_parts
+  apply BlockDiag.BlockDiagOp.injective_of_parts
+  · -- finBlock = A_fin is invertible
+    simp only [approxInverse]
+    exact h_A_fin_unit
+  · -- tailScalar ≠ 0
+    exact approxInverse_tailScalar_ne_zero sol A_fin
 
 /-- **Main Theorem**: Existence and uniqueness of Taylor series solution.
 

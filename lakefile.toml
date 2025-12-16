@@ -5,6 +5,10 @@ defaultTargets = ["RadiiPolynomial"]
 [[lean_lib]]
 name = "RadiiPolynomial"
 
+# [[require]]
+# name = "ComputableReal"
+# git = "https://github.com/Timeroot/ComputableReal.git"
+
 [[require]]
 name = "checkdecls"
 git = "https://github.com/PatrickMassot/checkdecls.git"

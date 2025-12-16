@@ -1,4 +1,5 @@
 import RadiiPolynomial.TaylorODE.lpWeighted
+import RadiiPolynomial.RadiiPolyGeneral
 import Mathlib.Analysis.Normed.Lp.PiLp
 import Mathlib.Analysis.Normed.Operator.Basic
 
@@ -38,7 +39,7 @@ where K = finWeightedMatrixNorm(A_N).
 ## Main Definitions
 
 - `WeightedPiLp`: Finite-dimensional weighted ℓ¹ space on `Fin (N+1) → ℝ`
-- `Matrix.toWeightedCLM`: Matrix as continuous linear map on weighted space
+- `FinWeightedMatrix.toWeightedCLM`: Matrix as continuous linear map on weighted space
 - `BlockDiagOp`: Block-diagonal operator structure for Chapter 7.7
 
 ## Main Results
@@ -82,31 +83,31 @@ variable {N : ℕ}
     Then PiLp 1 computes the ℓ¹ sum automatically. -/
 abbrev Space (ν : PosReal) (N : ℕ) := PiLp 1 (fun n : Fin (N + 1) => ScaledReal ν n)
 
-lemma norm_eq_sum (x : Space ν N) :
+lemma norm_eq_sum {ν : PosReal} {N : ℕ} (x : Space ν N) :
     ‖x‖ = ∑ n : Fin (N + 1), |ScaledReal.toReal (x n)| * (ν : ℝ) ^ (n : ℕ) := by
   rw [PiLp.norm_eq_sum (p := 1) (by norm_num : 0 < (1 : ℝ≥0∞).toReal)]
   simp only [ENNReal.toReal_one, Real.rpow_one, one_div, inv_one]
   rfl
 
-lemma norm_eq_finl1WeightedNorm (x : Space ν N) :
+lemma norm_eq_finl1WeightedNorm {ν : PosReal} {N : ℕ} (x : Space ν N) :
     ‖x‖ = l1Weighted.finl1WeightedNorm ν.toNNReal (fun n => x n) := by
   rw [norm_eq_sum, l1Weighted.finl1WeightedNorm]
   rfl
 
 /-- Standard basis vector eⱼ with 1 at position j and 0 elsewhere -/
-def stdBasis (j : Fin (N + 1)) : Space ν N :=
+def stdBasis {ν : PosReal} {N : ℕ} (j : Fin (N + 1)) : Space ν N :=
   WithLp.toLp 1 (fun n => if n = j then (1 : ScaledReal ν n) else 0)
 
 @[simp]
-lemma stdBasis_apply_self (j : Fin (N + 1)) : stdBasis (ν := ν) j j = 1 := by
+lemma stdBasis_apply_self {ν : PosReal} {N : ℕ} (j : Fin (N + 1)) : stdBasis (ν := ν) j j = 1 := by
   simp [stdBasis]
 
 @[simp]
-lemma stdBasis_apply_ne (i j : Fin (N + 1)) (h : i ≠ j) : stdBasis (ν := ν) j i = 0 := by
+lemma stdBasis_apply_ne {ν : PosReal} {N : ℕ} (i j : Fin (N + 1)) (h : i ≠ j) : stdBasis (ν := ν) j i = 0 := by
   simp [stdBasis, h]
 
 /-- The norm of a basis vector: ‖eⱼ‖ = νʲ -/
-lemma norm_stdBasis (j : Fin (N + 1)) : ‖stdBasis (ν := ν) j‖ = (ν : ℝ) ^ (j : ℕ) := by
+lemma norm_stdBasis {ν : PosReal} {N : ℕ} (j : Fin (N + 1)) : ‖stdBasis (ν := ν) j‖ = (ν : ℝ) ^ (j : ℕ) := by
   rw [norm_eq_sum]
   simp only [stdBasis]
   rw [Finset.sum_eq_single j]
@@ -125,13 +126,13 @@ We define how a matrix A : Matrix (Fin (N+1)) (Fin (N+1)) ℝ acts as a
 continuous linear map on the weighted ℓ¹ space.
 -/
 
-namespace Matrix
+namespace FinWeightedMatrix
 
 variable {N : ℕ}
 
 /-- Matrix action as a linear map on the weighted space.
     This is the standard matrix action (Ax)ᵢ = Σⱼ Aᵢⱼ xⱼ -/
-def mulVecWeightedLinear (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
+def mulVecWeightedLinear {ν : PosReal} {N : ℕ} (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
     FinWeighted.Space ν N →ₗ[ℝ] FinWeighted.Space ν N where
   toFun x := WithLp.toLp 1 (fun i => ScaledReal.ofReal (∑ j, A i j * ScaledReal.toReal (x j)))
   map_add' x y := by
@@ -156,7 +157,7 @@ def mulVecWeightedLinear (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
          = Σⱼ (colNorm_j · νʲ) |xⱼ|       [def of colNorm]
          ≤ (max_j colNorm_j) · Σⱼ |xⱼ| νʲ [factor out max]
          = (max_j colNorm_j) · ‖x‖ -/
-lemma mulVecWeightedLinear_norm_le (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
+lemma mulVecWeightedLinear_norm_le {ν : PosReal} {N : ℕ} (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
     (x : FinWeighted.Space ν N) :
     ‖mulVecWeightedLinear A x‖ ≤ l1Weighted.finWeightedMatrixNorm ν A * ‖x‖ := by
   rw [FinWeighted.norm_eq_sum, FinWeighted.norm_eq_sum]
@@ -198,7 +199,7 @@ lemma mulVecWeightedLinear_norm_le (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
         congr 1; ext j; ring
 
 /-- The matrix as a continuous linear map on the weighted space -/
-def toWeightedCLM (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
+def toWeightedCLM {ν : PosReal} {N : ℕ} (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
     FinWeighted.Space ν N →L[ℝ] FinWeighted.Space ν N :=
   LinearMap.mkContinuous
     (mulVecWeightedLinear A)
@@ -206,7 +207,7 @@ def toWeightedCLM (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
     (mulVecWeightedLinear_norm_le A)
 
 /-- Operator norm is bounded by the weighted matrix norm -/
-lemma opNorm_toWeightedCLM_le (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
+lemma opNorm_toWeightedCLM_le {ν : PosReal} {N : ℕ} (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
     ‖toWeightedCLM (ν := ν) A‖ ≤ l1Weighted.finWeightedMatrixNorm ν A := by
   apply ContinuousLinearMap.opNorm_le_bound _ (by
     apply Finset.le_sup'_of_le _ (Finset.mem_univ 0)
@@ -221,7 +222,7 @@ lemma opNorm_toWeightedCLM_le (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
     For the j-th basis vector eⱼ with ‖eⱼ‖ = νʲ:
       ‖A eⱼ‖ / ‖eⱼ‖ = colNorm_j
     This shows the matrix norm is achieved, not just bounded. -/
-lemma opNorm_achieved_on_basis (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) (j : Fin (N + 1)) :
+lemma opNorm_achieved_on_basis {ν : PosReal} {N : ℕ} (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) (j : Fin (N + 1)) :
     ‖toWeightedCLM (ν := ν) A (FinWeighted.stdBasis j)‖ =
     l1Weighted.matrixColNorm ν A j * (ν : ℝ) ^ (j : ℕ) := by
   simp only [toWeightedCLM]
@@ -235,7 +236,7 @@ lemma opNorm_achieved_on_basis (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) (j :
     · intro k _ hk; simp [hk]
     · intro h; exact absurd (Finset.mem_univ j) h
   simp only [LinearMap.mkContinuous, coe_mk']
-  have h' : ∀ i, |((A.mulVecWeightedLinear (FinWeighted.stdBasis (ν := ν) j)).ofLp i)| = |A i j| := by
+  have h' : ∀ i, |((mulVecWeightedLinear A (FinWeighted.stdBasis (ν := ν) j)).ofLp i)| = |A i j| := by
     intro i; rw [← h_apply]; rfl
   simp only [ScaledReal.toReal_apply, h']
   rw [l1Weighted.matrixColNorm]
@@ -247,7 +248,7 @@ lemma opNorm_achieved_on_basis (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) (j :
     **Proof**:
     - (≥): The sup over column norms is achieved on basis vectors (opNorm_achieved_on_basis)
     - (≤): Every vector gives at most the max column norm (mulVecWeightedLinear_norm_le) -/
-theorem finWeightedMatrixNorm_eq_opNorm (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
+theorem finWeightedMatrixNorm_eq_opNorm {ν : PosReal} {N : ℕ} (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
     l1Weighted.finWeightedMatrixNorm ν A = ‖toWeightedCLM (ν := ν) A‖ := by
   apply le_antisymm
   -- Direction (≤): finWeightedMatrixNorm ≤ opNorm
@@ -271,7 +272,107 @@ theorem finWeightedMatrixNorm_eq_opNorm (A : Matrix (Fin (N + 1)) (Fin (N + 1)) 
   -- Direction (≥): opNorm ≤ finWeightedMatrixNorm
   · exact opNorm_toWeightedCLM_le A
 
-end Matrix
+/-- toWeightedCLM preserves matrix multiplication.
+
+    This shows that the embedding of matrices into weighted CLMs is a ring homomorphism.
+    The proof swaps the order of summation and uses associativity of multiplication. -/
+lemma toWeightedCLM_mul {ν : PosReal} {N : ℕ}
+    (A B : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
+    toWeightedCLM (ν := ν) (A * B) =
+    (toWeightedCLM (ν := ν) A).comp (toWeightedCLM (ν := ν) B) := by
+  ext x i
+  simp only [toWeightedCLM, mulVecWeightedLinear, ScaledReal.ofReal,
+    ScaledReal.toReal, LinearMap.mkContinuous_apply, LinearMap.coe_mk, AddHom.coe_mk, coe_comp',
+    Function.comp_apply, Matrix.mul_apply]
+  simp only [map_sum]
+  simp only [Finset.sum_mul]
+  simp only [Finset.mul_sum]
+  conv_lhs =>
+    arg 2; ext k
+    simp only [map_sum]
+  rw [Finset.sum_comm]
+  simp [mul_assoc]
+  rfl
+
+/-- toWeightedCLM preserves subtraction from identity.
+
+    This shows that applying the matrix (I - M) via toWeightedCLM equals
+    the identity CLM minus toWeightedCLM of M. The proof reduces to showing
+    that the Kronecker delta sum ∑ₖ δᵢₖ · xₖ = xᵢ. -/
+lemma toWeightedCLM_one_sub {ν : PosReal} {N : ℕ}
+    (M : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
+    toWeightedCLM (ν := ν) (1 - M) =
+    ContinuousLinearMap.id ℝ (FinWeighted.Space ν N) - toWeightedCLM (ν := ν) M := by
+  ext x i
+  simp only [toWeightedCLM, mulVecWeightedLinear, ContinuousLinearMap.coe_sub',
+             ContinuousLinearMap.coe_id', Pi.sub_apply, id_eq, LinearMap.coe_mk, AddHom.coe_mk,
+             LinearMap.mkContinuous_apply, ScaledReal.ofReal, ScaledReal.toReal,
+             Matrix.sub_apply, Matrix.one_apply, WithLp.ofLp_sub, map_sum, sub_mul]
+  simp only [ite_mul, one_mul, zero_mul, map_sub, Finset.sum_sub_distrib, sub_left_inj]
+  rw [Finset.sum_eq_single i]
+  · simp only [↓reduceIte]; rfl
+  · intro j _ hj; simp only [EmbeddingLike.map_eq_zero_iff, ite_eq_right_iff]; omega
+  · intro h; exact absurd (Finset.mem_univ i) h
+
+/-- If the CLM corresponding to a matrix is a unit, so is the matrix.
+
+    The proof uses the fact that toWeightedCLM M is essentially M.mulVec
+    transported to the weighted space via an isomorphism. If the CLM is
+    invertible (a unit), then M.mulVec must be injective, which for
+    square matrices over a field means det M ≠ 0.
+
+    Key insight: FinWeighted.Space ν N ≅ Fin (N+1) → ℝ as vector spaces
+    (the norms differ but the underlying spaces are the same).
+    So IsUnit (toWeightedCLM M) ↔ IsUnit (toLin' M) ↔ IsUnit M. -/
+lemma matrix_isUnit_of_toWeightedCLM_isUnit {ν : PosReal} {N : ℕ}
+    (M : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
+    (h : IsUnit (toWeightedCLM (ν := ν) M)) :
+    IsUnit M := by
+  rw [Matrix.isUnit_iff_isUnit_det _, isUnit_iff_ne_zero]
+  intro h_det
+  obtain ⟨u, hu⟩ := h
+  have h_inj : Function.Injective (toWeightedCLM (ν := ν) M) := by
+    rw [← hu]
+    have h_left_inv : Function.LeftInverse u.inv u.val := fun x => by
+      have := congrFun (congrArg DFunLike.coe u.inv_mul) x
+      simp only [ContinuousLinearMap.mul_apply, ContinuousLinearMap.one_apply] at this
+      exact this
+    exact h_left_inv.injective
+  have h_det_lin : LinearMap.det (Matrix.toLin' M) = 0 := by
+    rw [LinearMap.det_toLin']; exact h_det
+  have h_ker_nontrivial := LinearMap.bot_lt_ker_of_det_eq_zero h_det_lin
+  rw [bot_lt_iff_ne_bot, ne_eq, Submodule.eq_bot_iff] at h_ker_nontrivial
+  push_neg at h_ker_nontrivial
+  obtain ⟨v, hv_ker, hv_ne⟩ := h_ker_nontrivial
+  rw [LinearMap.mem_ker] at hv_ker
+  have hv_mulVec : M *ᵥ v = 0 := by
+    simp only [Matrix.toLin'_apply] at hv_ker
+    exact hv_ker
+  let x : FinWeighted.Space ν N := WithLp.toLp 1 (fun i => v i)
+  have hx_ne : x ≠ 0 := by
+    simp only [ne_eq]
+    intro hx; apply hv_ne; ext i
+    exact congrFun (congrArg WithLp.ofLp hx) i
+  have hx_zero : toWeightedCLM (ν := ν) M x = 0 := by
+    ext i
+    simp only [toWeightedCLM, mulVecWeightedLinear, LinearMap.coe_mk,
+               AddHom.coe_mk, LinearMap.mkContinuous_apply, ScaledReal.ofReal]
+    exact congrFun hv_mulVec i
+  rw [← map_zero (toWeightedCLM (ν := ν) M)] at hx_zero
+  exact hx_ne (h_inj hx_zero)
+
+/-- If ‖I - M‖ < 1 for a square matrix M, then M is invertible.
+
+    This is the matrix version of the Neumann series invertibility criterion. -/
+lemma matrix_invertible_of_norm_lt_one {ν : PosReal} {N : ℕ}
+    (M : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
+    (h : l1Weighted.finWeightedMatrixNorm ν (1 - M) < 1) :
+    IsUnit M := by
+  rw [finWeightedMatrixNorm_eq_opNorm, toWeightedCLM_one_sub] at h
+  have h_unit := isUnit_of_norm_sub_id_lt_one (E := FinWeighted.Space ν N) h
+  exact matrix_isUnit_of_toWeightedCLM_isUnit M h_unit
+
+end FinWeightedMatrix
 
 
 /-! ## Block-Diagonal Operators
@@ -315,15 +416,15 @@ def BlockDiagOp.action {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) (a : ℕ 
     A.tailScalar * a n
 
 /-- The projection of a sequence onto its first N+1 coordinates -/
-def projFin (a : l1Weighted ν) : Fin (N + 1) → ℝ :=
+def projFin {ν : PosReal} {N : ℕ} (a : l1Weighted ν) : Fin (N + 1) → ℝ :=
   fun n => lpWeighted.toSeq a n
 
 /-- Embedding a finite vector as a sequence with zero tail -/
-def embedFin (x : Fin (N + 1) → ℝ) : ℕ → ℝ :=
+def embedFin {N : ℕ} (x : Fin (N + 1) → ℝ) : ℕ → ℝ :=
   fun n => if h : n ≤ N then x ⟨n, Nat.lt_succ_of_le h⟩ else 0
 
 /-- The tail projection: coordinates N+1, N+2, ... -/
-def projTail (a : l1Weighted ν) : ℕ → ℝ :=
+def projTail {ν : PosReal} {N : ℕ} (a : l1Weighted ν) : ℕ → ℝ :=
   fun n => if n ≤ N then 0 else lpWeighted.toSeq a n
 
 /-- Direct sum decomposition: a = embedFin(projFin a) + projTail a -/
@@ -341,7 +442,7 @@ lemma finBlock_norm_bound {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) (a : l
     ∑ n : Fin (N + 1), |∑ j : Fin (N + 1), A.finBlock n j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ) ≤
     l1Weighted.finWeightedMatrixNorm ν A.finBlock *
     ∑ j : Fin (N + 1), |lpWeighted.toSeq a j| * (ν : ℝ) ^ (j : ℕ) := by
-  -- This follows the same pattern as Matrix.mulVecWeightedLinear_norm_le
+  -- This follows the same pattern as FinWeightedMatrix.mulVecWeightedLinear_norm_le
   calc ∑ n : Fin (N + 1), |∑ j, A.finBlock n j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ)
       ≤ ∑ n : Fin (N + 1), (∑ j, |A.finBlock n j| * |lpWeighted.toSeq a j|) * (ν : ℝ) ^ (n : ℕ) := by
         apply Finset.sum_le_sum
@@ -533,6 +634,58 @@ lemma BlockDiagOp.toCLM_apply {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) (a
 lemma BlockDiagOp.norm_toCLM_le (A : BlockDiagOp ν N) :
     ‖A.toCLM‖ ≤ max (l1Weighted.finWeightedMatrixNorm ν A.finBlock) |A.tailScalar| :=
   LinearMap.mkContinuous_norm_le _ (le_max_of_le_left (l1Weighted.finWeightedMatrixNorm_nonneg _)) _
+
+/-- Block-diagonal operator is injective if finite block matrix is invertible and tail scalar ≠ 0.
+
+    The proof shows that if A x = A y, then both the finite and tail parts match,
+    which forces x = y when the finite block is invertible and the tail scalar is nonzero. -/
+lemma BlockDiagOp.injective_of_parts {ν : PosReal} {N : ℕ}
+    (A : BlockDiagOp ν N)
+    (h_fin : IsUnit A.finBlock)
+    (h_tail : A.tailScalar ≠ 0) :
+    Function.Injective A.toCLM := by
+  intro x y h_eq
+  -- A x = A y means action matches for all n
+  have h_diff : A.toCLM (x - y) = 0 := by
+    simp only [map_sub, sub_eq_zero]
+    exact h_eq
+  -- For n > N, the action is tailScalar * (x - y)_n = 0
+  -- Since tailScalar ≠ 0, we get (x - y)_n = 0 for n > N
+  have h_tail_zero : ∀ n : ℕ, N < n → lpWeighted.toSeq (x - y) n = 0 := by
+    intro n hn
+    have h_action_n : lpWeighted.toSeq (A.toCLM (x - y)) n = 0 := by
+      rw [h_diff]; rfl
+    simp only [BlockDiagOp.toCLM_apply, BlockDiagOp.action, not_le.mpr hn, ↓reduceDIte] at h_action_n
+    exact (mul_eq_zero.mp h_action_n).resolve_left h_tail
+  -- For the finite part, we get A.finBlock * (x - y)_fin = 0
+  have h_mat_action : ∀ i : Fin (N + 1), ∑ j, A.finBlock i j * lpWeighted.toSeq (x - y) j = 0 := by
+    intro i
+    have h_action_i : lpWeighted.toSeq (A.toCLM (x - y)) i = 0 := by
+      rw [h_diff]; rfl
+    simp only [BlockDiagOp.toCLM_apply, BlockDiagOp.action, Fin.is_le, ↓reduceDIte] at h_action_i
+    exact h_action_i
+  -- Convert to matrix multiplication form
+  have h_mulVec : A.finBlock.mulVec (fun j => lpWeighted.toSeq (x - y) j) = 0 := by
+    ext i
+    simp only [Matrix.mulVec, dotProduct, Pi.zero_apply]
+    exact h_mat_action i
+  -- Since A.finBlock is invertible, the vector must be zero
+  obtain ⟨u, hu⟩ := h_fin
+  have h_vec_zero := congrArg (u⁻¹.val.mulVec) h_mulVec
+  simp only [Matrix.mulVec_zero] at h_vec_zero
+  rw [Matrix.mulVec_mulVec, ← hu, Units.inv_mul, Matrix.one_mulVec] at h_vec_zero
+  -- The finite indices are zero
+  have h_fin_zero : ∀ n : Fin (N + 1), lpWeighted.toSeq (x - y) n = 0 := by
+    intro n
+    exact congrFun h_vec_zero n
+  -- Combine: x - y = 0 at all indices
+  have h_all_zero : x - y = 0 := by
+    ext n
+    by_cases hn : n ≤ N
+    · exact h_fin_zero ⟨n, Nat.lt_succ_of_le hn⟩
+    · push_neg at hn
+      exact h_tail_zero n hn
+  exact sub_eq_zero.mp h_all_zero
 
 end BlockDiag
 
