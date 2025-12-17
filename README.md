@@ -6,15 +6,14 @@
 
 - https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial  
 
-This repository contains a **Lean blueprint** for the theorem
-**Radii Polynomials in General Banach Spaces**.
+This repository contains a **Lean 4 blueprint** for the 
+**Radii Polynomial Method in Banach Spaces**, including a complete formalization 
+of Example 7.7 (analytic square root via computer-assisted proof).
 
-> Proof flow at a glance:  
-> data → Newton map \(T = x - A f(x)\) → a‑priori bounds \((Y_0, Z_0, Z_2)\) → radii polynomial \(p(r)\) → derivative bound → fixed‑point radii lemma → main theorem (existence, uniqueness, nondegeneracy).
+> **Proof flow at a glance:**  
+> data → Newton map $T = x - A f(x)$ → a-priori bounds $(Y_0, Z_0, Z_2)$ → radii polynomial $p(r)$ → derivative bound → fixed-point radii lemma → main theorem (existence, uniqueness, nondegeneracy).
 
 ## Directory Structure
-
-This project have the following structure:
 
 ```
 RadiiPolynomial/                    
@@ -22,12 +21,24 @@ RadiiPolynomial/
 ├── Main.lean                       
 ├── makefile                        
 ├── RadiiPolynomial/               
-│   └── RadiiPolyGeneral.lean     
+│   ├── RadiiPolyGeneral.lean       # General radii polynomial theorems
+│   └── TaylorODE/                  # Example 7.7: Square root formalization
+│       ├── ScaledReal.lean         # PosReal, scaled real numbers
+│       ├── lpWeighted.lean         # Weighted ℓᵖ spaces (ℓ¹_ν)
+│       ├── CauchyProduct.lean      # Cauchy product (convolution)
+│       ├── FrechetCauchyProduct.lean  # Fréchet derivative of squaring
+│       ├── OperatorNorm.lean       # Block diagonal operators
+│       ├── Example_7_7.lean        # Main theorem setup and bounds
+│       ├── Computable.lean         # Decidable rational arithmetic
+│       ├── Example_7_7_Dyadic.lean # Concrete verification (native_decide)
+│       └── Example_7_7_Analytic.lean  # Power series semantics
 └── blueprint/                               
     └── src/                       
         ├── content.tex            
         ├── macros/                
-        │   └── common.tex         # LaTeX macros (leanblueprint standard)
+        │   ├── common.tex          # Shared LaTeX macros
+        │   ├── print.tex           # Print-specific macros
+        │   └── web.tex             # Web-specific macros
         └── Sections/              
             ├── Ch0/               
             │   ├── Abstract.tex
@@ -38,78 +49,69 @@ RadiiPolynomial/
             │   ├── 2-3-Newton.tex
             │   └── 2-4-RadiiPolynomialsFD.tex
             └── Ch7/               
-                └── 7-6-RadiiPolynomialBanach.tex
+                ├── 7-6-RadiiPolynomialBanach.tex
+                └── 7-7-Example.tex    # Example 7.7 blueprint
 ```
 
 ---
 
-### Macros
+## Example 7.7: Analytic Square Root
 
-Reusable LaTeX macros live in `blueprint/src/macros`. These define commands and presentation differences used by the blueprint outputs:
+The formalization proves existence of an analytic branch of $\sqrt{\lambda}$ near $\lambda_0 > 0$:
 
-- `blueprint/src/macros/common.tex` — shared macros and notation used across web/print versions. 
-- `blueprint/src/macros/print.tex` — rules and commands used when producing printable/PDF outputs. In usual cases, this file should be minimal.
-- `blueprint/src/macros/web.tex` — web-specific tweaks for the HTML blueprint pages. In usual cases, this file should be minimal.
+1. **Coefficient space:** Work in weighted $\ell^1_\nu$ with Cauchy product
+2. **Fixed-point equation:** $F(\tilde{a}) = \tilde{a} \star \tilde{a} - c = 0$
+3. **Bound verification:** $Y_0, Z_0, Z_2$ bounds via rational/dyadic arithmetic
+4. **Radii polynomial:** $p(r_0) < 0$ verified by `native_decide`
+5. **Semantic bridge:** 
+   - Formal level: $\ell^1_\nu \hookrightarrow \mathbb{R}[\![X]\!]$ (PowerSeries)
+   - Analytic level: Mertens' theorem shows $\text{eval}(\tilde{a}, z)^2 = \lambda_0 + z$
+6. **Branch selection:** IVT argument proves $\text{eval}(\tilde{a}, \lambda - \lambda_0) = \sqrt{\lambda}$
 
 ---
 
-## LaTeX ↔ LEAN 
+## LaTeX ↔ Lean Linking
 
-### Lean Label Commands
+Link LaTeX statements to Lean declarations using:
 
-- `\lean{declaration_name}` - Links to the Lean declaration
-- `\leanok` - Marks that the formalization is complete
-- `\uses{label1, label2}` - Indicates dependencies on other results
-- `\label{latex_label}` - Standard LaTeX label for cross-references
+| Command | Purpose |
+|---------|---------|
+| `\lean{declaration_name}` | Links to Lean declaration |
+| `\leanok` | Marks formalization complete |
+| `\uses{label1, label2}` | Declares dependencies |
+| `\label{latex_label}` | Standard LaTeX cross-reference |
 
-When writing the blueprint `.tex` files you link LaTeX statements (theorems, definitions, lemmas, etc.) to LEAN declaration using the `\lean{}` handle. The handle must name an existing *true* declaration in LEAN so the `checkdecls` in `leanblueprint` can build the dependency graph.
-
-### Example
-
+**Example:**
 ```tex
-\begin{theorem}[Mean Value Theorem]\label{thm:MVT}
-	\lean{RP.MeanValueTheorem}
-	Let $g:\mathbb R^n\to\mathbb R$ be $C^1$. For all $x,y\in\mathbb R^n$ there exists $t\in(0,1)$ such that
-	\[
-		g(x)-g(y)=\nabla g\bigl(y+t(x-y)\bigr)\cdot (x-y).
-	\]
+\begin{theorem}[Existence of fixed point]\label{thm:example_7_7_existence}
+  \lean{Example_7_7.example_7_7_main_theorem}
+  \leanok
+  \uses{lem:radii_poly_neg,def:F_map}
+  There exists unique $\tilde{a} \in \ell^1_\nu$ with $F(\tilde{a}) = 0$.
 \end{theorem}
 ```
 
-Here `\lean{RP.MeanValueTheorem}` is a handle that points to the Lean declaration named `RP.MeanValueTheorem` in the LEAN sources.
-
-
-```lean
-namespace RP
-/-- Mean Value Theorem (placeholder). -/
-theorem MeanValueTheorem : True := True.intro
--- ...
-```
-
-Rules and best practices
-- Every `\lean{...}` handle used in the `.tex` files must reference an existing Lean object (fully qualified when in a namespace). If the object doesn't exist the blueprint check will fail.
-- Placeholders are fine while writing the blueprint: it's common to add a temporary `theorem ... : True := True.intro` so the dependency graph and checks succeed. Replace placeholders with real statements/proofs as you formalize.
-- Lean sources for the blueprint live under `LEAN-modules/`. Update or add files there when you introduce new handles in the `.tex` files.
-- After editing `.tex` or `LEAN-modules/`, run `make` at the repository root to rebuild the blueprint pages and run the checks (the `make` recipe invokes the plasTeX/leanblueprint pipeline).
-
-If you ever need help locating the Lean declaration for a LaTeX handle, search the `LEAN-modules/` folder for the name (e.g. `grep -R "MeanValueTheorem" LEAN-modules`).
+Every `\lean{...}` handle must reference an existing Lean declaration. Run `lake exe checkdecls blueprint/lean_decls` to verify.
 
 ---
 
-## InfoView setup
+## Building
 
-Configure the the LEAN version for VS Code Lean extension (InfoView), to check required version (in currently installed toolchains) run:
+```bash
+# Build Lean project
+lake build
 
-```sh
-cat .lake/packages/mathlib/lean-toolchain
+# Check blueprint declarations
+lake exe checkdecls blueprint/lean_decls
+
+# Build blueprint (requires leanblueprint)
+make
 ```
 
-Set the VS Code Lean toolchain to that version (for example `v4.26.0-rc1`) in the extension settings or via the InfoView selector. 
+---
 
 ## Additional Resources
 
 - [Leanblueprint documentation](https://github.com/PatrickMassot/leanblueprint)
 - [Lean 4 documentation](https://leanprover.github.io/lean4/doc/)
 - [Mathlib4 documentation](https://leanprover-community.github.io/mathlib4_docs/)
-
-
