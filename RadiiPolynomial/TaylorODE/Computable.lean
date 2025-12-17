@@ -67,7 +67,7 @@ instance instPow [hx : IsRat x] (n : ℕ) : IsRat (x ^ n) :=
   ⟨hx.q ^ n, by simp [hx.eq]⟩
 
 instance instAbs [hx : IsRat x] : IsRat |x| :=
-  ⟨|hx.q|, by simp [hx.eq, abs_eq_abs]⟩
+  ⟨|hx.q|, by simp [hx.eq]⟩
 
 /-- Decidable ≤ for IsRat values -/
 instance instDecidableLE [hx : IsRat x] [hy : IsRat y] : Decidable (x ≤ y) :=
