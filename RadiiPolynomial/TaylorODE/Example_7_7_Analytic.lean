@@ -205,28 +205,28 @@ theorem analyticSolution_eq_sqrt {ν : PosReal} (aTilde : l1Weighted ν) (lam0 :
     rw [hsq'] at h
     exact h.symm
 
-  -- Step 4: x̃ is continuous (power series with |z| ≤ ν is continuous)
-  have hcont : ContinuousAt (analyticSolution aTilde) 0 := by
-    unfold analyticSolution
-    -- Use continuousOn_tsum on the ball {z : |z| ≤ ν}
-    have hsum := (l1Weighted.mem_iff _).mp aTilde.2
-    have hcontOn : ContinuousOn (fun z => ∑' n, lpWeighted.toSeq aTilde n * z ^ n)
-        {z : ℝ | |z| ≤ ν} := by
-      apply continuousOn_tsum (u := fun n => |lpWeighted.toSeq aTilde n| * (ν : ℝ) ^ n)
-      · intro n
-        exact (continuous_const.mul (continuous_pow n)).continuousOn
-      · exact hsum
-      · intro n z hz
-        simp only [Set.mem_setOf_eq] at hz
-        simp only [Real.norm_eq_abs, abs_mul, abs_pow]
-        gcongr
-    apply hcontOn.continuousAt
-    rw [mem_nhds_iff]
-    use Metric.ball 0 ν
-    refine ⟨?_, Metric.isOpen_ball, Metric.mem_ball_self ν.2⟩
-    intro z hz
-    simp only [Set.mem_setOf_eq, Metric.mem_ball, dist_zero_right] at hz ⊢
-    exact hz.le
+  -- -- Step 4: x̃ is continuous (power series with |z| ≤ ν is continuous)
+  -- have hcont : ContinuousAt (analyticSolution aTilde) 0 := by
+  --   unfold analyticSolution
+  --   -- Use continuousOn_tsum on the ball {z : |z| ≤ ν}
+  --   have hsum := (l1Weighted.mem_iff _).mp aTilde.2
+  --   have hcontOn : ContinuousOn (fun z => ∑' n, lpWeighted.toSeq aTilde n * z ^ n)
+  --       {z : ℝ | |z| ≤ ν} := by
+  --     apply continuousOn_tsum (u := fun n => |lpWeighted.toSeq aTilde n| * (ν : ℝ) ^ n)
+  --     · intro n
+  --       exact (continuous_const.mul (continuous_pow n)).continuousOn
+  --     · exact hsum
+  --     · intro n z hz
+  --       simp only [Set.mem_setOf_eq] at hz
+  --       simp only [Real.norm_eq_abs, abs_mul, abs_pow]
+  --       gcongr
+  --   apply hcontOn.continuousAt
+  --   rw [mem_nhds_iff]
+  --   use Metric.ball 0 ν
+  --   refine ⟨?_, Metric.isOpen_ball, Metric.mem_ball_self ν.2⟩
+  --   intro z hz
+  --   simp only [Set.mem_setOf_eq, Metric.mem_ball, dist_zero_right] at hz ⊢
+  --   exact hz.le
 
   -- Step 5: By continuity, x̃ stays positive (since x̃(0) > 0 and x̃² > 0 everywhere)
   -- If x̃(z) ≤ 0 for some z, then by IVT x̃ = 0 somewhere, but x̃² = lam > 0, contradiction

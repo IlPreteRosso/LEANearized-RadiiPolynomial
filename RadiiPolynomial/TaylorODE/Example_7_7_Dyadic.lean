@@ -75,7 +75,7 @@ def r0 : ℚ := (Dyadic.ofIntWithPrec 102 10).toRat
 #eval |A₂₀-2.920|<1e-3  -- ≈ 2.920
 
 #eval |lam0-0.333|<1e-3  -- ≈ 0.333
-#eval |ν-0.25|<1e-4      -- = 0.25
+#eval |ν-0.25|<1e-4      -- ≈ 0.25
 #eval |r0-0.0996|<1e-3  -- ≈ 0.0996
 
 /-! ### F(ā) computation -/
@@ -206,7 +206,7 @@ def lam0_val : ℝ := lam0
 #eval Z₁
 #eval Z₂
 
--- adjust based on actual
+-- better looking bounds (honestly dyadic doesn't help here)
 def Y₀_pad : ℚ := 18/1000
 def Z₀_pad : ℚ := 2/1000
 def Z₁_pad : ℚ := 446/1000
