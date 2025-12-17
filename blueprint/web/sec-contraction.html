@@ -170,8 +170,6 @@
     <span class="definition_thmtitle">Complete metric space</span>
     <div class="thm_header_extras">
 
-    
-    ✓
         </div>
     <div class="thm_header_hidden_extras">
 
@@ -179,29 +177,10 @@
     
     
     
-    <button class="modal lean">L∃∀N</button>
-        <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Lean declarations</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-        
-        <ul class="uses">
-          
-          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/CompleteSpace" class="lean_decl">CompleteSpace</a></li>
-          
-        </ul>
-    
-      </div>
-    </div>
-
-    
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  A metric space \((X, d)\) is <i class="itshape">complete</i> if every Cauchy sequence converges in \(X\), i.e., if given any \(\varepsilon {\gt} 0\) there exists \(N(\varepsilon )\) such that \(n, m {\gt} N(\varepsilon )\) implies \(d(x_n, x_m) {\lt} \varepsilon \), then there is some \(y \in X\) with \(\lim _{n\rightarrow \infty } x_n = y\). </p>
+  <p> A metric space \((X, d)\) is <i class="itshape">complete</i> if every Cauchy sequence converges in \(X\), i.e., if given any \(\varepsilon {\gt} 0\) there exists \(N(\varepsilon )\) such that \(n, m {\gt} N(\varepsilon )\) implies \(d(x_n, x_m) {\lt} \varepsilon \), then there is some \(y \in X\) with \(\lim _{n\rightarrow \infty } x_n = y\). </p>
 
   </div>
 </div>
@@ -214,8 +193,6 @@
     <span class="definition_thmtitle">Contraction mapping</span>
     <div class="thm_header_extras">
 
-    
-    ✓
         </div>
     <div class="thm_header_hidden_extras">
 
@@ -223,29 +200,10 @@
     
     
     
-    <button class="modal lean">L∃∀N</button>
-        <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Lean declarations</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-        
-        <ul class="uses">
-          
-          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContractingWith" class="lean_decl">ContractingWith</a></li>
-          
-        </ul>
-    
-      </div>
-    </div>
-
-    
         </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  Let \((X, d)\) be a metric space. A function \(T: X \rightarrow X\) is a <i class="itshape">contraction</i> if there is a number \(\kappa \in [0, 1)\), called a <i class="itshape">contraction constant</i>, such that </p>
+  <p> Let \((X, d)\) be a metric space. A function \(T: X \rightarrow X\) is a <i class="itshape">contraction</i> if there is a number \(\kappa \in [0, 1)\), called a <i class="itshape">contraction constant</i>, such that </p>
 <div class="displaymath" id="a0000000007">
   \begin{equation*}  d(T(x), T(y)) \leq \kappa \cdot d(x, y) \end{equation*}
 </div>
@@ -262,8 +220,6 @@
     <span class="theorem_thmtitle">Contraction Mapping Theorem</span>
     <div class="thm_header_extras">
 
-    
-    ✓
         </div>
     <div class="thm_header_hidden_extras">
 
@@ -296,29 +252,10 @@
 
     
     
-    <button class="modal lean">L∃∀N</button>
-        <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Lean declarations</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-        
-        <ul class="uses">
-          
-          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContractingWith.exists_fixedPoint'" class="lean_decl">ContractingWith.exists_fixedPoint'</a></li>
-          
-        </ul>
-    
-      </div>
-    </div>
-
-    
         </div>
   </div>
   <div class="theorem_thmcontent">
-  <p>   Let \((X, d)\) be a complete metric space. If \(T: X \rightarrow X\) is a contraction with contraction constant \(\kappa \), then there exists a unique fixed point \(\tilde{x} \in X\) of \(T\). Furthermore, \(\tilde{x}\) is globally attracting, and for any \(x \in X\), </p>
+  <p>  Let \((X, d)\) be a complete metric space. If \(T: X \rightarrow X\) is a contraction with contraction constant \(\kappa \), then there exists a unique fixed point \(\tilde{x} \in X\) of \(T\). Furthermore, \(\tilde{x}\) is globally attracting, and for any \(x \in X\), </p>
 <div class="displaymath" id="a0000000009">
   \begin{equation*}  d(T^n(x), \tilde{x}) \leq \frac{\kappa ^n}{1-\kappa } d(T(x), x). \end{equation*}
 </div>
