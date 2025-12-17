@@ -178,6 +178,7 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
 \begin{definition}[$Z_1$ bound]\label{def:Z1_bound}
   \lean{Example_7_7.Z₁_bound}
   \leanok
+  \uses{def:approx_solution,thm:fderiv_sq}
   In the simple case where $A^\dagger = D_{\bar{a}}F$, we have $Z_1 = 0$.
 \end{definition}
 
@@ -243,7 +244,7 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
 \begin{theorem}[Existence of fixed point]\label{thm:example_7_7_existence}
   \lean{Example_7_7.example_7_7_main_theorem}
   \leanok
-  \uses{lem:radii_poly_neg,def:F_map,def:concrete_approx}
+  \uses{thm:simple_radii_poly_same,lem:radii_poly_neg,def:F_map,def:concrete_approx}
   There exists a unique $\tilde{a} \in \ell^1_\nu$ with 
   $\lVert \tilde{a} - \bar{a}\rVert_{\ell^1_\nu} \leq r_0$ such that $F(\tilde{a}) = 0$, 
   i.e., $(\tilde{a} \star \tilde{a})_n = c_n$ for all $n$.
@@ -442,6 +443,8 @@ the power series selects the positive branch.
 \subsection{Summary}\label{subsec:example_summary}
 
 \begin{theorem}[Main result for Example 7.7]\label{thm:example_7_7_main}
+  \lean{Example_7_7_Final.example_7_7_main_theorem_rat}
+  \leanok
   \uses{thm:example_7_7_existence,thm:analytic_eq_sqrt}
   For $\lambda_0 = 1$ and $\nu = 1/2$, there exists a unique power series
   \begin{equation*}
