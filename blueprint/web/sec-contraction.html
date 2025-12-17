@@ -45,6 +45,9 @@
 <li class="">
   <a href="sect0001.html#a0000000005"><span class="toc_ref"></span> <span class="toc_entry">Special Cases</span></a>
  </li>
+<li class="">
+  <a href="sect0001.html#a0000000006"><span class="toc_ref"></span> <span class="toc_entry">Example 7.7: Weighted Sequence Space Notations</span></a>
+ </li>
 
   </ul>
  </li>
@@ -75,7 +78,7 @@
   </ul>
  </li>
 <li class="">
-  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Radii Polynomial of Banach Spaces</span></a>
+  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Radii Polynomial on Banach Spaces</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
@@ -102,6 +105,43 @@
  </li>
 <li class="">
   <a href="sec-radii_poly_banach.html#subsec:main_theorems"><span class="toc_ref">2.1.7</span> <span class="toc_entry">Main Theorems</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html"><span class="toc_ref">2.2</span> <span class="toc_entry">Example 7.7: Square Root via Power Series</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-example_7_7.html#subsec:weighted_space"><span class="toc_ref">2.2.1</span> <span class="toc_entry">The Weighted Sequence Space</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:cauchy_product"><span class="toc_ref">2.2.2</span> <span class="toc_entry">Cauchy Product and Banach Algebra Structure</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:fixed_point_problem"><span class="toc_ref">2.2.3</span> <span class="toc_entry">The Fixed-Point Problem</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:approx_solution"><span class="toc_ref">2.2.4</span> <span class="toc_entry">Approximate Solution</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:bound_defs"><span class="toc_ref">2.2.5</span> <span class="toc_entry">Bound Definitions</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:bound_verification"><span class="toc_ref">2.2.6</span> <span class="toc_entry">Bound Verification</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:existence"><span class="toc_ref">2.2.7</span> <span class="toc_entry">Existence Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:analytic_interpretation"><span class="toc_ref">2.2.8</span> <span class="toc_entry">Analytic Interpretation</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:branch_selection"><span class="toc_ref">2.2.9</span> <span class="toc_entry">Branch Selection</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:example_summary"><span class="toc_ref">2.2.10</span> <span class="toc_entry">Summary</span></a>
  </li>
 
   </ul>
@@ -206,7 +246,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>  Let \((X, d)\) be a metric space. A function \(T: X \rightarrow X\) is a <i class="itshape">contraction</i> if there is a number \(\kappa \in [0, 1)\), called a <i class="itshape">contraction constant</i>, such that </p>
-<div class="displaymath" id="a0000000006">
+<div class="displaymath" id="a0000000007">
   \begin{equation*}  d(T(x), T(y)) \leq \kappa \cdot d(x, y) \end{equation*}
 </div>
 <p> for all \(x, y \in X\). </p>
@@ -229,7 +269,7 @@
 
     <a class="icon proof" href="sec-contraction.html#thm:contraction_mapping">#</a>
     
-    <a class="icon proof" href="sec-contraction.html#a0000000007"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sec-contraction.html#a0000000008"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -279,13 +319,13 @@
   </div>
   <div class="theorem_thmcontent">
   <p>   Let \((X, d)\) be a complete metric space. If \(T: X \rightarrow X\) is a contraction with contraction constant \(\kappa \), then there exists a unique fixed point \(\tilde{x} \in X\) of \(T\). Furthermore, \(\tilde{x}\) is globally attracting, and for any \(x \in X\), </p>
-<div class="displaymath" id="a0000000008">
+<div class="displaymath" id="a0000000009">
   \begin{equation*}  d(T^n(x), \tilde{x}) \leq \frac{\kappa ^n}{1-\kappa } d(T(x), x). \end{equation*}
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000007">
+<div class="proof_wrapper" id="a0000000008">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -295,7 +335,7 @@
   <div class="proof_content">
   <p>Choose \(x_0 \in X\) and recursively define \(x_{n+1} := T(x_n)\). By the contraction property, \(d(x_{n+1}, x_n) \leq \kappa \cdot d(x_n, x_{n-1})\), so by induction \(d(x_{n+1}, x_n) \leq \kappa ^n d(x_1, x_0)\). </p>
 <p>For \(n {\lt} m\), the triangle inequality and geometric series give </p>
-<div class="displaymath" id="a0000000009">
+<div class="displaymath" id="a0000000010">
   \begin{equation*}  d(x_n, x_m) \leq \sum _{j=n}^{m-1} d(x_{j+1}, x_j) \leq \frac{\kappa ^n}{1-\kappa } d(x_1, x_0). \end{equation*}
 </div>
 <p> Thus \(\{ x_n\} \) is Cauchy. By completeness, there exists \(\tilde{x} = \lim _{n\rightarrow \infty } x_n\). </p>

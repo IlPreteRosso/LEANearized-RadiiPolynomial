@@ -13,7 +13,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RadiiPolynomial: Radii Polynomials in Finite Dimensions</title>
-<link rel="next" href="ch-banach.html" title="Radii Polynomial of Banach Spaces" />
+<link rel="next" href="ch-banach.html" title="Radii Polynomial on Banach Spaces" />
 <link rel="prev" href="sec-newton.html" title="Newton’s Method" />
 <link rel="up" href="ch-foundations.html" title="Foundations" />
 <link rel="stylesheet" href="styles/theme-white.css" />
@@ -45,6 +45,9 @@
 <li class="">
   <a href="sect0001.html#a0000000005"><span class="toc_ref"></span> <span class="toc_entry">Special Cases</span></a>
  </li>
+<li class="">
+  <a href="sect0001.html#a0000000006"><span class="toc_ref"></span> <span class="toc_entry">Example 7.7: Weighted Sequence Space Notations</span></a>
+ </li>
 
   </ul>
  </li>
@@ -75,7 +78,7 @@
   </ul>
  </li>
 <li class="">
-  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Radii Polynomial of Banach Spaces</span></a>
+  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Radii Polynomial on Banach Spaces</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
@@ -102,6 +105,43 @@
  </li>
 <li class="">
   <a href="sec-radii_poly_banach.html#subsec:main_theorems"><span class="toc_ref">2.1.7</span> <span class="toc_entry">Main Theorems</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html"><span class="toc_ref">2.2</span> <span class="toc_entry">Example 7.7: Square Root via Power Series</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-example_7_7.html#subsec:weighted_space"><span class="toc_ref">2.2.1</span> <span class="toc_entry">The Weighted Sequence Space</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:cauchy_product"><span class="toc_ref">2.2.2</span> <span class="toc_entry">Cauchy Product and Banach Algebra Structure</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:fixed_point_problem"><span class="toc_ref">2.2.3</span> <span class="toc_entry">The Fixed-Point Problem</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:approx_solution"><span class="toc_ref">2.2.4</span> <span class="toc_entry">Approximate Solution</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:bound_defs"><span class="toc_ref">2.2.5</span> <span class="toc_entry">Bound Definitions</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:bound_verification"><span class="toc_ref">2.2.6</span> <span class="toc_entry">Bound Verification</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:existence"><span class="toc_ref">2.2.7</span> <span class="toc_entry">Existence Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:analytic_interpretation"><span class="toc_ref">2.2.8</span> <span class="toc_entry">Analytic Interpretation</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:branch_selection"><span class="toc_ref">2.2.9</span> <span class="toc_entry">Branch Selection</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:example_summary"><span class="toc_ref">2.2.10</span> <span class="toc_entry">Summary</span></a>
  </li>
 
   </ul>
@@ -135,7 +175,7 @@
 
     <a class="icon proof" href="sec-radii_poly_fd.html#thm:fixed_point_radii">#</a>
     
-    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000022"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000023"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -168,21 +208,21 @@
   </div>
   <div class="theorem_thmcontent">
   <p>  Consider a map \(T \in C^1(\mathbb {R}^n, \mathbb {R}^n)\) and let \(\bar{x} \in \mathbb {R}^n\). Let \(Y_0 \geq 0\) and \(Z: (0,\infty ) \rightarrow [0,\infty )\) be a non-negative function satisfying </p>
-<div class="displaymath" id="a0000000023">
+<div class="displaymath" id="a0000000024">
   \begin{equation*}  \| T(\bar{x}) - \bar{x}\| \leq Y_0 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000024">
+<div class="displaymath" id="a0000000025">
   \begin{equation*}  \| \text{DT}(c)\| \leq Z(r), \quad \text{for all } c \in \overline{B}_r(\bar{x}) \text{ and all } r {\gt} 0. \end{equation*}
 </div>
 <p> Define </p>
-<div class="displaymath" id="a0000000025">
+<div class="displaymath" id="a0000000026">
   \begin{equation*}  p(r) := (Z(r) - 1)r + Y_0. \end{equation*}
 </div>
 <p> If there exists \(r_0 {\gt} 0\) such that \(p(r_0) {\lt} 0\), then there exists a unique \(\tilde{x} \in \overline{B}_{r_0}(\bar{x})\) such that \(T(\tilde{x}) = \tilde{x}\). </p>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000022">
+<div class="proof_wrapper" id="a0000000023">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -192,7 +232,7 @@
   <div class="proof_content">
   <p>The assumption \(p(r_0) {\lt} 0\) implies \(Z(r_0)r_0 + Y_0 {\lt} r_0\) and hence \(Z(r_0) {\lt} 1\). </p>
 <p><b class="bfseries">Step 1: \(T\) maps \(\overline{B}_{r_0}(\bar{x})\) into itself.</b> Let \(x \in \overline{B}_{r_0}(\bar{x})\). By the Mean Value Inequality: </p>
-<div class="displaymath" id="a0000000026">
+<div class="displaymath" id="a0000000027">
   \begin{equation*}  \| T(x) - \bar{x}\| \leq \| T(x) - T(\bar{x})\| + \| T(\bar{x}) - \bar{x}\| \leq Z(r_0)\| x - \bar{x}\| + Y_0 \leq Z(r_0)r_0 + Y_0 {\lt} r_0. \end{equation*}
 </div>
 <p><b class="bfseries">Step 2: \(T\) is a contraction on \(\overline{B}_{r_0}(\bar{x})\).</b> For \(a, b \in \overline{B}_{r_0}(\bar{x})\), by the Mean Value Inequality: \(\| T(a) - T(b)\| \leq Z(r_0)\| a - b\| \). Since \(Z(r_0) {\lt} 1\), \(T\) is a contraction. </p>
@@ -241,7 +281,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>  Given constants \(Y_0, Z_0 \geq 0\) and a function \(Z_2: (0,\infty ) \rightarrow [0,\infty )\), the <i class="itshape">radii polynomial</i> is defined by </p>
-<div class="displaymath" id="a0000000027">
+<div class="displaymath" id="a0000000028">
   \begin{equation*}  p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0. \end{equation*}
 </div>
 
@@ -288,7 +328,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>  The <i class="itshape">combined bound</i> is defined as </p>
-<div class="displaymath" id="a0000000028">
+<div class="displaymath" id="a0000000029">
   \begin{equation*}  Z(r) := Z_0 + Z_2(r) \cdot r. \end{equation*}
 </div>
 
@@ -310,7 +350,7 @@
 
     <a class="icon proof" href="sec-radii_poly_fd.html#lem:radii_poly_alt_form">#</a>
     
-    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000029"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000030"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -360,13 +400,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>   The radii polynomial can be rewritten as </p>
-<div class="displaymath" id="a0000000030">
+<div class="displaymath" id="a0000000031">
   \begin{equation*}  p(r) = (Z(r) - 1)r + Y_0. \end{equation*}
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000029">
+<div class="proof_wrapper" id="a0000000030">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -394,7 +434,7 @@
 
     <a class="icon proof" href="sec-radii_poly_fd.html#lem:poly_neg_implies_contraction">#</a>
     
-    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000031"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000032"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -449,7 +489,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000031">
+<div class="proof_wrapper" id="a0000000032">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -477,7 +517,7 @@
 
     <a class="icon proof" href="sec-radii_poly_fd.html#thm:radii_poly_fd">#</a>
     
-    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000032"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000033"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -543,13 +583,13 @@
   </div>
   <div class="theorem_thmcontent">
   <p>   Consider \(f \in C^1(\mathbb {R}^n, \mathbb {R}^n)\). Let \(\bar{x} \in \mathbb {R}^n\) and \(A \in M_n(\mathbb {R})\). Let \(Y_0\) and \(Z_0\) be non-negative constants and \(Z_2: (0,\infty ) \rightarrow [0,\infty )\) be a non-negative function satisfying </p>
-<div class="displaymath" id="a0000000033">
+<div class="displaymath" id="a0000000034">
   \begin{equation*}  \| Af(\bar{x})\| \leq Y_0 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000034">
+<div class="displaymath" id="a0000000035">
   \begin{equation*}  \| I - A\text{Df}(\bar{x})\| \leq Z_0 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000035">
+<div class="displaymath" id="a0000000036">
   \begin{equation*}  \| A[\text{Df}(c) - \text{Df}(\bar{x})]\| \leq Z_2(r) \cdot r, \quad \text{for all } c \in \overline{B}_r(\bar{x}) \text{ and all } r {\gt} 0. \end{equation*}
 </div>
 <p> Define \(p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0\). </p>
@@ -557,7 +597,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000032">
+<div class="proof_wrapper" id="a0000000033">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -567,7 +607,7 @@
   <div class="proof_content">
   <p> <b class="bfseries">Step 1: Define Newton-like operator.</b> Let \(T(x) = x - Af(x)\). Since \(f\) is \(C^1\) and \(A\) is linear, \(T\) is \(C^1\). </p>
 <p><b class="bfseries">Step 2: Verify bounds.</b> We have \(\| T(\bar{x}) - \bar{x}\| = \| Af(\bar{x})\| \leq Y_0\). For \(c \in \overline{B}_{r_0}(\bar{x})\), \(\text{DT}(c) = I - A\text{Df}(c)\), so </p>
-<div class="displaymath" id="a0000000036">
+<div class="displaymath" id="a0000000037">
   \begin{equation*}  \| \text{DT}(c)\| \leq \| I - A\text{Df}(\bar{x})\| + \| A[\text{Df}(\bar{x}) - \text{Df}(c)]\| \leq Z_0 + Z_2(r_0)r_0 = Z(r_0). \end{equation*}
 </div>
 <p><b class="bfseries">Step 3: Show \(A\) is invertible.</b> From \(p(r_0) {\lt} 0\), Lemma&#160;<a href="sec-radii_poly_fd.html#lem:poly_neg_implies_contraction">1.4.5</a> gives \(Z(r_0) {\lt} 1\). Since \(\| I - A\text{Df}(\bar{x})\| \leq Z_0 \leq Z(r_0) {\lt} 1\), by Theorem&#160;<a href="sec-radii_poly_banach.html#thm:neumann_series">2.1.1</a>, \(A\text{Df}(\bar{x})\) is invertible. Since \(\text{Df}(\bar{x})\) is square, \(A\) is invertible. </p>
@@ -681,7 +721,7 @@
 
     <a class="icon proof" href="sec-radii_poly_fd.html#ex:sqrt2">#</a>
     
-    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000037"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sec-radii_poly_fd.html#a0000000038"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -736,7 +776,7 @@
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000037">
+<div class="proof_wrapper" id="a0000000038">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -876,7 +916,7 @@
 </a>
   <a href="ch-foundations.html" title="Foundations"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
 </a>
-  <a href="ch-banach.html" title="Radii Polynomial of Banach Spaces"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+  <a href="ch-banach.html" title="Radii Polynomial on Banach Spaces"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
 </a>
 </nav>
 

@@ -1,0 +1,2584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RadiiPolynomial: Example 7.7: Square Root via Power Series</title>
+<link rel="prev" href="sec-radii_poly_banach.html" title="Radii Polynomial Approach on Banach Spaces" />
+<link rel="up" href="ch-banach.html" title="Radii Polynomial on Banach Spaces" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">RadiiPolynomial</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Notations</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000003"><span class="toc_ref"></span> <span class="toc_entry">General Notations</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000004"><span class="toc_ref"></span> <span class="toc_entry">Radii Polynomial Notations</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000005"><span class="toc_ref"></span> <span class="toc_entry">Special Cases</span></a>
+ </li>
+<li class="">
+  <a href="sect0001.html#a0000000006"><span class="toc_ref"></span> <span class="toc_entry">Example 7.7: Weighted Sequence Space Notations</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="ch-foundations.html"><span class="toc_ref">1</span> <span class="toc_entry">Foundations</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sec-contraction.html"><span class="toc_ref">1.1</span> <span class="toc_entry">Contraction Mapping Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-mean_value.html"><span class="toc_ref">1.2</span> <span class="toc_entry">Mean Value Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-newton.html"><span class="toc_ref">1.3</span> <span class="toc_entry">Newton’s Method</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_fd.html"><span class="toc_ref">1.4</span> <span class="toc_entry">Radii Polynomials in Finite Dimensions</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-radii_poly_fd.html#subsec:example_sqrt2"><span class="toc_ref">1.4.1</span> <span class="toc_entry">Example 2.4.5: Finding \(\sqrt{2}\)</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active">
+  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Radii Polynomial on Banach Spaces</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sec-radii_poly_banach.html"><span class="toc_ref">2.1</span> <span class="toc_entry">Radii Polynomial Approach on Banach Spaces</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-radii_poly_banach.html#subsec:banach_setup"><span class="toc_ref">2.1.1</span> <span class="toc_entry">Banach Space Setup</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:neumann_series"><span class="toc_ref">2.1.2</span> <span class="toc_entry">Neumann Series and Operator Invertibility</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:newton_ef"><span class="toc_ref">2.1.3</span> <span class="toc_entry">Newton-Like Operators for E to F Maps</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:radii_poly_defs_banach"><span class="toc_ref">2.1.4</span> <span class="toc_entry">Radii Polynomial Definitions</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:operator_bounds"><span class="toc_ref">2.1.5</span> <span class="toc_entry">Operator Bounds</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:helper_lemmas"><span class="toc_ref">2.1.6</span> <span class="toc_entry">Helper Lemmas</span></a>
+ </li>
+<li class="">
+  <a href="sec-radii_poly_banach.html#subsec:main_theorems"><span class="toc_ref">2.1.7</span> <span class="toc_entry">Main Theorems</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="sec-example_7_7.html"><span class="toc_ref">2.2</span> <span class="toc_entry">Example 7.7: Square Root via Power Series</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-2 active">
+     <li class="">
+  <a href="sec-example_7_7.html#subsec:weighted_space"><span class="toc_ref">2.2.1</span> <span class="toc_entry">The Weighted Sequence Space</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:cauchy_product"><span class="toc_ref">2.2.2</span> <span class="toc_entry">Cauchy Product and Banach Algebra Structure</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:fixed_point_problem"><span class="toc_ref">2.2.3</span> <span class="toc_entry">The Fixed-Point Problem</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:approx_solution"><span class="toc_ref">2.2.4</span> <span class="toc_entry">Approximate Solution</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:bound_defs"><span class="toc_ref">2.2.5</span> <span class="toc_entry">Bound Definitions</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:bound_verification"><span class="toc_ref">2.2.6</span> <span class="toc_entry">Bound Verification</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:existence"><span class="toc_ref">2.2.7</span> <span class="toc_entry">Existence Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:analytic_interpretation"><span class="toc_ref">2.2.8</span> <span class="toc_entry">Analytic Interpretation</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:branch_selection"><span class="toc_ref">2.2.9</span> <span class="toc_entry">Branch Selection</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:example_summary"><span class="toc_ref">2.2.10</span> <span class="toc_entry">Summary</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="sec:example_7_7">2.2 Example 7.7: Square Root via Power Series</h1>
+
+<p>This section applies the radii polynomial method to prove existence of an analytic branch of \(\sqrt{\lambda }\) near a base point \(\lambda _0 {\gt} 0\). We work in the weighted sequence space \(\ell ^1_\nu \) and verify all bounds to establish existence of a fixed point, then interpret this fixed point as a convergent power series. </p>
+<h2 id="subsec:weighted_space">2.2.1 The Weighted Sequence Space</h2>
+
+<div class="definition_thmwrapper theorem-style-plain" id="def:posreal">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.1</span>
+    <span class="definition_thmtitle">Positive real numbers</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:posreal">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/PosReal" class="lean_decl">PosReal</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  The type of positive real numbers is </p>
+<div class="displaymath" id="a0000000066">
+  \begin{equation*}  \texttt{PosReal} := \{ x : \mathbb {R} \mid 0 {\lt} x\} . \end{equation*}
+</div>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:l1_weighted">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.2</span>
+    <span class="definition_thmtitle">Weighted \(\ell ^1\) space</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:l1_weighted">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:posreal">Definition 2.2.1</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted" class="lean_decl">l1Weighted</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   For \(\nu {\gt} 0\), the weighted \(\ell ^1_\nu \) space consists of sequences \(a : \mathbb {N} \rightarrow \mathbb {R}\) such that </p>
+<div class="displaymath" id="a0000000067">
+  \begin{equation*}  \| a\| _{\ell ^1_\nu } := \sum _{n=0}^\infty |a_n| \nu ^n {\lt} \infty . \end{equation*}
+</div>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:l1_mem_iff">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.2.3</span>
+    <span class="lemma_thmtitle">Membership criterion</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#lem:l1_mem_iff">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:l1_weighted">Definition 2.2.2</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.mem_iff" class="lean_decl">l1Weighted.mem_iff</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   A sequence \(a\) belongs to \(\ell ^1_\nu \) if and only if \(\sum _{n=0}^\infty |a_n| \nu ^n\) converges. </p>
+
+  </div>
+</div>
+<h2 id="subsec:cauchy_product">2.2.2 Cauchy Product and Banach Algebra Structure</h2>
+
+<div class="definition_thmwrapper theorem-style-plain" id="def:cauchy_product">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.4</span>
+    <span class="definition_thmtitle">Cauchy product</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:cauchy_product">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/CauchyProduct" class="lean_decl">CauchyProduct</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  The <i class="itshape">Cauchy product</i> of sequences \(a, b : \mathbb {N} \rightarrow \mathbb {R}\) is </p>
+<div class="displaymath" id="a0000000068">
+  \begin{equation*}  (a \star b)_n := \sum _{k=0}^n a_k b_{n-k}. \end{equation*}
+</div>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:cauchy_product_mem">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.2.5</span>
+    <span class="theorem_thmtitle">Closure under Cauchy product</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#thm:cauchy_product_mem">#</a>
+    
+    <a class="icon proof" href="sec-example_7_7.html#a0000000069"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:l1_weighted">Definition 2.2.2</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:cauchy_product">Definition 2.2.4</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.mem" class="lean_decl">l1Weighted.mem</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   If \(a, b \in \ell ^1_\nu \), then \(a \star b \in \ell ^1_\nu \). </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000069">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>By the triangle inequality and rearrangement: </p>
+<div class="displaymath" id="a0000000070">
+  \begin{align*}  \sum _{n=0}^\infty |(a \star b)_n| \nu ^n & \leq \sum _{n=0}^\infty \sum _{k=0}^n |a_k| |b_{n-k}| \nu ^n \\ & = \sum _{n=0}^\infty \sum _{k=0}^n |a_k| \nu ^k \cdot |b_{n-k}| \nu ^{n-k} \\ & = \| a\| _{\ell ^1_\nu } \cdot \| b\| _{\ell ^1_\nu } {\lt} \infty . \end{align*}
+</div>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:norm_submultiplicative">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.2.6</span>
+    <span class="theorem_thmtitle">Submultiplicative norm</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#thm:norm_submultiplicative">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:l1_weighted">Definition 2.2.2</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:cauchy_product">Definition 2.2.4</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.norm_mul_le" class="lean_decl">l1Weighted.norm_mul_le</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   For \(a, b \in \ell ^1_\nu \): </p>
+<div class="displaymath" id="a0000000071">
+  \begin{equation*}  \| a \star b\| _{\ell ^1_\nu } \leq \| a\| _{\ell ^1_\nu } \cdot \| b\| _{\ell ^1_\nu }. \end{equation*}
+</div>
+<p> This makes \((\ell ^1_\nu , \star )\) a Banach algebra. </p>
+
+  </div>
+</div>
+<h2 id="subsec:fixed_point_problem">2.2.3 The Fixed-Point Problem</h2>
+
+<p>We seek an analytic function \(x(\lambda ) = \sum _{n=0}^\infty a_n (\lambda - \lambda _0)^n\) satisfying \(x(\lambda )^2 = \lambda \). In coefficient space, this becomes: find \(a \in \ell ^1_\nu \) such that \((a \star a)_n = c_n\) where \(c\) is the parameter sequence. </p>
+<div class="definition_thmwrapper theorem-style-plain" id="def:param_seq">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.7</span>
+    <span class="definition_thmtitle">Parameter sequence</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:param_seq">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.paramSeq" class="lean_decl">Example_7_7.paramSeq</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  For \(\lambda _0 \in \mathbb {R}\), the <i class="itshape">parameter sequence</i> is </p>
+<div class="displaymath" id="a0000000072">
+  \begin{equation*}  c_n = \begin{cases}  \lambda _0 &  n = 0 \\ 1 &  n = 1 \\ 0 &  n \geq 2 \end{cases}\end{equation*}
+</div>
+<p> This encodes the polynomial \(\lambda _0 + z\) (i.e., \(\lambda \) when \(z = \lambda - \lambda _0\)). </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:F_map">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.8</span>
+    <span class="definition_thmtitle">The map \(F\)</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:F_map">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:l1_weighted">Definition 2.2.2</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:cauchy_product">Definition 2.2.4</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:param_seq">Definition 2.2.7</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.F" class="lean_decl">Example_7_7.F</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   The fixed-point map \(F: \ell ^1_\nu \rightarrow \ell ^1_\nu \) is defined by </p>
+<div class="displaymath" id="a0000000073">
+  \begin{equation*}  F(a)_n = (a \star a)_n - c_n. \end{equation*}
+</div>
+<p> A zero of \(F\) corresponds to a power series squaring to \(\lambda _0 + z\). </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:sq_map">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.9</span>
+    <span class="definition_thmtitle">Squaring map</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:sq_map">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:l1_weighted">Definition 2.2.2</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:cauchy_product">Definition 2.2.4</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.sq" class="lean_decl">l1Weighted.sq</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   The squaring map \(\text{sq}: \ell ^1_\nu \rightarrow \ell ^1_\nu \) is \(\text{sq}(a) = a \star a\). </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:fderiv_sq">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.2.10</span>
+    <span class="theorem_thmtitle">Fréchet derivative of squaring</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#thm:fderiv_sq">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:sq_map">Definition 2.2.9</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:cauchy_product">Definition 2.2.4</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.hasFDerivAt_sq" class="lean_decl">l1Weighted.hasFDerivAt_sq</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   The squaring map is Fréchet differentiable with derivative at \(a\): </p>
+<div class="displaymath" id="a0000000074">
+  \begin{equation*}  D_a[\text{sq}](h) = 2(a \star h). \end{equation*}
+</div>
+
+  </div>
+</div>
+<h2 id="subsec:approx_solution">2.2.4 Approximate Solution</h2>
+
+<div class="definition_thmwrapper theorem-style-plain" id="def:approx_solution">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.11</span>
+    <span class="definition_thmtitle">Approximate solution structure</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:approx_solution">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:l1_weighted">Definition 2.2.2</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.ApproxSolution" class="lean_decl">Example_7_7.ApproxSolution</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   An <i class="itshape">approximate solution</i> of order \(N\) consists of: </p>
+<ul class="itemize">
+  <li><p>Finite coefficients \(\bar{a}_0, \bar{a}_1, \ldots , \bar{a}_N \in \mathbb {R}\) </p>
+</li>
+  <li><p>The extension \(\bar{a} \in \ell ^1_\nu \) defined by \(\bar{a}_n = 0\) for \(n {\gt} N\) </p>
+</li>
+</ul>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:concrete_approx">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.12</span>
+    <span class="definition_thmtitle">Concrete approximate solution</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:concrete_approx">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:approx_solution">Definition 2.2.11</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ConcreteExample.sol" class="lean_decl">ConcreteExample.sol</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   For \(\lambda _0 = 1\) and \(N = 2\), the approximate solution is: </p>
+<div class="displaymath" id="a0000000075">
+  \begin{equation*}  \bar{a}_0 = 1, \quad \bar{a}_1 = \frac{1}{2}, \quad \bar{a}_2 = -\frac{1}{8}. \end{equation*}
+</div>
+<p> These are the first three Taylor coefficients of \(\sqrt{1 + z}\) at \(z = 0\). </p>
+
+  </div>
+</div>
+<h2 id="subsec:bound_defs">2.2.5 Bound Definitions</h2>
+
+<div class="definition_thmwrapper theorem-style-plain" id="def:Y0_bound">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.13</span>
+    <span class="definition_thmtitle">\(Y_0\) bound</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:Y0_bound">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:F_map">Definition 2.2.8</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:approx_solution">Definition 2.2.11</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.Y₀_bound" class="lean_decl">Example_7_7.Y₀_bound</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   The \(Y_0\) bound measures the initial defect: </p>
+<div class="displaymath" id="a0000000076">
+  \begin{equation*}  Y_0 = \| A \cdot F(\bar{a})\| _{\ell ^1_\nu } \end{equation*}
+</div>
+<p> where \(A\) is the approximate inverse. For diagonal \(A\) with entries \(A_{nn} = 1/(2\bar{a}_0)\): </p>
+<div class="displaymath" id="a0000000077">
+  \begin{equation*}  Y_0 = \sum _{n=0}^N |A_{nn} \cdot F(\bar{a})_n| \nu ^n + Y_0^{\text{tail}} \end{equation*}
+</div>
+<p> where \(Y_0^{\text{tail}}\) accounts for the tail contribution. </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:Z0_bound">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.14</span>
+    <span class="definition_thmtitle">\(Z_0\) bound</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:Z0_bound">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:approx_solution">Definition 2.2.11</a></li>
+          
+          <li><a href="sec-example_7_7.html#thm:fderiv_sq">Theorem 2.2.10</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.Z₀_bound" class="lean_decl">Example_7_7.Z₀_bound</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   The \(Z_0\) bound measures deviation from identity: </p>
+<div class="displaymath" id="a0000000078">
+  \begin{equation*}  Z_0 = \| I - A \circ D_{\bar{a}}F\| . \end{equation*}
+</div>
+<p> Since \(D_{\bar{a}}F(h) = 2(\bar{a} \star h)\) and \(A\) is diagonal with \(A_{nn} = 1/(2\bar{a}_0)\): </p>
+<div class="displaymath" id="a0000000079">
+  \begin{equation*}  Z_0 = \sup _{n \geq 0} \left|1 - \frac{2(\bar{a} \star e_n)_n}{2\bar{a}_0}\right| \cdot \nu ^n \end{equation*}
+</div>
+<p> where \(e_n\) is the \(n\)-th standard basis sequence. </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:Z1_bound">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.15</span>
+    <span class="definition_thmtitle">\(Z_1\) bound</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:Z1_bound">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.Z₁_bound" class="lean_decl">Example_7_7.Z₁_bound</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  In the simple case where \(A^\dagger = D_{\bar{a}}F\), we have \(Z_1 = 0\). </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:Z2_bound">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.16</span>
+    <span class="definition_thmtitle">\(Z_2\) bound</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:Z2_bound">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#thm:fderiv_sq">Theorem 2.2.10</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.Z₂_bound" class="lean_decl">Example_7_7.Z₂_bound</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   The \(Z_2\) bound measures Lipschitz continuity of the derivative: </p>
+<div class="displaymath" id="a0000000080">
+  \begin{equation*}  \| A \circ (D_c F - D_{\bar{a}} F)\| \leq Z_2 \cdot r \end{equation*}
+</div>
+<p> for all \(c \in \overline{B}_r(\bar{a})\). Since \(D_c F - D_{\bar{a}} F = 2((c - \bar{a}) \star \cdot )\): </p>
+<div class="displaymath" id="a0000000081">
+  \begin{equation*}  Z_2 = \frac{2 \| A\| }{\text{(appropriate norm)}}. \end{equation*}
+</div>
+
+  </div>
+</div>
+<h2 id="subsec:bound_verification">2.2.6 Bound Verification</h2>
+
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:Y0_verified">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.2.17</span>
+    <span class="lemma_thmtitle">\(Y_0\) bound verification</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#lem:Y0_verified">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:Y0_bound">Definition 2.2.13</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:concrete_approx">Definition 2.2.12</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ConcreteExample.Y₀_bound_le" class="lean_decl">ConcreteExample.Y₀_bound_le</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   For the concrete parameters \(\nu = 1/2\), \(\lambda _0 = 1\), \(N = 2\): </p>
+<div class="displaymath" id="a0000000082">
+  \begin{equation*}  Y_0 \leq Y_0^{\text{pad}} \end{equation*}
+</div>
+<p> where \(Y_0^{\text{pad}}\) is a rational upper bound verified by computation. </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:Z0_verified">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.2.18</span>
+    <span class="lemma_thmtitle">\(Z_0\) bound verification</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#lem:Z0_verified">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:Z0_bound">Definition 2.2.14</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:concrete_approx">Definition 2.2.12</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ConcreteExample.Z₀_bound_le" class="lean_decl">ConcreteExample.Z₀_bound_le</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   For the concrete parameters: </p>
+<div class="displaymath" id="a0000000083">
+  \begin{equation*}  Z_0 \leq Z_0^{\text{pad}}. \end{equation*}
+</div>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:Z2_verified">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.2.19</span>
+    <span class="lemma_thmtitle">\(Z_2\) bound verification</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#lem:Z2_verified">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:Z2_bound">Definition 2.2.16</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:concrete_approx">Definition 2.2.12</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ConcreteExample.Z₂_bound_le" class="lean_decl">ConcreteExample.Z₂_bound_le</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   For the concrete parameters and all \(c \in \overline{B}_r(\bar{a})\): </p>
+<div class="displaymath" id="a0000000084">
+  \begin{equation*}  \| A \circ (D_c F - D_{\bar{a}} F)\| \leq Z_2^{\text{pad}} \cdot r. \end{equation*}
+</div>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:radii_poly_neg">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.2.20</span>
+    <span class="lemma_thmtitle">Radii polynomial negativity</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#lem:radii_poly_neg">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#lem:Y0_verified">Lemma 2.2.17</a></li>
+          
+          <li><a href="sec-example_7_7.html#lem:Z0_verified">Lemma 2.2.18</a></li>
+          
+          <li><a href="sec-example_7_7.html#lem:Z2_verified">Lemma 2.2.19</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ConcreteExample.radiiPoly_7_7_neg" class="lean_decl">ConcreteExample.radiiPoly_7_7_neg</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   For \(r_0 {\gt} 0\) sufficiently small: </p>
+<div class="displaymath" id="a0000000085">
+  \begin{equation*}  p(r_0) = Z_2^{\text{pad}} \cdot r_0^2 - (1 - Z_0^{\text{pad}}) r_0 + Y_0^{\text{pad}} {\lt} 0. \end{equation*}
+</div>
+
+  </div>
+</div>
+<h2 id="subsec:existence">2.2.7 Existence Theorem</h2>
+
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:example_7_7_existence">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.2.21</span>
+    <span class="theorem_thmtitle">Existence of fixed point</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#thm:example_7_7_existence">#</a>
+    
+    <a class="icon proof" href="sec-example_7_7.html#a0000000086"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#lem:radii_poly_neg">Lemma 2.2.20</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:F_map">Definition 2.2.8</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:concrete_approx">Definition 2.2.12</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.example_7_7_main_theorem" class="lean_decl">Example_7_7.example_7_7_main_theorem</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   There exists a unique \(\tilde{a} \in \ell ^1_\nu \) with \(\| \tilde{a} - \bar{a}\| _{\ell ^1_\nu } \leq r_0\) such that \(F(\tilde{a}) = 0\), i.e., \((\tilde{a} \star \tilde{a})_n = c_n\) for all \(n\). </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000086">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>Apply Theorem&#160;<a href="sec-radii_poly_banach.html#thm:simple_radii_poly_same">2.1.23</a> with the verified bounds. </p>
+
+  </div>
+</div>
+<h2 id="subsec:analytic_interpretation">2.2.8 Analytic Interpretation</h2>
+
+<p>Having established existence in coefficient space, we now interpret the result as convergence of a power series. We separate this into two levels: </p>
+<ol class="enumerate">
+  <li><p><b class="bfseries">Formal level:</b> Embed \(\ell ^1_\nu \) into the ring of formal power series \(\mathbb {R}[\! [X]\! ]\) </p>
+</li>
+  <li><p><b class="bfseries">Analytic level:</b> Evaluate the series at points in the disk of convergence </p>
+</li>
+</ol>
+<h3 id="a0000000087">Formal Power Series Embedding</h3>
+<div class="definition_thmwrapper theorem-style-plain" id="def:to_power_series">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.22</span>
+    <span class="definition_thmtitle">Formal power series embedding</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:to_power_series">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:l1_weighted">Definition 2.2.2</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.toPowerSeries" class="lean_decl">l1Weighted.toPowerSeries</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   For \(a \in \ell ^1_\nu \), the formal power series is </p>
+<div class="displaymath" id="a0000000088">
+  \begin{equation*}  \texttt{toPowerSeries}(a) := \sum _{n=0}^\infty a_n X^n \in \mathbb {R}[\! [X]\! ]. \end{equation*}
+</div>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-plain" id="def:param_power_series">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.23</span>
+    <span class="definition_thmtitle">Parameter power series</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:param_power_series">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:param_seq">Definition 2.2.7</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.paramPowerSeries" class="lean_decl">l1Weighted.paramPowerSeries</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   The parameter sequence as a formal power series: </p>
+<div class="displaymath" id="a0000000089">
+  \begin{equation*}  \texttt{paramPowerSeries}(\lambda _0) = \lambda _0 + X \in \mathbb {R}[\! [X]\! ]. \end{equation*}
+</div>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:coeff_mul_eq_cauchy">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.2.24</span>
+    <span class="theorem_thmtitle">Cauchy product is formal multiplication</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#thm:coeff_mul_eq_cauchy">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:to_power_series">Definition 2.2.22</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:cauchy_product">Definition 2.2.4</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.coeff_mul_eq_cauchyProduct" class="lean_decl">l1Weighted.coeff_mul_eq_cauchyProduct</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   For \(a, b \in \ell ^1_\nu \): </p>
+<div class="displaymath" id="a0000000090">
+  \begin{equation*}  \texttt{coeff}_n(\texttt{toPowerSeries}(a) \cdot \texttt{toPowerSeries}(b)) = (a \star b)_n. \end{equation*}
+</div>
+<p> This is essentially definitional: multiplication in \(\mathbb {R}[\! [X]\! ]\) <em>is</em> the Cauchy product. </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:formal_sq_eq_param">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.2.25</span>
+    <span class="theorem_thmtitle">Formal fixed-point equation</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#thm:formal_sq_eq_param">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:to_power_series">Definition 2.2.22</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:param_power_series">Definition 2.2.23</a></li>
+          
+          <li><a href="sec-example_7_7.html#thm:coeff_mul_eq_cauchy">Theorem 2.2.24</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.toPowerSeries_sq_eq_param" class="lean_decl">l1Weighted.toPowerSeries_sq_eq_param</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   If \(F(\tilde{a}) = 0\) (i.e., \((\tilde{a} \star \tilde{a})_n = c_n\) for all \(n\)), then at the formal level: </p>
+<div class="displaymath" id="a0000000091">
+  \begin{equation*}  \texttt{toPowerSeries}(\tilde{a})^2 = \texttt{paramPowerSeries}(\lambda _0). \end{equation*}
+</div>
+
+  </div>
+</div>
+<h3 id="a0000000092">Analytic Evaluation</h3>
+<div class="definition_thmwrapper theorem-style-plain" id="def:eval">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">2.2.26</span>
+    <span class="definition_thmtitle">Analytic evaluation</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#def:eval">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:l1_weighted">Definition 2.2.2</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.eval" class="lean_decl">l1Weighted.eval</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   For \(a \in \ell ^1_\nu \) and \(z \in \mathbb {R}\), the evaluation is </p>
+<div class="displaymath" id="a0000000093">
+  \begin{equation*}  \texttt{eval}(a, z) := \sum _{n=0}^\infty a_n z^n. \end{equation*}
+</div>
+<p> (An alias <span class="ttfamily">analyticSolution</span> is provided for backward compatibility.) </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:summable_eval">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.2.27</span>
+    <span class="lemma_thmtitle">Absolute convergence</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#lem:summable_eval">#</a>
+    
+    <a class="icon proof" href="sec-example_7_7.html#a0000000094"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:l1_weighted">Definition 2.2.2</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:eval">Definition 2.2.26</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.summable_eval" class="lean_decl">l1Weighted.summable_eval</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   If \(a \in \ell ^1_\nu \) and \(|z| \leq \nu \), then \(\sum _{n=0}^\infty a_n z^n\) converges absolutely. </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000094">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>For \(|z| \leq \nu \): \(\sum _{n=0}^\infty |a_n z^n| \leq \sum _{n=0}^\infty |a_n| \nu ^n = \| a\| _{\ell ^1_\nu } {\lt} \infty \). </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:eval_mul">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.2.28</span>
+    <span class="theorem_thmtitle">Mertens’ theorem: evaluation commutes with multiplication</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#thm:eval_mul">#</a>
+    
+    <a class="icon proof" href="sec-example_7_7.html#a0000000095"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:cauchy_product">Definition 2.2.4</a></li>
+          
+          <li><a href="sec-example_7_7.html#lem:summable_eval">Lemma 2.2.27</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.eval_mul" class="lean_decl">l1Weighted.eval_mul</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   For \(a, b \in \ell ^1_\nu \) and \(|z| \leq \nu \): </p>
+<div class="displaymath" id="a0000000096">
+  \begin{equation*}  \texttt{eval}(a, z) \cdot \texttt{eval}(b, z) = \sum _{n=0}^\infty (a \star b)_n z^n. \end{equation*}
+</div>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000095">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>By absolute convergence, apply Mertens’ theorem (<span class="ttfamily">tsum_mul_tsum_eq_tsum_sum_antidiagonal_of_summable_norm’</span>): the product of absolutely convergent series equals the series of Cauchy products. </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:eval_sq_eq">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.2.29</span>
+    <span class="theorem_thmtitle">Squaring identity</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#thm:eval_sq_eq">#</a>
+    
+    <a class="icon proof" href="sec-example_7_7.html#a0000000097"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#thm:example_7_7_existence">Theorem 2.2.21</a></li>
+          
+          <li><a href="sec-example_7_7.html#thm:eval_mul">Theorem 2.2.28</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:param_seq">Definition 2.2.7</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.eval_sq_eq" class="lean_decl">l1Weighted.eval_sq_eq</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   If \(\tilde{a} \in \ell ^1_\nu \) satisfies \(F(\tilde{a}) = 0\), then for \(|z| \leq \nu \): </p>
+<div class="displaymath" id="a0000000098">
+  \begin{equation*}  \texttt{eval}(\tilde{a}, z)^2 = \lambda _0 + z. \end{equation*}
+</div>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000097">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>By Theorem&#160;<a href="sec-example_7_7.html#thm:eval_mul">2.2.28</a>: \(\texttt{eval}(\tilde{a}, z)^2 = \sum _{n=0}^\infty (\tilde{a} \star \tilde{a})_n z^n = \sum _{n=0}^\infty c_n z^n = \lambda _0 + z\). </p>
+
+  </div>
+</div>
+<div class="corollary_thmwrapper theorem-style-plain" id="cor:analytic_is_sqrt">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    Corollary
+    </span>
+    <span class="corollary_thmlabel">2.2.30</span>
+    <span class="corollary_thmtitle">Evaluation identity</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#cor:analytic_is_sqrt">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#thm:eval_sq_eq">Theorem 2.2.29</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.analyticSolution_is_sqrt" class="lean_decl">Example_7_7.analyticSolution_is_sqrt</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="corollary_thmcontent">
+  <p>   For \(|\lambda - \lambda _0| \leq \nu \): </p>
+<div class="displaymath" id="a0000000099">
+  \begin{equation*}  \texttt{eval}(\tilde{a}, \lambda - \lambda _0)^2 = \lambda . \end{equation*}
+</div>
+
+  </div>
+</div>
+<h2 id="subsec:branch_selection">2.2.9 Branch Selection</h2>
+
+<p>The equation \(y^2 = \lambda \) has two solutions: \(\pm \sqrt{\lambda }\). We show that the power series selects the positive branch. </p>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:eval_zero">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.2.31</span>
+    <span class="lemma_thmtitle">Evaluation at zero</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#lem:eval_zero">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#def:eval">Definition 2.2.26</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.eval_zero" class="lean_decl">l1Weighted.eval_zero</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   For any \(a \in \ell ^1_\nu \): </p>
+<div class="displaymath" id="a0000000100">
+  \begin{equation*}  \texttt{eval}(a, 0) = a_0. \end{equation*}
+</div>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:analytic_eq_sqrt">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.2.32</span>
+    <span class="theorem_thmtitle">Positive branch identification</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#thm:analytic_eq_sqrt">#</a>
+    
+    <a class="icon proof" href="sec-example_7_7.html#a0000000101"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#cor:analytic_is_sqrt">Corollary 2.2.30</a></li>
+          
+          <li><a href="sec-example_7_7.html#lem:eval_zero">Lemma 2.2.31</a></li>
+          
+          <li><a href="sec-example_7_7.html#def:concrete_approx">Definition 2.2.12</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.analyticSolution_eq_sqrt" class="lean_decl">Example_7_7.analyticSolution_eq_sqrt</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>   Suppose: </p>
+<ol class="enumerate">
+  <li><p>\(\lambda _0 {\gt} 0\) </p>
+</li>
+  <li><p>\(\lambda {\gt} 0\) </p>
+</li>
+  <li><p>\(|\lambda - \lambda _0| \leq \nu \) </p>
+</li>
+  <li><p>\(\tilde{a}_0 {\gt} 0\) </p>
+</li>
+</ol>
+<p> Then \(\texttt{eval}(\tilde{a}, \lambda - \lambda _0) = \sqrt{\lambda }\). </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000101">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p><b class="bfseries">Step 1:</b> Evaluate at \(z = 0\): \(\texttt{eval}(\tilde{a}, 0) = \tilde{a}_0\). </p>
+<p><b class="bfseries">Step 2:</b> From \(\texttt{eval}(\tilde{a}, 0)^2 = \lambda _0\) and \(\tilde{a}_0 {\gt} 0\): \(\tilde{a}_0 = \sqrt{\lambda _0} {\gt} 0\). </p>
+<p><b class="bfseries">Step 3:</b> Since \(\texttt{eval}(\tilde{a}, \lambda - \lambda _0)^2 = \lambda {\gt} 0\), we have \(\texttt{eval}(\tilde{a}, \lambda - \lambda _0) \neq 0\). </p>
+<p><b class="bfseries">Step 4 (Positivity by IVT):</b> Suppose for contradiction that \(\texttt{eval}(\tilde{a}, \lambda - \lambda _0) {\lt} 0\). Since \(\texttt{eval}(\tilde{a}, 0) {\gt} 0\) and \(z \mapsto \texttt{eval}(\tilde{a}, z)\) is continuous (uniform convergence of power series), by the Intermediate Value Theorem there exists \(c\) between \(0\) and \(\lambda - \lambda _0\) with \(\texttt{eval}(\tilde{a}, c) = 0\). </p>
+<p>But \(\texttt{eval}(\tilde{a}, c)^2 = \lambda _0 + c\), so \(0 = \lambda _0 + c\), giving \(c = -\lambda _0 {\lt} 0\). </p>
+<p><i class="itshape">Case 1:</i> If \(\lambda \geq \lambda _0\), then \(c \in [0, \lambda - \lambda _0]\) requires \(c \geq 0\), contradicting \(c = -\lambda _0 {\lt} 0\). </p>
+<p><i class="itshape">Case 2:</i> If \(\lambda {\lt} \lambda _0\), then \(c \in [\lambda - \lambda _0, 0]\) requires \(c \geq \lambda - \lambda _0\), i.e., \(-\lambda _0 \geq \lambda - \lambda _0\), so \(\lambda \leq 0\), contradicting \(\lambda {\gt} 0\). </p>
+<p>Therefore \(\texttt{eval}(\tilde{a}, \lambda - \lambda _0) {\gt} 0\). </p>
+<p><b class="bfseries">Step 5:</b> Since \(\texttt{eval}(\tilde{a}, \lambda - \lambda _0) {\gt} 0\) and \(\texttt{eval}(\tilde{a}, \lambda - \lambda _0)^2 = \lambda \), we have \(\texttt{eval}(\tilde{a}, \lambda - \lambda _0) = \sqrt{\lambda }\). </p>
+
+  </div>
+</div>
+<h2 id="subsec:example_summary">2.2.10 Summary</h2>
+
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:example_7_7_main">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    Theorem
+    </span>
+    <span class="theorem_thmlabel">2.2.33</span>
+    <span class="theorem_thmtitle">Main result for Example 7.7</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sec-example_7_7.html#thm:example_7_7_main">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sec-example_7_7.html#thm:example_7_7_existence">Theorem 2.2.21</a></li>
+          
+          <li><a href="sec-example_7_7.html#thm:analytic_eq_sqrt">Theorem 2.2.32</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>  For \(\lambda _0 = 1\) and \(\nu = 1/2\), there exists a unique power series </p>
+<div class="displaymath" id="a0000000102">
+  \begin{equation*}  \tilde{x}(\lambda ) = \sum _{n=0}^\infty \tilde{a}_n (\lambda - 1)^n \end{equation*}
+</div>
+<p> convergent for \(|\lambda - 1| \leq 1/2\) (i.e., \(\lambda \in [1/2, 3/2]\)) such that </p>
+<div class="displaymath" id="a0000000103">
+  \begin{equation*}  \tilde{x}(\lambda ) = \sqrt{\lambda }. \end{equation*}
+</div>
+<p> The coefficients \(\tilde{a}\) are within distance \(r_0\) of the approximate Taylor coefficients \((1, 1/2, -1/8, 0, 0, \ldots )\) in the \(\ell ^1_\nu \) norm. </p>
+
+  </div>
+</div>
+<p>This completes the formalization of Example 7.7, demonstrating: </p>
+<ol class="enumerate">
+  <li><p>Application of radii polynomial method to infinite-dimensional Banach algebra </p>
+</li>
+  <li><p>Coefficient-space verification via rational arithmetic </p>
+</li>
+  <li><p><b class="bfseries">Formal level:</b> Embedding \(\ell ^1_\nu \hookrightarrow \mathbb {R}[\! [X]\! ]\) where multiplication is the Cauchy product by definition </p>
+</li>
+  <li><p><b class="bfseries">Analytic level:</b> Mertens’ theorem shows evaluation commutes with multiplication </p>
+</li>
+  <li><p>Branch selection via continuity and the Intermediate Value Theorem </p>
+</li>
+</ol>
+<h3 id="a0000000104">Architecture Summary</h3>
+<p>The key insight is separating formal and analytic concerns: </p>
+<div class="centered"> <table class="tabular">
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <b class="bfseries">Level</b> </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <b class="bfseries">Object</b> </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <b class="bfseries">Key Property</b> </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black; border-left:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p>Formal </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> <span class="ttfamily">toPowerSeries</span> : \(\ell ^1_\nu \rightarrow \mathbb {R}[\! [X]\! ]\) </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left; border-right:1px solid black" 
+        rowspan=""
+        colspan="">
+      <p> \(a \cdot b = a \star b\) (definitional) </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left; border-right:1px solid black; border-left:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">
+      <p>Analytic </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">
+      <p> <span class="ttfamily">eval</span> : \(\ell ^1_\nu \times \mathbb {R} \rightarrow \mathbb {R}\) </p>
+
+    </td>
+    <td  style="text-align:left; border-right:1px solid black; border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px" 
+        rowspan=""
+        colspan="">
+      <p> Mertens’ theorem </p>
+
+    </td>
+  </tr>
+</table> </div>
+<p>This separation means: </p>
+<ul class="itemize">
+  <li><p>The formal equation \(\tilde{a}^2 = c\) in \(\mathbb {R}[\! [X]\! ]\) is immediate from \(F(\tilde{a}) = 0\) </p>
+</li>
+  <li><p>The analytic equation \(\texttt{eval}(\tilde{a}, z)^2 = \lambda _0 + z\) requires Mertens’ theorem </p>
+</li>
+  <li><p>Continuity for IVT comes from uniform convergence of power series </p>
+</li>
+</ul>
+<p>  <br /></p>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sec-radii_poly_banach.html" title="Radii Polynomial Approach on Banach Spaces"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="ch-banach.html" title="Radii Polynomial on Banach Spaces"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

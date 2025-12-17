@@ -1,0 +1,488 @@
+% blueprint/src/Sections/Ch7/7-7-Example.tex
+
+\section{Example 7.7: Square Root via Power Series}\label{sec:example_7_7}
+
+This section applies the radii polynomial method to prove existence of an analytic 
+branch of $\sqrt{\lambda}$ near a base point $\lambda_0 > 0$. We work in the 
+weighted sequence space $\ell^1_\nu$ and verify all bounds to establish existence 
+of a fixed point, then interpret this fixed point as a convergent power series.
+
+\subsection{The Weighted Sequence Space}\label{subsec:weighted_space}
+
+\begin{definition}[Positive real numbers]\label{def:posreal}
+  \lean{PosReal}
+  \leanok
+  The type of positive real numbers is
+  \begin{equation*}
+  \texttt{PosReal} := \{x : \mathbb{R} \mid 0 < x\}.
+  \end{equation*}
+\end{definition}
+
+\begin{definition}[Weighted $\ell^1$ space]\label{def:l1_weighted}
+  \lean{l1Weighted}
+  \leanok
+  \uses{def:posreal}
+  For $\nu > 0$, the weighted $\ell^1_\nu$ space consists of sequences $a : \mathbb{N} \to \mathbb{R}$ such that
+  \begin{equation*}
+  \lVert a\rVert_{\ell^1_\nu} := \sum_{n=0}^\infty |a_n| \nu^n < \infty.
+  \end{equation*}
+\end{definition}
+
+\begin{lemma}[Membership criterion]\label{lem:l1_mem_iff}
+  \lean{l1Weighted.mem_iff}
+  \leanok
+  \uses{def:l1_weighted}
+  A sequence $a$ belongs to $\ell^1_\nu$ if and only if $\sum_{n=0}^\infty |a_n| \nu^n$ converges.
+\end{lemma}
+
+\subsection{Cauchy Product and Banach Algebra Structure}\label{subsec:cauchy_product}
+
+\begin{definition}[Cauchy product]\label{def:cauchy_product}
+  \lean{CauchyProduct}
+  \leanok
+  The \textit{Cauchy product} of sequences $a, b : \mathbb{N} \to \mathbb{R}$ is
+  \begin{equation*}
+  (a \star b)_n := \sum_{k=0}^n a_k b_{n-k}.
+  \end{equation*}
+\end{definition}
+
+\begin{theorem}[Closure under Cauchy product]\label{thm:cauchy_product_mem}
+  \lean{l1Weighted.mem}
+  \leanok
+  \uses{def:l1_weighted,def:cauchy_product}
+  If $a, b \in \ell^1_\nu$, then $a \star b \in \ell^1_\nu$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By the triangle inequality and rearrangement:
+  \begin{align*}
+  \sum_{n=0}^\infty |(a \star b)_n| \nu^n 
+  &\leq \sum_{n=0}^\infty \sum_{k=0}^n |a_k| |b_{n-k}| \nu^n \\
+  &= \sum_{n=0}^\infty \sum_{k=0}^n |a_k| \nu^k \cdot |b_{n-k}| \nu^{n-k} \\
+  &= \lVert a\rVert_{\ell^1_\nu} \cdot \lVert b\rVert_{\ell^1_\nu} < \infty.
+  \end{align*}
+\end{proof}
+
+\begin{theorem}[Submultiplicative norm]\label{thm:norm_submultiplicative}
+  \lean{l1Weighted.norm_mul_le}
+  \leanok
+  \uses{def:l1_weighted,def:cauchy_product}
+  For $a, b \in \ell^1_\nu$:
+  \begin{equation*}
+  \lVert a \star b\rVert_{\ell^1_\nu} \leq \lVert a\rVert_{\ell^1_\nu} \cdot \lVert b\rVert_{\ell^1_\nu}.
+  \end{equation*}
+  This makes $(\ell^1_\nu, \star)$ a Banach algebra.
+\end{theorem}
+
+\subsection{The Fixed-Point Problem}\label{subsec:fixed_point_problem}
+
+We seek an analytic function $x(\lambda) = \sum_{n=0}^\infty a_n (\lambda - \lambda_0)^n$ 
+satisfying $x(\lambda)^2 = \lambda$. In coefficient space, this becomes: find 
+$a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter sequence.
+
+\begin{definition}[Parameter sequence]\label{def:param_seq}
+  \lean{Example_7_7.paramSeq}
+  \leanok
+  For $\lambda_0 \in \mathbb{R}$, the \textit{parameter sequence} is
+  \begin{equation*}
+  c_n = \begin{cases} \lambda_0 & n = 0 \\ 1 & n = 1 \\ 0 & n \geq 2 \end{cases}
+  \end{equation*}
+  This encodes the polynomial $\lambda_0 + z$ (i.e., $\lambda$ when $z = \lambda - \lambda_0$).
+\end{definition}
+
+\begin{definition}[The map $F$]\label{def:F_map}
+  \lean{Example_7_7.F}
+  \leanok
+  \uses{def:l1_weighted,def:cauchy_product,def:param_seq}
+  The fixed-point map $F: \ell^1_\nu \to \ell^1_\nu$ is defined by
+  \begin{equation*}
+  F(a)_n = (a \star a)_n - c_n.
+  \end{equation*}
+  A zero of $F$ corresponds to a power series squaring to $\lambda_0 + z$.
+\end{definition}
+
+\begin{definition}[Squaring map]\label{def:sq_map}
+  \lean{l1Weighted.sq}
+  \leanok
+  \uses{def:l1_weighted,def:cauchy_product}
+  The squaring map $\text{sq}: \ell^1_\nu \to \ell^1_\nu$ is $\text{sq}(a) = a \star a$.
+\end{definition}
+
+\begin{theorem}[Fr\'echet derivative of squaring]\label{thm:fderiv_sq}
+  \lean{l1Weighted.hasFDerivAt_sq}
+  \leanok
+  \uses{def:sq_map,def:cauchy_product}
+  The squaring map is Fr\'echet differentiable with derivative at $a$:
+  \begin{equation*}
+  D_a[\text{sq}](h) = 2(a \star h).
+  \end{equation*}
+\end{theorem}
+
+\subsection{Approximate Solution}\label{subsec:approx_solution}
+
+\begin{definition}[Approximate solution structure]\label{def:approx_solution}
+  \lean{Example_7_7.ApproxSolution}
+  \leanok
+  \uses{def:l1_weighted}
+  An \textit{approximate solution} of order $N$ consists of:
+  \begin{itemize}
+    \item Finite coefficients $\bar{a}_0, \bar{a}_1, \ldots, \bar{a}_N \in \mathbb{R}$
+    \item The extension $\bar{a} \in \ell^1_\nu$ defined by $\bar{a}_n = 0$ for $n > N$
+  \end{itemize}
+\end{definition}
+
+\begin{definition}[Concrete approximate solution]\label{def:concrete_approx}
+  \lean{ConcreteExample.sol}
+  \leanok
+  \uses{def:approx_solution}
+  For $\lambda_0 = 1$ and $N = 2$, the approximate solution is:
+  \begin{equation*}
+  \bar{a}_0 = 1, \quad \bar{a}_1 = \frac{1}{2}, \quad \bar{a}_2 = -\frac{1}{8}.
+  \end{equation*}
+  These are the first three Taylor coefficients of $\sqrt{1 + z}$ at $z = 0$.
+\end{definition}
+
+\subsection{Bound Definitions}\label{subsec:bound_defs}
+
+\begin{definition}[$Y_0$ bound]\label{def:Y0_bound}
+  \lean{Example_7_7.Y₀_bound}
+  \leanok
+  \uses{def:F_map,def:approx_solution}
+  The $Y_0$ bound measures the initial defect:
+  \begin{equation*}
+  Y_0 = \lVert A \cdot F(\bar{a})\rVert_{\ell^1_\nu}
+  \end{equation*}
+  where $A$ is the approximate inverse. For diagonal $A$ with entries $A_{nn} = 1/(2\bar{a}_0)$:
+  \begin{equation*}
+  Y_0 = \sum_{n=0}^N |A_{nn} \cdot F(\bar{a})_n| \nu^n + Y_0^{\text{tail}}
+  \end{equation*}
+  where $Y_0^{\text{tail}}$ accounts for the tail contribution.
+\end{definition}
+
+\begin{definition}[$Z_0$ bound]\label{def:Z0_bound}
+  \lean{Example_7_7.Z₀_bound}
+  \leanok
+  \uses{def:approx_solution,thm:fderiv_sq}
+  The $Z_0$ bound measures deviation from identity:
+  \begin{equation*}
+  Z_0 = \lVert I - A \circ D_{\bar{a}}F\rVert.
+  \end{equation*}
+  Since $D_{\bar{a}}F(h) = 2(\bar{a} \star h)$ and $A$ is diagonal with $A_{nn} = 1/(2\bar{a}_0)$:
+  \begin{equation*}
+  Z_0 = \sup_{n \geq 0} \left|1 - \frac{2(\bar{a} \star e_n)_n}{2\bar{a}_0}\right| \cdot \nu^n
+  \end{equation*}
+  where $e_n$ is the $n$-th standard basis sequence.
+\end{definition}
+
+\begin{definition}[$Z_1$ bound]\label{def:Z1_bound}
+  \lean{Example_7_7.Z₁_bound}
+  \leanok
+  In the simple case where $A^\dagger = D_{\bar{a}}F$, we have $Z_1 = 0$.
+\end{definition}
+
+\begin{definition}[$Z_2$ bound]\label{def:Z2_bound}
+  \lean{Example_7_7.Z₂_bound}
+  \leanok
+  \uses{thm:fderiv_sq}
+  The $Z_2$ bound measures Lipschitz continuity of the derivative:
+  \begin{equation*}
+  \lVert A \circ (D_c F - D_{\bar{a}} F)\rVert \leq Z_2 \cdot r
+  \end{equation*}
+  for all $c \in \overline{B}_r(\bar{a})$. Since $D_c F - D_{\bar{a}} F = 2((c - \bar{a}) \star \cdot)$:
+  \begin{equation*}
+  Z_2 = \frac{2 \lVert A\rVert}{\text{(appropriate norm)}}.
+  \end{equation*}
+\end{definition}
+
+\subsection{Bound Verification}\label{subsec:bound_verification}
+
+\begin{lemma}[$Y_0$ bound verification]\label{lem:Y0_verified}
+  \lean{ConcreteExample.Y₀_bound_le}
+  \leanok
+  \uses{def:Y0_bound,def:concrete_approx}
+  For the concrete parameters $\nu = 1/2$, $\lambda_0 = 1$, $N = 2$:
+  \begin{equation*}
+  Y_0 \leq Y_0^{\text{pad}}
+  \end{equation*}
+  where $Y_0^{\text{pad}}$ is a rational upper bound verified by computation.
+\end{lemma}
+
+\begin{lemma}[$Z_0$ bound verification]\label{lem:Z0_verified}
+  \lean{ConcreteExample.Z₀_bound_le}
+  \leanok
+  \uses{def:Z0_bound,def:concrete_approx}
+  For the concrete parameters:
+  \begin{equation*}
+  Z_0 \leq Z_0^{\text{pad}}.
+  \end{equation*}
+\end{lemma}
+
+\begin{lemma}[$Z_2$ bound verification]\label{lem:Z2_verified}
+  \lean{ConcreteExample.Z₂_bound_le}
+  \leanok
+  \uses{def:Z2_bound,def:concrete_approx}
+  For the concrete parameters and all $c \in \overline{B}_r(\bar{a})$:
+  \begin{equation*}
+  \lVert A \circ (D_c F - D_{\bar{a}} F)\rVert \leq Z_2^{\text{pad}} \cdot r.
+  \end{equation*}
+\end{lemma}
+
+\begin{lemma}[Radii polynomial negativity]\label{lem:radii_poly_neg}
+  \lean{ConcreteExample.radiiPoly_7_7_neg}
+  \leanok
+  \uses{lem:Y0_verified,lem:Z0_verified,lem:Z2_verified}
+  For $r_0 > 0$ sufficiently small:
+  \begin{equation*}
+  p(r_0) = Z_2^{\text{pad}} \cdot r_0^2 - (1 - Z_0^{\text{pad}}) r_0 + Y_0^{\text{pad}} < 0.
+  \end{equation*}
+\end{lemma}
+
+\subsection{Existence Theorem}\label{subsec:existence}
+
+\begin{theorem}[Existence of fixed point]\label{thm:example_7_7_existence}
+  \lean{Example_7_7.example_7_7_main_theorem}
+  \leanok
+  \uses{lem:radii_poly_neg,def:F_map,def:concrete_approx}
+  There exists a unique $\tilde{a} \in \ell^1_\nu$ with 
+  $\lVert \tilde{a} - \bar{a}\rVert_{\ell^1_\nu} \leq r_0$ such that $F(\tilde{a}) = 0$, 
+  i.e., $(\tilde{a} \star \tilde{a})_n = c_n$ for all $n$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Apply Theorem~\ref{thm:simple_radii_poly_same} with the verified bounds.
+\end{proof}
+
+\subsection{Analytic Interpretation}\label{subsec:analytic_interpretation}
+
+Having established existence in coefficient space, we now interpret the result 
+as convergence of a power series. We separate this into two levels:
+
+\begin{enumerate}
+  \item \textbf{Formal level:} Embed $\ell^1_\nu$ into the ring of formal power series $\PowerSeries{X}$
+  \item \textbf{Analytic level:} Evaluate the series at points in the disk of convergence
+\end{enumerate}
+
+\subsubsection{Formal Power Series Embedding}
+
+\begin{definition}[Formal power series embedding]\label{def:to_power_series}
+  \lean{l1Weighted.toPowerSeries}
+  \leanok
+  \uses{def:l1_weighted}
+  For $a \in \ell^1_\nu$, the formal power series is
+  \begin{equation*}
+  \texttt{toPowerSeries}(a) := \sum_{n=0}^\infty a_n X^n \in \PowerSeries{X}.
+  \end{equation*}
+\end{definition}
+
+\begin{definition}[Parameter power series]\label{def:param_power_series}
+  \lean{l1Weighted.paramPowerSeries}
+  \leanok
+  \uses{def:param_seq}
+  The parameter sequence as a formal power series:
+  \begin{equation*}
+  \texttt{paramPowerSeries}(\lambda_0) = \lambda_0 + X \in \PowerSeries{X}.
+  \end{equation*}
+\end{definition}
+
+\begin{theorem}[Cauchy product is formal multiplication]\label{thm:coeff_mul_eq_cauchy}
+  \lean{l1Weighted.coeff_mul_eq_cauchyProduct}
+  \leanok
+  \uses{def:to_power_series,def:cauchy_product}
+  For $a, b \in \ell^1_\nu$:
+  \begin{equation*}
+  \texttt{coeff}_n(\texttt{toPowerSeries}(a) \cdot \texttt{toPowerSeries}(b)) = (a \star b)_n.
+  \end{equation*}
+  This is essentially definitional: multiplication in $\PowerSeries{X}$ \emph{is} the Cauchy product.
+\end{theorem}
+
+\begin{theorem}[Formal fixed-point equation]\label{thm:formal_sq_eq_param}
+  \lean{l1Weighted.toPowerSeries_sq_eq_param}
+  \leanok
+  \uses{def:to_power_series,def:param_power_series,thm:coeff_mul_eq_cauchy}
+  If $F(\tilde{a}) = 0$ (i.e., $(\tilde{a} \star \tilde{a})_n = c_n$ for all $n$), then at the formal level:
+  \begin{equation*}
+  \texttt{toPowerSeries}(\tilde{a})^2 = \texttt{paramPowerSeries}(\lambda_0).
+  \end{equation*}
+\end{theorem}
+
+\subsubsection{Analytic Evaluation}
+
+\begin{definition}[Analytic evaluation]\label{def:eval}
+  \lean{l1Weighted.eval}
+  \leanok
+  \uses{def:l1_weighted}
+  For $a \in \ell^1_\nu$ and $z \in \mathbb{R}$, the evaluation is
+  \begin{equation*}
+  \texttt{eval}(a, z) := \sum_{n=0}^\infty a_n z^n.
+  \end{equation*}
+  (An alias \texttt{analyticSolution} is provided for backward compatibility.)
+\end{definition}
+
+\begin{lemma}[Absolute convergence]\label{lem:summable_eval}
+  \lean{l1Weighted.summable_eval}
+  \leanok
+  \uses{def:l1_weighted,def:eval}
+  If $a \in \ell^1_\nu$ and $|z| \leq \nu$, then $\sum_{n=0}^\infty a_n z^n$ 
+  converges absolutely.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  For $|z| \leq \nu$:
+  $\sum_{n=0}^\infty |a_n z^n| \leq \sum_{n=0}^\infty |a_n| \nu^n = \lVert a\rVert_{\ell^1_\nu} < \infty$.
+\end{proof}
+
+\begin{theorem}[Mertens' theorem: evaluation commutes with multiplication]\label{thm:eval_mul}
+  \lean{l1Weighted.eval_mul}
+  \leanok
+  \uses{def:cauchy_product,lem:summable_eval}
+  For $a, b \in \ell^1_\nu$ and $|z| \leq \nu$:
+  \begin{equation*}
+  \texttt{eval}(a, z) \cdot \texttt{eval}(b, z) = \sum_{n=0}^\infty (a \star b)_n z^n.
+  \end{equation*}
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By absolute convergence, apply Mertens' theorem 
+  (\texttt{tsum\_mul\_tsum\_eq\_tsum\_sum\_antidiagonal\_of\_summable\_norm'}): 
+  the product of absolutely convergent series equals the series of Cauchy products.
+\end{proof}
+
+\begin{theorem}[Squaring identity]\label{thm:eval_sq_eq}
+  \lean{l1Weighted.eval_sq_eq}
+  \leanok
+  \uses{thm:example_7_7_existence,thm:eval_mul,def:param_seq}
+  If $\tilde{a} \in \ell^1_\nu$ satisfies $F(\tilde{a}) = 0$, then for $|z| \leq \nu$:
+  \begin{equation*}
+  \texttt{eval}(\tilde{a}, z)^2 = \lambda_0 + z.
+  \end{equation*}
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  By Theorem~\ref{thm:eval_mul}:
+  $\texttt{eval}(\tilde{a}, z)^2 = \sum_{n=0}^\infty (\tilde{a} \star \tilde{a})_n z^n 
+  = \sum_{n=0}^\infty c_n z^n = \lambda_0 + z$.
+\end{proof}
+
+\begin{corollary}[Evaluation identity]\label{cor:analytic_is_sqrt}
+  \lean{Example_7_7.analyticSolution_is_sqrt}
+  \leanok
+  \uses{thm:eval_sq_eq}
+  For $|\lambda - \lambda_0| \leq \nu$:
+  \begin{equation*}
+  \texttt{eval}(\tilde{a}, \lambda - \lambda_0)^2 = \lambda.
+  \end{equation*}
+\end{corollary}
+
+\subsection{Branch Selection}\label{subsec:branch_selection}
+
+The equation $y^2 = \lambda$ has two solutions: $\pm\sqrt{\lambda}$. We show that 
+the power series selects the positive branch.
+
+\begin{lemma}[Evaluation at zero]\label{lem:eval_zero}
+  \lean{l1Weighted.eval_zero}
+  \leanok
+  \uses{def:eval}
+  For any $a \in \ell^1_\nu$:
+  \begin{equation*}
+  \texttt{eval}(a, 0) = a_0.
+  \end{equation*}
+\end{lemma}
+
+\begin{theorem}[Positive branch identification]\label{thm:analytic_eq_sqrt}
+  \lean{Example_7_7.analyticSolution_eq_sqrt}
+  \leanok
+  \uses{cor:analytic_is_sqrt,lem:eval_zero,def:concrete_approx}
+  Suppose:
+  \begin{enumerate}
+    \item $\lambda_0 > 0$
+    \item $\lambda > 0$
+    \item $|\lambda - \lambda_0| \leq \nu$
+    \item $\tilde{a}_0 > 0$
+  \end{enumerate}
+  Then $\texttt{eval}(\tilde{a}, \lambda - \lambda_0) = \sqrt{\lambda}$.
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  \textbf{Step 1:} Evaluate at $z = 0$: $\texttt{eval}(\tilde{a}, 0) = \tilde{a}_0$.
+  
+  \textbf{Step 2:} From $\texttt{eval}(\tilde{a}, 0)^2 = \lambda_0$ and $\tilde{a}_0 > 0$: 
+  $\tilde{a}_0 = \sqrt{\lambda_0} > 0$.
+  
+  \textbf{Step 3:} Since $\texttt{eval}(\tilde{a}, \lambda - \lambda_0)^2 = \lambda > 0$, we have 
+  $\texttt{eval}(\tilde{a}, \lambda - \lambda_0) \neq 0$.
+  
+  \textbf{Step 4 (Positivity by IVT):} Suppose for contradiction that 
+  $\texttt{eval}(\tilde{a}, \lambda - \lambda_0) < 0$. Since $\texttt{eval}(\tilde{a}, 0) > 0$ and 
+  $z \mapsto \texttt{eval}(\tilde{a}, z)$ is continuous (uniform convergence of power series), 
+  by the Intermediate Value Theorem there exists $c$ between $0$ and $\lambda - \lambda_0$ 
+  with $\texttt{eval}(\tilde{a}, c) = 0$.
+  
+  But $\texttt{eval}(\tilde{a}, c)^2 = \lambda_0 + c$, so $0 = \lambda_0 + c$, giving $c = -\lambda_0 < 0$.
+  
+  \textit{Case 1:} If $\lambda \geq \lambda_0$, then $c \in [0, \lambda - \lambda_0]$ 
+  requires $c \geq 0$, contradicting $c = -\lambda_0 < 0$.
+  
+  \textit{Case 2:} If $\lambda < \lambda_0$, then $c \in [\lambda - \lambda_0, 0]$ 
+  requires $c \geq \lambda - \lambda_0$, i.e., $-\lambda_0 \geq \lambda - \lambda_0$, 
+  so $\lambda \leq 0$, contradicting $\lambda > 0$.
+  
+  Therefore $\texttt{eval}(\tilde{a}, \lambda - \lambda_0) > 0$.
+  
+  \textbf{Step 5:} Since $\texttt{eval}(\tilde{a}, \lambda - \lambda_0) > 0$ and 
+  $\texttt{eval}(\tilde{a}, \lambda - \lambda_0)^2 = \lambda$, we have 
+  $\texttt{eval}(\tilde{a}, \lambda - \lambda_0) = \sqrt{\lambda}$.
+\end{proof}
+
+\subsection{Summary}\label{subsec:example_summary}
+
+\begin{theorem}[Main result for Example 7.7]\label{thm:example_7_7_main}
+  \uses{thm:example_7_7_existence,thm:analytic_eq_sqrt}
+  For $\lambda_0 = 1$ and $\nu = 1/2$, there exists a unique power series
+  \begin{equation*}
+  \tilde{x}(\lambda) = \sum_{n=0}^\infty \tilde{a}_n (\lambda - 1)^n
+  \end{equation*}
+  convergent for $|\lambda - 1| \leq 1/2$ (i.e., $\lambda \in [1/2, 3/2]$) such that
+  \begin{equation*}
+  \tilde{x}(\lambda) = \sqrt{\lambda}.
+  \end{equation*}
+  The coefficients $\tilde{a}$ are within distance $r_0$ of the approximate 
+  Taylor coefficients $(1, 1/2, -1/8, 0, 0, \ldots)$ in the $\ell^1_\nu$ norm.
+\end{theorem}
+
+This completes the formalization of Example 7.7, demonstrating:
+\begin{enumerate}
+  \item Application of radii polynomial method to infinite-dimensional Banach algebra
+  \item Coefficient-space verification via rational arithmetic
+  \item \textbf{Formal level:} Embedding $\ell^1_\nu \hookrightarrow \PowerSeries{X}$ 
+        where multiplication is the Cauchy product by definition
+  \item \textbf{Analytic level:} Mertens' theorem shows evaluation commutes with multiplication
+  \item Branch selection via continuity and the Intermediate Value Theorem
+\end{enumerate}
+
+\subsubsection*{Architecture Summary}
+
+The key insight is separating formal and analytic concerns:
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Level} & \textbf{Object} & \textbf{Key Property} \\
+\hline
+Formal & \texttt{toPowerSeries} : $\ell^1_\nu \to \PowerSeries{X}$ & $a \cdot b = a \star b$ (definitional) \\
+Analytic & \texttt{eval} : $\ell^1_\nu \times \mathbb{R} \to \mathbb{R}$ & Mertens' theorem \\
+\hline
+\end{tabular}
+\end{center}
+
+This separation means:
+\begin{itemize}
+  \item The formal equation $\tilde{a}^2 = c$ in $\PowerSeries{X}$ is immediate from $F(\tilde{a}) = 0$
+  \item The analytic equation $\texttt{eval}(\tilde{a}, z)^2 = \lambda_0 + z$ requires Mertens' theorem
+  \item Continuity for IVT comes from uniform convergence of power series
+\end{itemize}

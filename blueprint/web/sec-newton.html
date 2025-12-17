@@ -45,6 +45,9 @@
 <li class="">
   <a href="sect0001.html#a0000000005"><span class="toc_ref"></span> <span class="toc_entry">Special Cases</span></a>
  </li>
+<li class="">
+  <a href="sect0001.html#a0000000006"><span class="toc_ref"></span> <span class="toc_entry">Example 7.7: Weighted Sequence Space Notations</span></a>
+ </li>
 
   </ul>
  </li>
@@ -75,7 +78,7 @@
   </ul>
  </li>
 <li class="">
-  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Radii Polynomial of Banach Spaces</span></a>
+  <a href="ch-banach.html"><span class="toc_ref">2</span> <span class="toc_entry">Radii Polynomial on Banach Spaces</span></a>
   <span class="expand-toc">▶</span>
   <ul class="sub-toc-1">
      <li class="">
@@ -102,6 +105,43 @@
  </li>
 <li class="">
   <a href="sec-radii_poly_banach.html#subsec:main_theorems"><span class="toc_ref">2.1.7</span> <span class="toc_entry">Main Theorems</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html"><span class="toc_ref">2.2</span> <span class="toc_entry">Example 7.7: Square Root via Power Series</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sec-example_7_7.html#subsec:weighted_space"><span class="toc_ref">2.2.1</span> <span class="toc_entry">The Weighted Sequence Space</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:cauchy_product"><span class="toc_ref">2.2.2</span> <span class="toc_entry">Cauchy Product and Banach Algebra Structure</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:fixed_point_problem"><span class="toc_ref">2.2.3</span> <span class="toc_entry">The Fixed-Point Problem</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:approx_solution"><span class="toc_ref">2.2.4</span> <span class="toc_entry">Approximate Solution</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:bound_defs"><span class="toc_ref">2.2.5</span> <span class="toc_entry">Bound Definitions</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:bound_verification"><span class="toc_ref">2.2.6</span> <span class="toc_entry">Bound Verification</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:existence"><span class="toc_ref">2.2.7</span> <span class="toc_entry">Existence Theorem</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:analytic_interpretation"><span class="toc_ref">2.2.8</span> <span class="toc_entry">Analytic Interpretation</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:branch_selection"><span class="toc_ref">2.2.9</span> <span class="toc_entry">Branch Selection</span></a>
+ </li>
+<li class="">
+  <a href="sec-example_7_7.html#subsec:example_summary"><span class="toc_ref">2.2.10</span> <span class="toc_entry">Summary</span></a>
  </li>
 
   </ul>
@@ -162,7 +202,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>  Let \(E, F\) be Banach spaces, \(f: E \rightarrow F\) a function, and \(A: F \rightarrow E\) a continuous linear map. The <i class="itshape">Newton-like map</i> is defined by </p>
-<div class="displaymath" id="a0000000017">
+<div class="displaymath" id="a0000000018">
   \begin{equation*}  T(x) = x - A(f(x)). \end{equation*}
 </div>
 
@@ -184,7 +224,7 @@
 
     <a class="icon proof" href="sec-newton.html#prop:fixed_point_iff_zero">#</a>
     
-    <a class="icon proof" href="sec-newton.html#a0000000018"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="sec-newton.html#a0000000019"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     
     
@@ -232,13 +272,13 @@
   </div>
   <div class="proposition_thmcontent">
   <p>   Let \(E, F\) be vector spaces, \(f: E \rightarrow F\), and \(A: F \rightarrow E\) an injective linear map. Let \(T(x) = x - A(f(x))\) be the Newton-like operator. Then: </p>
-<div class="displaymath" id="a0000000019">
+<div class="displaymath" id="a0000000020">
   \begin{equation*}  T(x) = x \quad \Leftrightarrow \quad f(x) = 0. \end{equation*}
 </div>
 
   </div>
 </div>
-<div class="proof_wrapper" id="a0000000018">
+<div class="proof_wrapper" id="a0000000019">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -316,7 +356,7 @@
   </div>
   <div class="definition_thmcontent">
   <p>  If \(f \in C^2(U, \mathbb {R}^n)\) where \(U \subset \mathbb {R}^n\) is an open set, the <i class="itshape">classical Newton operator</i> is given by </p>
-<div class="displaymath" id="a0000000020">
+<div class="displaymath" id="a0000000021">
   \begin{equation*}  T(x) := x - (\text{Df}(x))^{-1} f(x). \end{equation*}
 </div>
 
@@ -361,7 +401,7 @@
   </div>
   <div class="remark_thmcontent">
   <p>  If \(\tilde{x}\) is a nondegenerate zero of \(f \in C^2\), then the derivative of the classical Newton operator satisfies </p>
-<div class="displaymath" id="a0000000021">
+<div class="displaymath" id="a0000000022">
   \begin{equation*}  \text{DT}(\tilde{x}) = I - (\text{Df}(\tilde{x}))^{-1} \text{Df}(\tilde{x}) = 0, \end{equation*}
 </div>
 <p> making \(T\) a strong contraction near \(\tilde{x}\). This motivates the choice of \(A \approx (\text{Df}(\bar{x}))^{-1}\) in the radii polynomial method. </p>

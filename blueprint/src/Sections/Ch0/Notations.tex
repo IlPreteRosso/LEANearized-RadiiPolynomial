@@ -14,7 +14,7 @@ $\overline{B}_r(x)$ — closed ball of radius $r$ centered at $x$
 
 $I_E$ — identity operator on space $E$
 
-$\text{Df}(x)$ — Fréchet derivative of $f$ at $x$
+$\text{Df}(x)$ — Fr\'echet derivative of $f$ at $x$
 
 \subsection*{Radii Polynomial Notations}
 
@@ -45,3 +45,25 @@ When $E = F$ and $A^\dagger = \text{Df}(\bar{x})$, we have $Z_1 = 0$.
 Simple radii polynomial: $p(r) = Z_2(r)r^2 - (1-Z_0)r + Y_0$
 
 General radii polynomial: $p(r) = Z_2(r)r^2 - (1-Z_0-Z_1)r + Y_0$
+
+\subsection*{Example 7.7: Weighted Sequence Space Notations}
+
+$\nu$ — weight parameter (positive real)
+
+$\ell^1_\nu$ — weighted $\ell^1$ space with norm $\lVert a\rVert_{\ell^1_\nu} = \sum_{n=0}^\infty |a_n| \nu^n$
+
+$a \star b$ — Cauchy product: $(a \star b)_n = \sum_{k=0}^n a_k b_{n-k}$
+
+$\bar{a}$ — approximate solution (finite coefficient sequence)
+
+$\tilde{a}$ — exact solution in $\ell^1_\nu$
+
+$\lambda_0$ — base point for power series expansion
+
+$c$ — parameter sequence: $c_0 = \lambda_0$, $c_1 = 1$, $c_n = 0$ for $n \geq 2$
+
+$F(a)$ — fixed-point map: $F(a)_n = (a \star a)_n - c_n$
+
+\texttt{toPowerSeries}$(a)$ — formal power series embedding $\ell^1_\nu \hookrightarrow \mathbb{R}[\![ X ]\!]$
+
+\texttt{eval}$(a, z)$ — analytic evaluation: $\sum_{n=0}^\infty a_n z^n$ for $|z| \leq \nu$

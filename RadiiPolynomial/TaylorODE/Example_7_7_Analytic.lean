@@ -4,6 +4,7 @@ import RadiiPolynomial.TaylorODE.Example_7_7
 import Mathlib.Topology.Algebra.InfiniteSum.Real
 import Mathlib.Analysis.Normed.Group.InfiniteSum
 import Mathlib.Analysis.Normed.Group.FunctionSeries
+import Mathlib.RingTheory.PowerSeries.Basic
 
 /-!
 # From Coefficient Space to Analytic Functions
@@ -14,101 +15,161 @@ This file bridges the gap between:
 
 ## Main Results
 
-* `l1Weighted.summable_powerSeries`: If ã ∈ ℓ¹_ν and |z| ≤ ν, then Σ ãₙ zⁿ converges absolutely
-* `l1Weighted.tsum_sq_eq_tsum_cauchyProduct`: (Σ ãₙ zⁿ)² = Σ (ã ⋆ ã)ₙ zⁿ
-* `powerSeries_sq_eq_param`: If F(ã) = 0, then x̃(z)² = λ₀ + z
+* `l1Weighted.toPowerSeries`: Embedding of ℓ¹_ν into formal power series ℝ⟦X⟧
+* `l1Weighted.eval`: Evaluation of power series at points in the disk of convergence
+* `l1Weighted.eval_mul`: Evaluation commutes with multiplication (Mertens' theorem)
+* `l1Weighted.eval_sq_eq`: If F(ã) = 0, then eval(ã, z)² = λ₀ + z
+* `Example_7_7.analyticSolution_eq_sqrt`: Branch selection via IVT shows x̃(λ - λ₀) = √λ
+
+## Architecture
+
+We separate the formal and analytic levels:
+1. **Formal level:** `l1Weighted.toPowerSeries` embeds sequences into `PowerSeries ℝ`
+   - Multiplication in `PowerSeries` is the Cauchy product by definition
+   - No convergence issues at this level
+2. **Analytic level:** `l1Weighted.eval` evaluates the series at |z| ≤ ν
+   - Uses absolute convergence from ℓ¹_ν membership
+   - Mertens' theorem shows evaluation commutes with multiplication
 
 ## References
 
-This completes the formalization of Example 7.7 from the radii polynomial textbook,
-connecting the abstract Banach space fixed-point theorem to concrete analytic functions.
+This completes the formalization of Example 7.7 from the radii polynomial textbook.
 -/
 
 open scoped BigOperators NNReal ENNReal
+open PowerSeries (coeff)
 
 noncomputable section
 
+variable {ν : PosReal}
+
 namespace l1Weighted
 
-/-! ## Absolute Convergence of Power Series -/
+/-! ## Formal Power Series Embedding -/
 
-/-- The power series Σ aₙ zⁿ for a sequence a and complex number z -/
-def powerSeries (a : ℕ → ℝ) (z : ℝ) : ℕ → ℝ := fun n => a n * z ^ n
+/-- Embed an ℓ¹_ν sequence as a formal power series in ℝ⟦X⟧ -/
+def toPowerSeries (a : l1Weighted ν) : PowerSeries ℝ :=
+  PowerSeries.mk (lpWeighted.toSeq a)
+
+/-- Coefficient extraction agrees with the underlying sequence -/
+@[simp]
+theorem coeff_toPowerSeries (a : l1Weighted ν) (n : ℕ) :
+    coeff n (toPowerSeries a) = lpWeighted.toSeq a n :=
+  PowerSeries.coeff_mk n _
+
+/-- The formal power series for the parameter sequence c = (λ₀, 1, 0, 0, ...) -/
+def paramPowerSeries (lam0 : ℝ) : PowerSeries ℝ :=
+  PowerSeries.mk (Example_7_7.paramSeq lam0)
+
+@[simp]
+theorem coeff_paramPowerSeries (lam0 : ℝ) (n : ℕ) :
+    coeff n (paramPowerSeries lam0) = Example_7_7.paramSeq lam0 n :=
+  PowerSeries.coeff_mk n _
+
+/-- The parameter series equals C(λ₀) + X in the ring of power series -/
+theorem paramPowerSeries_eq (lam0 : ℝ) :
+    paramPowerSeries lam0 = PowerSeries.C lam0 + PowerSeries.X := by
+  ext n
+  simp only [coeff_paramPowerSeries, map_add, PowerSeries.coeff_C, PowerSeries.coeff_X]
+  match n with
+  | 0 => simp [Example_7_7.paramSeq]
+  | 1 => simp [Example_7_7.paramSeq]
+  | n + 2 => simp [Example_7_7.paramSeq]
+
+/-! ## Cauchy Product is PowerSeries Multiplication
+
+The key insight: multiplication in `PowerSeries ℝ` is defined as the Cauchy product.
+This is purely algebraic—no convergence needed at the formal level. -/
+
+/-- PowerSeries multiplication agrees with Cauchy product coefficient-wise -/
+theorem coeff_mul_eq_cauchyProduct (a b : l1Weighted ν) (n : ℕ) :
+    coeff n (toPowerSeries a * toPowerSeries b) =
+    (lpWeighted.toSeq a ⋆ lpWeighted.toSeq b) n := by
+  rw [PowerSeries.coeff_mul]
+  simp only [coeff_toPowerSeries, CauchyProduct.apply]
+
+/-- Squaring in PowerSeries equals self-convolution -/
+theorem coeff_sq_eq_cauchyProduct (a : l1Weighted ν) (n : ℕ) :
+    coeff n (toPowerSeries a ^ 2) =
+    (lpWeighted.toSeq a ⋆ lpWeighted.toSeq a) n := by
+  rw [pow_two, coeff_mul_eq_cauchyProduct]
+
+/-- The fixed-point equation F(a) = 0 means a² = c in PowerSeries -/
+theorem toPowerSeries_sq_eq_param (a : l1Weighted ν) (lam0 : ℝ)
+    (hF : ∀ n, (lpWeighted.toSeq a ⋆ lpWeighted.toSeq a) n = Example_7_7.paramSeq lam0 n) :
+    toPowerSeries a ^ 2 = paramPowerSeries lam0 := by
+  ext n
+  rw [coeff_sq_eq_cauchyProduct, coeff_paramPowerSeries, hF]
+
+/-! ## Analytic Evaluation -/
 
 /-- If a ∈ ℓ¹_ν and |z| ≤ ν, then the terms |aₙ zⁿ| are bounded by |aₙ| νⁿ -/
-lemma norm_powerSeries_le {a : ℕ → ℝ} {z : ℝ} (hz : |z| ≤ ν) (n : ℕ) :
+lemma norm_term_le {a : ℕ → ℝ} {z : ℝ} (hz : |z| ≤ ν) (n : ℕ) :
     |a n * z ^ n| ≤ |a n| * (ν : ℝ) ^ n := by
   rw [abs_mul, abs_pow]
   gcongr
 
 /-- If a ∈ ℓ¹_ν and |z| ≤ ν, then Σ aₙ zⁿ converges absolutely -/
-theorem summable_powerSeries (a : l1Weighted ν) {z : ℝ} (hz : |z| ≤ ν) :
-    Summable (powerSeries (lpWeighted.toSeq a) z) := by
+theorem summable_eval (a : l1Weighted ν) {z : ℝ} (hz : |z| ≤ ν) :
+    Summable fun n => lpWeighted.toSeq a n * z ^ n := by
   apply Summable.of_norm_bounded (g := fun n => |lpWeighted.toSeq a n| * (ν : ℝ) ^ n)
   · exact (l1Weighted.mem_iff _).mp a.2
   · intro n
-    simp only [powerSeries, Real.norm_eq_abs]
-    exact norm_powerSeries_le hz n
+    simp only [Real.norm_eq_abs]
+    exact norm_term_le hz n
 
-/-- Absolute summability of the power series -/
-theorem summable_abs_powerSeries (a : l1Weighted ν) {z : ℝ} (hz : |z| ≤ ν) :
-    Summable (fun n => |lpWeighted.toSeq a n * z ^ n|) := by
+/-- Absolute summability -/
+theorem summable_abs_eval (a : l1Weighted ν) {z : ℝ} (hz : |z| ≤ ν) :
+    Summable fun n => |lpWeighted.toSeq a n * z ^ n| := by
   apply Summable.of_norm_bounded (g := fun n => |lpWeighted.toSeq a n| * (ν : ℝ) ^ n)
   · exact (l1Weighted.mem_iff _).mp a.2
   · intro n
     rw [Real.norm_eq_abs, abs_abs]
-    exact norm_powerSeries_le hz n
+    exact norm_term_le hz n
 
-/-! ## Cauchy Product and Pointwise Multiplication -/
+/-- Evaluate a power series at z ∈ ℝ with |z| ≤ ν -/
+def eval (a : l1Weighted ν) (z : ℝ) : ℝ :=
+  ∑' n, lpWeighted.toSeq a n * z ^ n
 
-/-- Key lemma: For absolutely convergent series, product = Cauchy product sum.
-    (Σ aₙ zⁿ) * (Σ bₙ zⁿ) = Σₙ (Σₖ aₖ bₙ₋ₖ) zⁿ = Σₙ (a ⋆ b)ₙ zⁿ
+/-- eval agrees with summing coefficients times powers -/
+theorem eval_eq_tsum (a : l1Weighted ν) (z : ℝ) :
+    eval a z = ∑' n, coeff n (toPowerSeries a) * z ^ n := by
+  simp only [eval, coeff_toPowerSeries]
 
-    Proof outline:
-    1. Since a, b ∈ ℓ¹_ν and |z| ≤ ν, both power series converge absolutely
-    2. Apply Mertens' theorem (tsum_mul_tsum_eq_tsum_sum_range_of_summable_norm):
-       (Σ fₙ)(Σ gₙ) = Σₙ Σₖ₌₀ⁿ fₖ gₙ₋ₖ
-    3. Convert range sum to antidiagonal sum via sum_antidiagonal_eq_sum_range_succ
-    4. Factor out zⁿ: aₖ zᵏ · bₗ zˡ = aₖ bₗ · zᵏ⁺ˡ = aₖ bₗ · zⁿ (when k+l=n)
-    5. Recognize the inner sum as the Cauchy product (a ⋆ b)ₙ -/
-theorem tsum_mul_eq_tsum_cauchyProduct (a b : l1Weighted ν) {z : ℝ} (hz : |z| ≤ ν) :
-    (∑' n, lpWeighted.toSeq a n * z ^ n) * (∑' n, lpWeighted.toSeq b n * z ^ n) =
-    ∑' n, (lpWeighted.toSeq a ⋆ lpWeighted.toSeq b) n * z ^ n := by
-  -- Step 1: Establish absolute convergence (using ‖·‖ not |·| to match Mathlib)
-  have ha : Summable fun n => ‖lpWeighted.toSeq a n * z ^ n‖ := by
-    simp only [Real.norm_eq_abs]
-    exact summable_abs_powerSeries a hz
-  have hb : Summable fun n => ‖lpWeighted.toSeq b n * z ^ n‖ := by
-    simp only [Real.norm_eq_abs]
-    exact summable_abs_powerSeries b hz
-  -- Step 2: Apply Mertens' theorem
-  rw [tsum_mul_tsum_eq_tsum_sum_range_of_summable_norm ha hb]
+/-! ## Mertens' Theorem: Evaluation Commutes with Multiplication -/
+
+/-- Key lemma: (Σ aₙ zⁿ) * (Σ bₙ zⁿ) = Σ (a ⋆ b)ₙ zⁿ -/
+theorem eval_mul (a b : l1Weighted ν) {z : ℝ} (hz : |z| ≤ ν) :
+    eval a z * eval b z = ∑' n, (lpWeighted.toSeq a ⋆ lpWeighted.toSeq b) n * z ^ n := by
+  unfold eval
+  -- Summability conditions for Mertens' theorem
+  have ha_norm : Summable fun n => ‖lpWeighted.toSeq a n * z ^ n‖ := by
+    simp only [Real.norm_eq_abs]; exact summable_abs_eval a hz
+  have hb_norm : Summable fun n => ‖lpWeighted.toSeq b n * z ^ n‖ := by
+    simp only [Real.norm_eq_abs]; exact summable_abs_eval b hz
+  have ha : Summable fun n => lpWeighted.toSeq a n * z ^ n := ha_norm.of_norm
+  have hb : Summable fun n => lpWeighted.toSeq b n * z ^ n := hb_norm.of_norm
+  -- Apply Mertens' theorem (antidiagonal form)
+  rw [tsum_mul_tsum_eq_tsum_sum_antidiagonal_of_summable_norm' ha_norm ha hb_norm hb]
   congr 1
   ext n
   simp only [CauchyProduct.apply]
-  -- Step 3: Convert Finset.range to Finset.antidiagonal
-  rw [← Finset.Nat.sum_antidiagonal_eq_sum_range_succ (fun k l => lpWeighted.toSeq a k * z ^ k * (lpWeighted.toSeq b l * z ^ l))]
-  -- Step 4: Factor out z^n from each term
+  -- Factor out z^n: aₖ zᵏ · bₗ zˡ = aₖ bₗ · zⁿ (when k+l=n)
   rw [Finset.sum_mul]
   apply Finset.sum_congr rfl
   intro ⟨k, l⟩ hkl
   simp only [Finset.mem_antidiagonal] at hkl
-  -- aₖ zᵏ · bₗ zˡ = aₖ bₗ · zᵏ⁺ˡ = aₖ bₗ · zⁿ
-  rw [mul_mul_mul_comm, ← pow_add]
-  congr 1
-  rw [hkl]
+  rw [mul_mul_mul_comm, ← pow_add, hkl]
 
-/-- Special case: (Σ aₙ zⁿ)² = Σ (a ⋆ a)ₙ zⁿ -/
-theorem tsum_sq_eq_tsum_cauchyProduct (a : l1Weighted ν) {z : ℝ} (hz : |z| ≤ ν) :
-    (∑' n, lpWeighted.toSeq a n * z ^ n) ^ 2 =
-    ∑' n, (lpWeighted.toSeq a ⋆ lpWeighted.toSeq a) n * z ^ n := by
-  rw [pow_two]
-  exact tsum_mul_eq_tsum_cauchyProduct a a hz
+/-- Squaring: (Σ aₙ zⁿ)² = Σ (a ⋆ a)ₙ zⁿ -/
+theorem eval_sq (a : l1Weighted ν) {z : ℝ} (hz : |z| ≤ ν) :
+    eval a z ^ 2 = ∑' n, (lpWeighted.toSeq a ⋆ lpWeighted.toSeq a) n * z ^ n := by
+  rw [pow_two, eval_mul a a hz]
 
-/-! ## The Parameter Sequence c = (λ₀, 1, 0, 0, ...) -/
+/-! ## Evaluation of the Parameter Series -/
 
 /-- Σ cₙ zⁿ = λ₀ + z -/
-theorem tsum_paramSeq (lam0 : ℝ) (z : ℝ) :
+theorem eval_paramSeq (lam0 z : ℝ) :
     ∑' n, Example_7_7.paramSeq lam0 n * z ^ n = lam0 + z := by
   have h : ∀ n ≥ 2, Example_7_7.paramSeq lam0 n * z ^ n = 0 := by
     intro n hn
@@ -123,31 +184,22 @@ theorem tsum_paramSeq (lam0 : ℝ) (z : ℝ) :
     simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hn
     exact h n (by omega)
 
-/-! ## Main Theorem: Analytic Solution -/
+/-! ## Main Semantic Theorems -/
 
-/-- The analytic function defined by the power series -/
-def analyticSolution (a : l1Weighted ν) (z : ℝ) : ℝ :=
-  ∑' n, lpWeighted.toSeq a n * z ^ n
-
-/-- If F(ã) = ã ⋆ ã - c = 0 coefficient-wise, then x̃(z)² = λ₀ + z pointwise -/
-theorem analyticSolution_sq_eq (a : l1Weighted ν) (lam0 : ℝ) {z : ℝ} (hz : |z| ≤ ν)
+/-- If F(a) = 0, then eval(a, z)² = λ₀ + z -/
+theorem eval_sq_eq (a : l1Weighted ν) (lam0 : ℝ) {z : ℝ} (hz : |z| ≤ ν)
     (hF : ∀ n, (lpWeighted.toSeq a ⋆ lpWeighted.toSeq a) n = Example_7_7.paramSeq lam0 n) :
-    (analyticSolution a z) ^ 2 = lam0 + z := by
-  unfold analyticSolution
-  rw [tsum_sq_eq_tsum_cauchyProduct a hz]
-  -- Now: Σ (a ⋆ a)ₙ zⁿ = Σ cₙ zⁿ = λ₀ + z
-  conv_lhs =>
-    congr
-    ext n
-    rw [hF n]
-  exact tsum_paramSeq lam0 z
+    eval a z ^ 2 = lam0 + z := by
+  rw [eval_sq a hz]
+  conv_lhs => congr; ext n; rw [hF n]
+  exact eval_paramSeq lam0 z
 
-/-- Corollary: The analytic solution satisfies x̃(z)² - (λ₀ + z) = 0 -/
-theorem analyticSolution_satisfies_eq (a : l1Weighted ν) (lam0 : ℝ) {z : ℝ} (hz : |z| ≤ ν)
-    (hF : ∀ n, (lpWeighted.toSeq a ⋆ lpWeighted.toSeq a) n = Example_7_7.paramSeq lam0 n) :
-    (analyticSolution a z) ^ 2 - (lam0 + z) = 0 := by
-  rw [analyticSolution_sq_eq a lam0 hz hF]
-  ring
+/-- eval(a, 0) = a₀ -/
+theorem eval_zero (a : l1Weighted ν) : eval a 0 = lpWeighted.toSeq a 0 := by
+  unfold eval
+  rw [tsum_eq_single 0]
+  · simp
+  · intro n hn; simp [hn]
 
 end l1Weighted
 
@@ -157,15 +209,15 @@ namespace Example_7_7
 
 open l1Weighted
 
-/-- The final semantic theorem for Example 7.7:
-    Given the validated coefficient sequence ã from the radii polynomial method,
-    the analytic function x̃(λ) = Σ ãₙ (λ - λ₀)ⁿ satisfies x̃(λ)² = λ
-    for all λ in the disk |λ - λ₀| ≤ ν. -/
+/-- Alias for backward compatibility -/
+abbrev analyticSolution (a : l1Weighted ν) (z : ℝ) : ℝ := l1Weighted.eval a z
+
+/-- The analytic function x̃(λ) = Σ ãₙ (λ - λ₀)ⁿ satisfies x̃(λ)² = λ -/
 theorem analyticSolution_is_sqrt {ν : PosReal} (aTilde : l1Weighted ν) (lam0 : ℝ)
     (hF : ∀ n, (lpWeighted.toSeq aTilde ⋆ lpWeighted.toSeq aTilde) n = Example_7_7.paramSeq lam0 n)
     {lam : ℝ} (hlam : |lam - lam0| ≤ ν) :
     (analyticSolution aTilde (lam - lam0)) ^ 2 = lam := by
-  rw [analyticSolution_sq_eq aTilde lam0 hlam hF]
+  rw [analyticSolution, eval_sq_eq aTilde lam0 hlam hF]
   ring
 
 /-- The function x̃ defines a branch of √λ near λ₀ -/
@@ -176,20 +228,13 @@ theorem analyticSolution_eq_sqrt {ν : PosReal} (aTilde : l1Weighted ν) (lam0 :
     (ha0_pos : 0 < lpWeighted.toSeq aTilde 0) :
     analyticSolution aTilde (lam - lam0) = Real.sqrt lam := by
   have hsq := analyticSolution_is_sqrt aTilde lam0 hF hlam
-  -- x̃² = λ and x̃(0) = ã₀ > 0 implies x̃ = √λ (positive branch)
 
   -- Step 1: Evaluate at z = 0: x̃(0) = a₀
-  have h_at_zero : analyticSolution aTilde 0 = lpWeighted.toSeq aTilde 0 := by
-    unfold analyticSolution
-    rw [tsum_eq_single 0]
-    · simp
-    · intro n hn
-      simp [hn]
+  have h_at_zero : analyticSolution aTilde 0 = lpWeighted.toSeq aTilde 0 :=
+    eval_zero aTilde
 
   -- Step 2: x̃(0)² = lam0 (from the equation at z=0)
   have hsq_at_zero : (analyticSolution aTilde 0) ^ 2 = lam0 := by
-    have h0 : |(0 : ℝ) - 0| ≤ (ν : ℝ) := by
-      simp only [sub_self, abs_zero, PosReal.coe_nonneg]
     have := analyticSolution_is_sqrt aTilde lam0 hF (by simp : |(lam0 : ℝ) - lam0| ≤ (ν : ℝ))
     simp only [sub_self] at this
     convert this using 2
@@ -197,39 +242,12 @@ theorem analyticSolution_eq_sqrt {ν : PosReal} (aTilde : l1Weighted ν) (lam0 :
   -- Step 3: Since a₀ > 0 and a₀² = lam0, we have a₀ = √lam0
   have ha0_eq : lpWeighted.toSeq aTilde 0 = Real.sqrt lam0 := by
     have h := Real.sqrt_sq ha0_pos.le
-    -- h : √(lpWeighted.toSeq aTilde 0 ^ 2) = lpWeighted.toSeq aTilde 0
-    -- Need to show lpWeighted.toSeq aTilde 0 ^ 2 = lam0
     have hsq' : lpWeighted.toSeq aTilde 0 ^ 2 = lam0 := by
-      rw [← h_at_zero]
-      exact hsq_at_zero
+      rw [← h_at_zero]; exact hsq_at_zero
     rw [hsq'] at h
     exact h.symm
 
-  -- -- Step 4: x̃ is continuous (power series with |z| ≤ ν is continuous)
-  -- have hcont : ContinuousAt (analyticSolution aTilde) 0 := by
-  --   unfold analyticSolution
-  --   -- Use continuousOn_tsum on the ball {z : |z| ≤ ν}
-  --   have hsum := (l1Weighted.mem_iff _).mp aTilde.2
-  --   have hcontOn : ContinuousOn (fun z => ∑' n, lpWeighted.toSeq aTilde n * z ^ n)
-  --       {z : ℝ | |z| ≤ ν} := by
-  --     apply continuousOn_tsum (u := fun n => |lpWeighted.toSeq aTilde n| * (ν : ℝ) ^ n)
-  --     · intro n
-  --       exact (continuous_const.mul (continuous_pow n)).continuousOn
-  --     · exact hsum
-  --     · intro n z hz
-  --       simp only [Set.mem_setOf_eq] at hz
-  --       simp only [Real.norm_eq_abs, abs_mul, abs_pow]
-  --       gcongr
-  --   apply hcontOn.continuousAt
-  --   rw [mem_nhds_iff]
-  --   use Metric.ball 0 ν
-  --   refine ⟨?_, Metric.isOpen_ball, Metric.mem_ball_self ν.2⟩
-  --   intro z hz
-  --   simp only [Set.mem_setOf_eq, Metric.mem_ball, dist_zero_right] at hz ⊢
-  --   exact hz.le
-
-  -- Step 5: By continuity, x̃ stays positive (since x̃(0) > 0 and x̃² > 0 everywhere)
-  -- If x̃(z) ≤ 0 for some z, then by IVT x̃ = 0 somewhere, but x̃² = lam > 0, contradiction
+  -- Step 4: By continuity, x̃ stays positive (IVT argument)
   have hpos : 0 < analyticSolution aTilde (lam - lam0) := by
     -- x̃² = lam > 0, so x̃ ≠ 0
     have hne : analyticSolution aTilde (lam - lam0) ≠ 0 := by
@@ -239,18 +257,12 @@ theorem analyticSolution_eq_sqrt {ν : PosReal} (aTilde : l1Weighted ν) (lam0 :
     -- x̃(0) = a₀ > 0
     have hpos0 : 0 < analyticSolution aTilde 0 := by
       rw [h_at_zero]; exact ha0_pos
-    -- By contrapositive of IVT: if x̃ continuous, x̃(0) > 0, x̃(z) ≠ 0, then x̃(z) > 0
-    -- (otherwise x̃ would cross 0)
+    -- By contrapositive of IVT
     by_contra hle
     push_neg at hle
     have hneg : analyticSolution aTilde (lam - lam0) < 0 := lt_of_le_of_ne hle hne
-    -- Use IVT: continuous function going from positive to negative must cross 0
-    -- We show this leads to a contradiction
-    -- By IVT, there exists c between 0 and (lam - lam0) with analyticSolution aTilde c = 0
-    -- But then c must satisfy 0² = lam0 + c, i.e., c = -lam0 < 0
-    -- This is not in the interval [min 0 (lam-lam0), max 0 (lam-lam0)] when lam > 0
+    -- Continuity of power series on the interval
     have hcontOn : ContinuousOn (analyticSolution aTilde) (Set.uIcc 0 (lam - lam0)) := by
-      -- analyticSolution is continuous on {z : |z| ≤ ν}
       have hcontBall : ContinuousOn (fun z => ∑' n, lpWeighted.toSeq aTilde n * z ^ n) {z : ℝ | |z| ≤ ν} := by
         apply continuousOn_tsum (u := fun n => |lpWeighted.toSeq aTilde n| * (ν : ℝ) ^ n)
         · intro n; exact (continuous_const.mul (continuous_pow n)).continuousOn
@@ -260,7 +272,6 @@ theorem analyticSolution_eq_sqrt {ν : PosReal} (aTilde : l1Weighted ν) (lam0 :
           simp only [Real.norm_eq_abs, abs_mul, abs_pow]
           gcongr
       apply hcontBall.mono
-      -- uIcc 0 (lam - lam0) ⊆ {z : |z| ≤ ν}
       intro z hz
       simp only [Set.mem_setOf_eq]
       simp only [Set.uIcc, Set.mem_Icc] at hz
@@ -276,11 +287,8 @@ theorem analyticSolution_eq_sqrt {ν : PosReal} (aTilde : l1Weighted ν) (lam0 :
            _ ≤ max 0 |lam - lam0| := max_le_max_left 0 (le_abs_self _)
            _ = |lam - lam0| := by simp [abs_nonneg]
            _ ≤ ν := h1
-    -- Apply IVT: 0 is between f(0) > 0 and f(lam - lam0) < 0
-    -- intermediate_value_uIcc says: uIcc (f a) (f b) ⊆ f '' uIcc a b
-    -- So 0 ∈ uIcc (f 0) (f (lam-lam0)) implies 0 ∈ f '' uIcc 0 (lam-lam0)
+    -- Apply IVT
     have hIVT := intermediate_value_uIcc hcontOn
-    -- 0 ∈ [f(lam-lam0), f(0)] since f(lam-lam0) < 0 < f(0)
     have h0_in : (0 : ℝ) ∈ Set.uIcc (analyticSolution aTilde 0) (analyticSolution aTilde (lam - lam0)) := by
       rw [Set.mem_uIcc]
       exact Or.inr ⟨hneg.le, hpos0.le⟩
@@ -299,33 +307,22 @@ theorem analyticSolution_eq_sqrt {ν : PosReal} (aTilde : l1Weighted ν) (lam0 :
            _ ≤ max 0 |lam - lam0| := max_le_max_left 0 (le_abs_self _)
            _ = |lam - lam0| := by simp [abs_nonneg]
            _ ≤ ν := hlam
-    -- Use analyticSolution_is_sqrt with lam := lam0 + c, so lam - lam0 = c
     have hc_bound' : |(lam0 + c) - lam0| ≤ ν := by simp [hc_bound]
     have hsq_c := analyticSolution_is_sqrt aTilde lam0 hF hc_bound'
     simp only [add_sub_cancel_left] at hsq_c
     rw [hc_eq, pow_two, mul_zero] at hsq_c
-    -- So 0 = lam0 + c, i.e., c = -lam0
     have hc_val : c = -lam0 := by linarith
-    -- But c ∈ uIcc 0 (lam - lam0), so min 0 (lam-lam0) ≤ c ≤ max 0 (lam-lam0)
-    -- Since c = -lam0 < 0 and lam > 0, we have lam - lam0 > -lam0, so c < min 0 (lam-lam0) if lam-lam0 ≥ 0
-    -- or c is not in range otherwise
     simp only [Set.uIcc, Set.mem_Icc] at hc_mem
     have hneg_lam0 : -lam0 < 0 := neg_neg_of_pos hlam0_pos
     rw [hc_val] at hc_mem
-    -- Case split on lam - lam0 ≥ 0 or < 0
     by_cases h : lam - lam0 ≥ 0
-    · -- If lam - lam0 ≥ 0, then min 0 (lam - lam0) = 0
-      simp only [min_eq_left h.le, max_eq_right h.le] at hc_mem
-      -- hc_mem.1 : 0 ≤ -lam0, but -lam0 < 0
+    · simp only [min_eq_left h.le, max_eq_right h.le] at hc_mem
       linarith [hc_mem.1]
-    · -- If lam - lam0 < 0, then min 0 (lam - lam0) = lam - lam0
-      push_neg at h
+    · push_neg at h
       simp only [min_eq_right h.le, max_eq_left h.le] at hc_mem
-      -- hc_mem.1 : lam - lam0 ≤ -lam0, i.e., lam ≤ 0, but lam > 0
       linarith [hc_mem.1]
 
-  -- sqrt(x²) = x when x ≥ 0, so sqrt((analyticSolution ...)²) = analyticSolution ...
-  -- Since (analyticSolution ...)² = lam, we get sqrt(lam) = analyticSolution ...
+  -- Step 5: sqrt(x²) = x when x > 0
   have h := Real.sqrt_sq hpos.le
   rw [hsq] at h
   exact h.symm

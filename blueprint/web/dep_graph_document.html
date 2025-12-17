@@ -63,6 +63,39 @@
 <div id="statements">
 
     
+    <div class="dep-modal-container" id="cor:analytic_is_sqrt_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="cor:analytic_is_sqrt" style="display: none">
+    <div class="thm_thmheading">
+      <span class="corollary_thmcaption">
+      Corollary
+      </span>
+      <span class="corollary_thmlabel">2.2.30</span><span class="corollary_thmtitle">Evaluation identity</span></div>
+    <div class="thm_thmcontent"><p>   For \(|\lambda - \lambda _0| \leq \nu \): </p>
+<div class="displaymath" id="a0000000099">
+  \begin{equation*}  \texttt{eval}(\tilde{a}, \lambda - \lambda _0)^2 = \lambda . \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#cor:analytic_is_sqrt">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.analyticSolution_is_sqrt">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
     <div class="dep-modal-container" id="cor:mean_value_inequality_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
@@ -76,7 +109,7 @@
       </span>
       <span class="corollary_thmlabel">1.2.4</span><span class="corollary_thmtitle">Mean Value Inequality</span></div>
     <div class="thm_thmcontent"><p>   Consider an open set \(U \subset \mathbb {R}^n\). Let \(f: U \rightarrow \mathbb {R}^n\) be a \(C^1\) function. Fix a point \(x_0 \in U\) and assume \(\overline{B}_\rho (x_0) \subset U\) for some \(\rho {\gt} 0\). Then, for all \(x, y \in \overline{B}_\rho (x_0)\), </p>
-<div class="displaymath" id="a0000000015">
+<div class="displaymath" id="a0000000016">
   \begin{equation*}  \| f(y) - f(x)\| \leq \left(\sup _{z \in \overline{B}_\rho (x_0)} \| \text{Df}(z)\| \right) \| y-x\| , \end{equation*}
 </div>
 <p> where \(\| \text{Df}(\cdot )\| \) denotes the operator norm. </p>
@@ -127,6 +160,75 @@
 
 
     
+    <div class="dep-modal-container" id="def:approx_solution_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:approx_solution" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.11</span><span class="definition_thmtitle">Approximate solution structure</span></div>
+    <div class="thm_thmcontent"><p>   An <i class="itshape">approximate solution</i> of order \(N\) consists of: </p>
+<ul class="itemize">
+  <li><p>Finite coefficients \(\bar{a}_0, \bar{a}_1, \ldots , \bar{a}_N \in \mathbb {R}\) </p>
+</li>
+  <li><p>The extension \(\bar{a} \in \ell ^1_\nu \) defined by \(\bar{a}_n = 0\) for \(n {\gt} N\) </p>
+</li>
+</ul>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:approx_solution">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.ApproxSolution">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:cauchy_product_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:cauchy_product" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.4</span><span class="definition_thmtitle">Cauchy product</span></div>
+    <div class="thm_thmcontent"><p>  The <i class="itshape">Cauchy product</i> of sequences \(a, b : \mathbb {N} \rightarrow \mathbb {R}\) is </p>
+<div class="displaymath" id="a0000000068">
+  \begin{equation*}  (a \star b)_n := \sum _{k=0}^n a_k b_{n-k}. \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:cauchy_product">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/CauchyProduct">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
     <div class="dep-modal-container" id="def:classical_newton_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
@@ -140,7 +242,7 @@
       </span>
       <span class="definition_thmlabel">1.3.4</span><span class="definition_thmtitle">Classical Newton operator</span></div>
     <div class="thm_thmcontent"><p>  If \(f \in C^2(U, \mathbb {R}^n)\) where \(U \subset \mathbb {R}^n\) is an open set, the <i class="itshape">classical Newton operator</i> is given by </p>
-<div class="displaymath" id="a0000000020">
+<div class="displaymath" id="a0000000021">
   \begin{equation*}  T(x) := x - (\text{Df}(x))^{-1} f(x). \end{equation*}
 </div>
 </div>
@@ -190,6 +292,40 @@
 
 
     
+    <div class="dep-modal-container" id="def:concrete_approx_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:concrete_approx" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.12</span><span class="definition_thmtitle">Concrete approximate solution</span></div>
+    <div class="thm_thmcontent"><p>   For \(\lambda _0 = 1\) and \(N = 2\), the approximate solution is: </p>
+<div class="displaymath" id="a0000000075">
+  \begin{equation*}  \bar{a}_0 = 1, \quad \bar{a}_1 = \frac{1}{2}, \quad \bar{a}_2 = -\frac{1}{8}. \end{equation*}
+</div>
+<p> These are the first three Taylor coefficients of \(\sqrt{1 + z}\) at \(z = 0\). </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:concrete_approx">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ConcreteExample.sol">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
     <div class="dep-modal-container" id="def:contraction_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
@@ -203,7 +339,7 @@
       </span>
       <span class="definition_thmlabel">1.1.2</span><span class="definition_thmtitle">Contraction mapping</span></div>
     <div class="thm_thmcontent"><p>  Let \((X, d)\) be a metric space. A function \(T: X \rightarrow X\) is a <i class="itshape">contraction</i> if there is a number \(\kappa \in [0, 1)\), called a <i class="itshape">contraction constant</i>, such that </p>
-<div class="displaymath" id="a0000000006">
+<div class="displaymath" id="a0000000007">
   \begin{equation*}  d(T(x), T(y)) \leq \kappa \cdot d(x, y) \end{equation*}
 </div>
 <p> for all \(x, y \in X\). </p>
@@ -213,6 +349,40 @@
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContractingWith">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:eval_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:eval" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.26</span><span class="definition_thmtitle">Analytic evaluation</span></div>
+    <div class="thm_thmcontent"><p>   For \(a \in \ell ^1_\nu \) and \(z \in \mathbb {R}\), the evaluation is </p>
+<div class="displaymath" id="a0000000093">
+  \begin{equation*}  \texttt{eval}(a, z) := \sum _{n=0}^\infty a_n z^n. \end{equation*}
+</div>
+<p> (An alias <span class="ttfamily">analyticSolution</span> is provided for backward compatibility.) </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:eval">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.eval">Lean</a>
     
     
   
@@ -254,6 +424,40 @@
 
 
     
+    <div class="dep-modal-container" id="def:F_map_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:F_map" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.8</span><span class="definition_thmtitle">The map \(F\)</span></div>
+    <div class="thm_thmcontent"><p>   The fixed-point map \(F: \ell ^1_\nu \rightarrow \ell ^1_\nu \) is defined by </p>
+<div class="displaymath" id="a0000000073">
+  \begin{equation*}  F(a)_n = (a \star a)_n - c_n. \end{equation*}
+</div>
+<p> A zero of \(F\) corresponds to a power series squaring to \(\lambda _0 + z\). </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:F_map">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.F">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
     <div class="dep-modal-container" id="def:general_radii_poly_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
@@ -267,7 +471,7 @@
       </span>
       <span class="definition_thmlabel">2.1.6</span><span class="definition_thmtitle">General radii polynomial</span></div>
     <div class="thm_thmcontent"><p>  For constants \(Y_0, Z_0, Z_1 \geq 0\) and function \(Z_2: (0,\infty ) \rightarrow [0,\infty )\), the <i class="itshape">general radii polynomial</i> is </p>
-<div class="displaymath" id="a0000000043">
+<div class="displaymath" id="a0000000044">
   \begin{equation*}  p(r) := Z_2(r)r^2 - (1 - Z_0 - Z_1)r + Y_0. \end{equation*}
 </div>
 </div>
@@ -276,6 +480,39 @@
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/generalRadiiPolynomial">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:l1_weighted_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:l1_weighted" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.2</span><span class="definition_thmtitle">Weighted \(\ell ^1\) space</span></div>
+    <div class="thm_thmcontent"><p>   For \(\nu {\gt} 0\), the weighted \(\ell ^1_\nu \) space consists of sequences \(a : \mathbb {N} \rightarrow \mathbb {R}\) such that </p>
+<div class="displaymath" id="a0000000067">
+  \begin{equation*}  \| a\| _{\ell ^1_\nu } := \sum _{n=0}^\infty |a_n| \nu ^n {\lt} \infty . \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:l1_weighted">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted">Lean</a>
     
     
   
@@ -300,7 +537,7 @@
       </span>
       <span class="definition_thmlabel">2.1.4</span><span class="definition_thmtitle">Newton-like map for E to F</span></div>
     <div class="thm_thmcontent"><p>   For a function \(f: E \rightarrow F\) and an approximate inverse \(A: F \rightarrow E\), the <i class="itshape">Newton-like map</i> is </p>
-<div class="displaymath" id="a0000000041">
+<div class="displaymath" id="a0000000042">
   \begin{equation*}  T(x) = x - A(f(x)). \end{equation*}
 </div>
 <p> Note that \(T: E \rightarrow E\) even though \(f\) maps between different spaces. </p>
@@ -334,7 +571,7 @@
       </span>
       <span class="definition_thmlabel">1.3.1</span><span class="definition_thmtitle">Newton-like map</span></div>
     <div class="thm_thmcontent"><p>  Let \(E, F\) be Banach spaces, \(f: E \rightarrow F\) a function, and \(A: F \rightarrow E\) a continuous linear map. The <i class="itshape">Newton-like map</i> is defined by </p>
-<div class="displaymath" id="a0000000017">
+<div class="displaymath" id="a0000000018">
   \begin{equation*}  T(x) = x - A(f(x)). \end{equation*}
 </div>
 </div>
@@ -397,7 +634,7 @@
       </span>
       <span class="definition_thmlabel">1.2.1</span><span class="definition_thmtitle">Operator norm</span></div>
     <div class="thm_thmcontent"><p>  Let \((X, \| \cdot \| _X)\) and \((Y, \| \cdot \| _Y)\) be normed linear spaces and let \(A: X \rightarrow Y\) be a continuous linear map. The <i class="itshape">operator norm</i> on \(A\) is given by </p>
-<div class="displaymath" id="a0000000010">
+<div class="displaymath" id="a0000000011">
   \begin{equation*}  \| A\| := \sup _{x \in X \setminus \{ 0\} } \frac{\| Ax\| _Y}{\| x\| _X} = \sup _{\| x\| _X = 1} \| Ax\| _Y. \end{equation*}
 </div>
 </div>
@@ -406,6 +643,106 @@
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContinuousLinearMap.opNorm">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:param_power_series_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:param_power_series" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.23</span><span class="definition_thmtitle">Parameter power series</span></div>
+    <div class="thm_thmcontent"><p>   The parameter sequence as a formal power series: </p>
+<div class="displaymath" id="a0000000089">
+  \begin{equation*}  \texttt{paramPowerSeries}(\lambda _0) = \lambda _0 + X \in \mathbb {R}[\! [X]\! ]. \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:param_power_series">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.paramPowerSeries">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:param_seq_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:param_seq" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.7</span><span class="definition_thmtitle">Parameter sequence</span></div>
+    <div class="thm_thmcontent"><p>  For \(\lambda _0 \in \mathbb {R}\), the <i class="itshape">parameter sequence</i> is </p>
+<div class="displaymath" id="a0000000072">
+  \begin{equation*}  c_n = \begin{cases}  \lambda _0 &  n = 0 \\ 1 &  n = 1 \\ 0 &  n \geq 2 \end{cases}\end{equation*}
+</div>
+<p> This encodes the polynomial \(\lambda _0 + z\) (i.e., \(\lambda \) when \(z = \lambda - \lambda _0\)). </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:param_seq">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.paramSeq">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:posreal_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:posreal" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.1</span><span class="definition_thmtitle">Positive real numbers</span></div>
+    <div class="thm_thmcontent"><p>  The type of positive real numbers is </p>
+<div class="displaymath" id="a0000000066">
+  \begin{equation*}  \texttt{PosReal} := \{ x : \mathbb {R} \mid 0 {\lt} x\} . \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:posreal">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/PosReal">Lean</a>
     
     
   
@@ -430,7 +767,7 @@
       </span>
       <span class="definition_thmlabel">1.4.2</span><span class="definition_thmtitle">Radii polynomial</span></div>
     <div class="thm_thmcontent"><p>  Given constants \(Y_0, Z_0 \geq 0\) and a function \(Z_2: (0,\infty ) \rightarrow [0,\infty )\), the <i class="itshape">radii polynomial</i> is defined by </p>
-<div class="displaymath" id="a0000000027">
+<div class="displaymath" id="a0000000028">
   \begin{equation*}  p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0. \end{equation*}
 </div>
 </div>
@@ -463,7 +800,7 @@
       </span>
       <span class="definition_thmlabel">2.1.10</span><span class="definition_thmtitle">Simple radii polynomial</span></div>
     <div class="thm_thmcontent"><p>  For \(Y_0 \geq 0\) and \(Z: (0,\infty ) \rightarrow [0,\infty )\), the <i class="itshape">simple radii polynomial</i> is </p>
-<div class="displaymath" id="a0000000045">
+<div class="displaymath" id="a0000000046">
   \begin{equation*}  p(r) := (Z(r) - 1)r + Y_0. \end{equation*}
 </div>
 </div>
@@ -472,6 +809,212 @@
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/simpleRadiiPolynomial">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:sq_map_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:sq_map" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.9</span><span class="definition_thmtitle">Squaring map</span></div>
+    <div class="thm_thmcontent"><p>   The squaring map \(\text{sq}: \ell ^1_\nu \rightarrow \ell ^1_\nu \) is \(\text{sq}(a) = a \star a\). </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:sq_map">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.sq">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:to_power_series_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:to_power_series" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.22</span><span class="definition_thmtitle">Formal power series embedding</span></div>
+    <div class="thm_thmcontent"><p>   For \(a \in \ell ^1_\nu \), the formal power series is </p>
+<div class="displaymath" id="a0000000088">
+  \begin{equation*}  \texttt{toPowerSeries}(a) := \sum _{n=0}^\infty a_n X^n \in \mathbb {R}[\! [X]\! ]. \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:to_power_series">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.toPowerSeries">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:Y0_bound_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:Y0_bound" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.13</span><span class="definition_thmtitle">\(Y_0\) bound</span></div>
+    <div class="thm_thmcontent"><p>   The \(Y_0\) bound measures the initial defect: </p>
+<div class="displaymath" id="a0000000076">
+  \begin{equation*}  Y_0 = \| A \cdot F(\bar{a})\| _{\ell ^1_\nu } \end{equation*}
+</div>
+<p> where \(A\) is the approximate inverse. For diagonal \(A\) with entries \(A_{nn} = 1/(2\bar{a}_0)\): </p>
+<div class="displaymath" id="a0000000077">
+  \begin{equation*}  Y_0 = \sum _{n=0}^N |A_{nn} \cdot F(\bar{a})_n| \nu ^n + Y_0^{\text{tail}} \end{equation*}
+</div>
+<p> where \(Y_0^{\text{tail}}\) accounts for the tail contribution. </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:Y0_bound">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.Y₀_bound">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:Z0_bound_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:Z0_bound" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.14</span><span class="definition_thmtitle">\(Z_0\) bound</span></div>
+    <div class="thm_thmcontent"><p>   The \(Z_0\) bound measures deviation from identity: </p>
+<div class="displaymath" id="a0000000078">
+  \begin{equation*}  Z_0 = \| I - A \circ D_{\bar{a}}F\| . \end{equation*}
+</div>
+<p> Since \(D_{\bar{a}}F(h) = 2(\bar{a} \star h)\) and \(A\) is diagonal with \(A_{nn} = 1/(2\bar{a}_0)\): </p>
+<div class="displaymath" id="a0000000079">
+  \begin{equation*}  Z_0 = \sup _{n \geq 0} \left|1 - \frac{2(\bar{a} \star e_n)_n}{2\bar{a}_0}\right| \cdot \nu ^n \end{equation*}
+</div>
+<p> where \(e_n\) is the \(n\)-th standard basis sequence. </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:Z0_bound">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.Z₀_bound">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:Z1_bound_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:Z1_bound" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.15</span><span class="definition_thmtitle">\(Z_1\) bound</span></div>
+    <div class="thm_thmcontent"><p>  In the simple case where \(A^\dagger = D_{\bar{a}}F\), we have \(Z_1 = 0\). </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:Z1_bound">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.Z₁_bound">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="def:Z2_bound_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="def:Z2_bound" style="display: none">
+    <div class="thm_thmheading">
+      <span class="definition_thmcaption">
+      Definition
+      </span>
+      <span class="definition_thmlabel">2.2.16</span><span class="definition_thmtitle">\(Z_2\) bound</span></div>
+    <div class="thm_thmcontent"><p>   The \(Z_2\) bound measures Lipschitz continuity of the derivative: </p>
+<div class="displaymath" id="a0000000080">
+  \begin{equation*}  \| A \circ (D_c F - D_{\bar{a}} F)\| \leq Z_2 \cdot r \end{equation*}
+</div>
+<p> for all \(c \in \overline{B}_r(\bar{a})\). Since \(D_c F - D_{\bar{a}} F = 2((c - \bar{a}) \star \cdot )\): </p>
+<div class="displaymath" id="a0000000081">
+  \begin{equation*}  Z_2 = \frac{2 \| A\| }{\text{(appropriate norm)}}. \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#def:Z2_bound">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.Z₂_bound">Lean</a>
     
     
   
@@ -496,7 +1039,7 @@
       </span>
       <span class="definition_thmlabel">1.4.3</span><span class="definition_thmtitle">Combined bound</span></div>
     <div class="thm_thmcontent"><p>  The <i class="itshape">combined bound</i> is defined as </p>
-<div class="displaymath" id="a0000000028">
+<div class="displaymath" id="a0000000029">
   \begin{equation*}  Z(r) := Z_0 + Z_2(r) \cdot r. \end{equation*}
 </div>
 </div>
@@ -529,7 +1072,7 @@
       </span>
       <span class="definition_thmlabel">2.1.7</span><span class="definition_thmtitle">Combined bound (general case)</span></div>
     <div class="thm_thmcontent"><p>  The <i class="itshape">combined bound</i> is </p>
-<div class="displaymath" id="a0000000044">
+<div class="displaymath" id="a0000000045">
   \begin{equation*}  Z(r) := Z_0 + Z_1 + Z_2(r) \cdot r. \end{equation*}
 </div>
 </div>
@@ -639,6 +1182,39 @@
 
 
     
+    <div class="dep-modal-container" id="lem:eval_zero_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:eval_zero" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">2.2.31</span><span class="lemma_thmtitle">Evaluation at zero</span></div>
+    <div class="thm_thmcontent"><p>   For any \(a \in \ell ^1_\nu \): </p>
+<div class="displaymath" id="a0000000100">
+  \begin{equation*}  \texttt{eval}(a, 0) = a_0. \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#lem:eval_zero">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.eval_zero">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
     <div class="dep-modal-container" id="lem:explicit_inverse_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
@@ -652,7 +1228,7 @@
       </span>
       <span class="lemma_thmlabel">2.1.2</span><span class="lemma_thmtitle">Explicit two-sided inverse</span></div>
     <div class="thm_thmcontent"><p>   If \(\| I_E - B\| {\lt} 1\) for \(B: E \rightarrow E\), then there exists \(B^{-1}: E \rightarrow E\) such that </p>
-<div class="displaymath" id="a0000000039">
+<div class="displaymath" id="a0000000040">
   \begin{equation*}  B \circ B^{-1} = I_E \quad \text{and} \quad B^{-1} \circ B = I_E. \end{equation*}
 </div>
 </div>
@@ -745,7 +1321,7 @@
       </span>
       <span class="lemma_thmlabel">2.1.3</span><span class="lemma_thmtitle">Composition form</span></div>
     <div class="thm_thmcontent"><p>   If \(\| I_E - B\| {\lt} 1\), then there exists \(B^{-1}\) such that </p>
-<div class="displaymath" id="a0000000040">
+<div class="displaymath" id="a0000000041">
   \begin{equation*}  B.\text{comp}(B^{-1}) = I_E \quad \text{and} \quad B^{-1}.\text{comp}(B) = I_E. \end{equation*}
 </div>
 </div>
@@ -754,6 +1330,36 @@
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/invertible_comp_form">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:l1_mem_iff_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:l1_mem_iff" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">2.2.3</span><span class="lemma_thmtitle">Membership criterion</span></div>
+    <div class="thm_thmcontent"><p>   A sequence \(a\) belongs to \(\ell ^1_\nu \) if and only if \(\sum _{n=0}^\infty |a_n| \nu ^n\) converges. </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#lem:l1_mem_iff">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.mem_iff">Lean</a>
     
     
   
@@ -808,13 +1414,13 @@
       </span>
       <span class="lemma_thmlabel">2.1.14</span><span class="lemma_thmtitle">General derivative bound</span></div>
     <div class="thm_thmcontent"><p>   Suppose for all \(c \in \overline{B}_r(\bar{x})\): </p>
-<div class="displaymath" id="a0000000049">
+<div class="displaymath" id="a0000000050">
   \begin{equation*}  \| I_E - A \circ A^\dagger \| \leq Z_0 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000050">
+<div class="displaymath" id="a0000000051">
   \begin{equation*}  \| A \circ (A^\dagger - \text{Df}(\bar{x}))\| \leq Z_1 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000051">
+<div class="displaymath" id="a0000000052">
   \begin{equation*}  \| A \circ (\text{Df}(c) - \text{Df}(\bar{x}))\| \leq Z_2(r) \cdot r \end{equation*}
 </div>
 <p> Then \(\| \text{DT}(c)\| \leq Z_0 + Z_1 + Z_2(r) \cdot r = Z(r)\). </p>
@@ -968,7 +1574,7 @@
       </span>
       <span class="lemma_thmlabel">1.4.4</span><span class="lemma_thmtitle">Alternative form of radii polynomial</span></div>
     <div class="thm_thmcontent"><p>   The radii polynomial can be rewritten as </p>
-<div class="displaymath" id="a0000000030">
+<div class="displaymath" id="a0000000031">
   \begin{equation*}  p(r) = (Z(r) - 1)r + Y_0. \end{equation*}
 </div>
 </div>
@@ -977,6 +1583,39 @@
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/radiiPolynomial_alt_form">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:radii_poly_neg_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:radii_poly_neg" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">2.2.20</span><span class="lemma_thmtitle">Radii polynomial negativity</span></div>
+    <div class="thm_thmcontent"><p>   For \(r_0 {\gt} 0\) sufficiently small: </p>
+<div class="displaymath" id="a0000000085">
+  \begin{equation*}  p(r_0) = Z_2^{\text{pad}} \cdot r_0^2 - (1 - Z_0^{\text{pad}}) r_0 + Y_0^{\text{pad}} {\lt} 0. \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#lem:radii_poly_neg">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ConcreteExample.radiiPoly_7_7_neg">Lean</a>
     
     
   
@@ -1018,6 +1657,136 @@
 
 
     
+    <div class="dep-modal-container" id="lem:summable_eval_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:summable_eval" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">2.2.27</span><span class="lemma_thmtitle">Absolute convergence</span></div>
+    <div class="thm_thmcontent"><p>   If \(a \in \ell ^1_\nu \) and \(|z| \leq \nu \), then \(\sum _{n=0}^\infty a_n z^n\) converges absolutely. </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#lem:summable_eval">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.summable_eval">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:Y0_verified_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:Y0_verified" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">2.2.17</span><span class="lemma_thmtitle">\(Y_0\) bound verification</span></div>
+    <div class="thm_thmcontent"><p>   For the concrete parameters \(\nu = 1/2\), \(\lambda _0 = 1\), \(N = 2\): </p>
+<div class="displaymath" id="a0000000082">
+  \begin{equation*}  Y_0 \leq Y_0^{\text{pad}} \end{equation*}
+</div>
+<p> where \(Y_0^{\text{pad}}\) is a rational upper bound verified by computation. </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#lem:Y0_verified">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ConcreteExample.Y₀_bound_le">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:Z0_verified_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:Z0_verified" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">2.2.18</span><span class="lemma_thmtitle">\(Z_0\) bound verification</span></div>
+    <div class="thm_thmcontent"><p>   For the concrete parameters: </p>
+<div class="displaymath" id="a0000000083">
+  \begin{equation*}  Z_0 \leq Z_0^{\text{pad}}. \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#lem:Z0_verified">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ConcreteExample.Z₀_bound_le">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="lem:Z2_verified_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="lem:Z2_verified" style="display: none">
+    <div class="thm_thmheading">
+      <span class="lemma_thmcaption">
+      Lemma
+      </span>
+      <span class="lemma_thmlabel">2.2.19</span><span class="lemma_thmtitle">\(Z_2\) bound verification</span></div>
+    <div class="thm_thmcontent"><p>   For the concrete parameters and all \(c \in \overline{B}_r(\bar{a})\): </p>
+<div class="displaymath" id="a0000000084">
+  \begin{equation*}  \| A \circ (D_c F - D_{\bar{a}} F)\| \leq Z_2^{\text{pad}} \cdot r. \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#lem:Z2_verified">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ConcreteExample.Z₂_bound_le">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
     <div class="dep-modal-container" id="prop:fixed_point_iff_zero_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
@@ -1031,7 +1800,7 @@
       </span>
       <span class="proposition_thmlabel">1.3.2</span><span class="proposition_thmtitle">Fixed points \(\Leftrightarrow \) Zeros (Proposition 2.3.1)</span></div>
     <div class="thm_thmcontent"><p>   Let \(E, F\) be vector spaces, \(f: E \rightarrow F\), and \(A: F \rightarrow E\) an injective linear map. Let \(T(x) = x - A(f(x))\) be the Newton-like operator. Then: </p>
-<div class="displaymath" id="a0000000019">
+<div class="displaymath" id="a0000000020">
   \begin{equation*}  T(x) = x \quad \Leftrightarrow \quad f(x) = 0. \end{equation*}
 </div>
 </div>
@@ -1064,7 +1833,7 @@
       </span>
       <span class="proposition_thmlabel">2.1.5</span><span class="proposition_thmtitle">Fixed points ⟺ Zeros for E to F</span></div>
     <div class="thm_thmcontent"><p>   Let \(f: E \rightarrow F\) and \(A: F \rightarrow E\) be injective. Then for the Newton-like operator \(T(x) = x - A(f(x))\): </p>
-<div class="displaymath" id="a0000000042">
+<div class="displaymath" id="a0000000043">
   \begin{equation*}  T(x) = x \quad \Leftrightarrow \quad f(x) = 0. \end{equation*}
 </div>
 <p> This holds even when \(E \neq F\); injectivity of \(A\) is sufficient. </p>
@@ -1126,6 +1895,111 @@
 
 
     
+    <div class="dep-modal-container" id="thm:analytic_eq_sqrt_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:analytic_eq_sqrt" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">2.2.32</span><span class="theorem_thmtitle">Positive branch identification</span></div>
+    <div class="thm_thmcontent"><p>   Suppose: </p>
+<ol class="enumerate">
+  <li><p>\(\lambda _0 {\gt} 0\) </p>
+</li>
+  <li><p>\(\lambda {\gt} 0\) </p>
+</li>
+  <li><p>\(|\lambda - \lambda _0| \leq \nu \) </p>
+</li>
+  <li><p>\(\tilde{a}_0 {\gt} 0\) </p>
+</li>
+</ol>
+<p> Then \(\texttt{eval}(\tilde{a}, \lambda - \lambda _0) = \sqrt{\lambda }\). </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#thm:analytic_eq_sqrt">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.analyticSolution_eq_sqrt">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:cauchy_product_mem_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:cauchy_product_mem" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">2.2.5</span><span class="theorem_thmtitle">Closure under Cauchy product</span></div>
+    <div class="thm_thmcontent"><p>   If \(a, b \in \ell ^1_\nu \), then \(a \star b \in \ell ^1_\nu \). </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#thm:cauchy_product_mem">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.mem">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:coeff_mul_eq_cauchy_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:coeff_mul_eq_cauchy" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">2.2.24</span><span class="theorem_thmtitle">Cauchy product is formal multiplication</span></div>
+    <div class="thm_thmcontent"><p>   For \(a, b \in \ell ^1_\nu \): </p>
+<div class="displaymath" id="a0000000090">
+  \begin{equation*}  \texttt{coeff}_n(\texttt{toPowerSeries}(a) \cdot \texttt{toPowerSeries}(b)) = (a \star b)_n. \end{equation*}
+</div>
+<p> This is essentially definitional: multiplication in \(\mathbb {R}[\! [X]\! ]\) <em>is</em> the Cauchy product. </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#thm:coeff_mul_eq_cauchy">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.coeff_mul_eq_cauchyProduct">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
     <div class="dep-modal-container" id="thm:contraction_mapping_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
@@ -1139,7 +2013,7 @@
       </span>
       <span class="theorem_thmlabel">1.1.3</span><span class="theorem_thmtitle">Contraction Mapping Theorem</span></div>
     <div class="thm_thmcontent"><p>   Let \((X, d)\) be a complete metric space. If \(T: X \rightarrow X\) is a contraction with contraction constant \(\kappa \), then there exists a unique fixed point \(\tilde{x} \in X\) of \(T\). Furthermore, \(\tilde{x}\) is globally attracting, and for any \(x \in X\), </p>
-<div class="displaymath" id="a0000000008">
+<div class="displaymath" id="a0000000009">
   \begin{equation*}  d(T^n(x), \tilde{x}) \leq \frac{\kappa ^n}{1-\kappa } d(T(x), x). \end{equation*}
 </div>
 </div>
@@ -1148,6 +2022,173 @@
     
     
   <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/ContractingWith.exists_fixedPoint'">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:eval_mul_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:eval_mul" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">2.2.28</span><span class="theorem_thmtitle">Mertens’ theorem: evaluation commutes with multiplication</span></div>
+    <div class="thm_thmcontent"><p>   For \(a, b \in \ell ^1_\nu \) and \(|z| \leq \nu \): </p>
+<div class="displaymath" id="a0000000096">
+  \begin{equation*}  \texttt{eval}(a, z) \cdot \texttt{eval}(b, z) = \sum _{n=0}^\infty (a \star b)_n z^n. \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#thm:eval_mul">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.eval_mul">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:eval_sq_eq_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:eval_sq_eq" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">2.2.29</span><span class="theorem_thmtitle">Squaring identity</span></div>
+    <div class="thm_thmcontent"><p>   If \(\tilde{a} \in \ell ^1_\nu \) satisfies \(F(\tilde{a}) = 0\), then for \(|z| \leq \nu \): </p>
+<div class="displaymath" id="a0000000098">
+  \begin{equation*}  \texttt{eval}(\tilde{a}, z)^2 = \lambda _0 + z. \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#thm:eval_sq_eq">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.eval_sq_eq">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:example_7_7_existence_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:example_7_7_existence" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">2.2.21</span><span class="theorem_thmtitle">Existence of fixed point</span></div>
+    <div class="thm_thmcontent"><p>   There exists a unique \(\tilde{a} \in \ell ^1_\nu \) with \(\| \tilde{a} - \bar{a}\| _{\ell ^1_\nu } \leq r_0\) such that \(F(\tilde{a}) = 0\), i.e., \((\tilde{a} \star \tilde{a})_n = c_n\) for all \(n\). </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#thm:example_7_7_existence">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/Example_7_7.example_7_7_main_theorem">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:example_7_7_main_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:example_7_7_main" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">2.2.33</span><span class="theorem_thmtitle">Main result for Example 7.7</span></div>
+    <div class="thm_thmcontent"><p>  For \(\lambda _0 = 1\) and \(\nu = 1/2\), there exists a unique power series </p>
+<div class="displaymath" id="a0000000102">
+  \begin{equation*}  \tilde{x}(\lambda ) = \sum _{n=0}^\infty \tilde{a}_n (\lambda - 1)^n \end{equation*}
+</div>
+<p> convergent for \(|\lambda - 1| \leq 1/2\) (i.e., \(\lambda \in [1/2, 3/2]\)) such that </p>
+<div class="displaymath" id="a0000000103">
+  \begin{equation*}  \tilde{x}(\lambda ) = \sqrt{\lambda }. \end{equation*}
+</div>
+<p> The coefficients \(\tilde{a}\) are within distance \(r_0\) of the approximate Taylor coefficients \((1, 1/2, -1/8, 0, 0, \ldots )\) in the \(\ell ^1_\nu \) norm. </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#thm:example_7_7_main">LaTeX</a>
+    
+    
+  
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:fderiv_sq_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:fderiv_sq" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">2.2.10</span><span class="theorem_thmtitle">Fréchet derivative of squaring</span></div>
+    <div class="thm_thmcontent"><p>   The squaring map is Fréchet differentiable with derivative at \(a\): </p>
+<div class="displaymath" id="a0000000074">
+  \begin{equation*}  D_a[\text{sq}](h) = 2(a \star h). \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#thm:fderiv_sq">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.hasFDerivAt_sq">Lean</a>
     
     
   
@@ -1172,14 +2213,14 @@
       </span>
       <span class="theorem_thmlabel">1.4.1</span><span class="theorem_thmtitle">Fixed point theorem with radii polynomial (Theorem 2.4.1)</span></div>
     <div class="thm_thmcontent"><p>  Consider a map \(T \in C^1(\mathbb {R}^n, \mathbb {R}^n)\) and let \(\bar{x} \in \mathbb {R}^n\). Let \(Y_0 \geq 0\) and \(Z: (0,\infty ) \rightarrow [0,\infty )\) be a non-negative function satisfying </p>
-<div class="displaymath" id="a0000000023">
+<div class="displaymath" id="a0000000024">
   \begin{equation*}  \| T(\bar{x}) - \bar{x}\| \leq Y_0 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000024">
+<div class="displaymath" id="a0000000025">
   \begin{equation*}  \| \text{DT}(c)\| \leq Z(r), \quad \text{for all } c \in \overline{B}_r(\bar{x}) \text{ and all } r {\gt} 0. \end{equation*}
 </div>
 <p> Define </p>
-<div class="displaymath" id="a0000000025">
+<div class="displaymath" id="a0000000026">
   \begin{equation*}  p(r) := (Z(r) - 1)r + Y_0. \end{equation*}
 </div>
 <p> If there exists \(r_0 {\gt} 0\) such that \(p(r_0) {\lt} 0\), then there exists a unique \(\tilde{x} \in \overline{B}_{r_0}(\bar{x})\) such that \(T(\tilde{x}) = \tilde{x}\). </p>
@@ -1189,6 +2230,39 @@
     
     
   
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
+    <div class="dep-modal-container" id="thm:formal_sq_eq_param_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:formal_sq_eq_param" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">2.2.25</span><span class="theorem_thmtitle">Formal fixed-point equation</span></div>
+    <div class="thm_thmcontent"><p>   If \(F(\tilde{a}) = 0\) (i.e., \((\tilde{a} \star \tilde{a})_n = c_n\) for all \(n\)), then at the formal level: </p>
+<div class="displaymath" id="a0000000091">
+  \begin{equation*}  \texttt{toPowerSeries}(\tilde{a})^2 = \texttt{paramPowerSeries}(\lambda _0). \end{equation*}
+</div>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#thm:formal_sq_eq_param">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.toPowerSeries_sq_eq_param">Lean</a>
     
     
   
@@ -1213,10 +2287,10 @@
       </span>
       <span class="theorem_thmlabel">2.1.20</span><span class="theorem_thmtitle">General Fixed Point Theorem (Theorem 7.6.1)</span></div>
     <div class="thm_thmcontent"><p>   Let \(T: E \rightarrow E\) be Fréchet differentiable and \(\bar{x} \in E\). Suppose: </p>
-<div class="displaymath" id="a0000000057">
+<div class="displaymath" id="a0000000058">
   \begin{equation*}  \| T(\bar{x}) - \bar{x}\| \leq Y_0 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000058">
+<div class="displaymath" id="a0000000059">
   \begin{equation*}  \| \text{DT}(x)\| \leq Z(r) \quad \text{for all } x \in \overline{B}_r(\bar{x}) \end{equation*}
 </div>
 <p> Define \(p(r) := (Z(r) - 1)r + Y_0\). </p>
@@ -1251,16 +2325,16 @@
       </span>
       <span class="theorem_thmlabel">2.1.21</span><span class="theorem_thmtitle">General Radii Polynomial Theorem (Theorem 7.6.2)</span></div>
     <div class="thm_thmcontent"><p>   Let \(E\) and \(F\) be Banach spaces and \(f: E \rightarrow F\) be Fréchet differentiable. Suppose \(\bar{x} \in E\), \(A^\dagger : E \rightarrow F\), and \(A: F \rightarrow E\) with \(A\) injective. Assume: </p>
-<div class="displaymath" id="a0000000060">
+<div class="displaymath" id="a0000000061">
   \begin{equation*}  \| A(f(\bar{x}))\| \leq Y_0 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000061">
+<div class="displaymath" id="a0000000062">
   \begin{equation*}  \| I_E - A \circ A^\dagger \| \leq Z_0 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000062">
+<div class="displaymath" id="a0000000063">
   \begin{equation*}  \| A \circ [\text{Df}(\bar{x}) - A^\dagger ]\| \leq Z_1 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000063">
+<div class="displaymath" id="a0000000064">
   \begin{equation*}  \| A \circ [\text{Df}(c) - \text{Df}(\bar{x})]\| \leq Z_2(r) \cdot r \quad \text{for } c \in \overline{B}_r(\bar{x}) \end{equation*}
 </div>
 <p> Define \(p(r) := Z_2(r)r^2 - (1 - Z_0 - Z_1)r + Y_0\). </p>
@@ -1295,7 +2369,7 @@
       </span>
       <span class="theorem_thmlabel">1.2.3</span><span class="theorem_thmtitle">Mean Value Theorem</span></div>
     <div class="thm_thmcontent"><p>  Suppose that \(U \subset \mathbb {R}^n\) is open and that \(f: U \rightarrow \mathbb {R}^n\) is \(C^1\). Consider \(x, y \in U\) such that the line segment \((1-t)x + ty\), \(t \in [0,1]\), is contained in \(U\). Then, </p>
-<div class="displaymath" id="a0000000012">
+<div class="displaymath" id="a0000000013">
   \begin{equation*}  f(y) - f(x) = \left(\int _0^1 \text{Df}((1-t)x + ty) \,  dt\right)(y-x), \end{equation*}
 </div>
 <p> where \(\text{Df}\) denotes the Jacobian of \(f\). </p>
@@ -1346,6 +2420,40 @@
 
 
     
+    <div class="dep-modal-container" id="thm:norm_submultiplicative_modal">
+      <div class="dep-modal-content">
+          <button class="dep-closebtn">
+<svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        
+  <div class="thm" id="thm:norm_submultiplicative" style="display: none">
+    <div class="thm_thmheading">
+      <span class="theorem_thmcaption">
+      Theorem
+      </span>
+      <span class="theorem_thmlabel">2.2.6</span><span class="theorem_thmtitle">Submultiplicative norm</span></div>
+    <div class="thm_thmcontent"><p>   For \(a, b \in \ell ^1_\nu \): </p>
+<div class="displaymath" id="a0000000071">
+  \begin{equation*}  \| a \star b\| _{\ell ^1_\nu } \leq \| a\| _{\ell ^1_\nu } \cdot \| b\| _{\ell ^1_\nu }. \end{equation*}
+</div>
+<p> This makes \((\ell ^1_\nu , \star )\) a Banach algebra. </p>
+</div>
+
+    <a class="latex_link" href="sec-example_7_7.html#thm:norm_submultiplicative">LaTeX</a>
+    
+    
+  <a class="lean_link lean_decl" href="https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial/docs/find/#doc/l1Weighted.norm_mul_le">Lean</a>
+    
+    
+  
+    
+  </div>
+    
+      </div>
+    </div>
+
+
+    
     <div class="dep-modal-container" id="thm:radii_poly_fd_modal">
       <div class="dep-modal-content">
           <button class="dep-closebtn">
@@ -1359,13 +2467,13 @@
       </span>
       <span class="theorem_thmlabel">1.4.6</span><span class="theorem_thmtitle">Radii polynomial theorem in finite dimensions (Theorem 2.4.2)</span></div>
     <div class="thm_thmcontent"><p>   Consider \(f \in C^1(\mathbb {R}^n, \mathbb {R}^n)\). Let \(\bar{x} \in \mathbb {R}^n\) and \(A \in M_n(\mathbb {R})\). Let \(Y_0\) and \(Z_0\) be non-negative constants and \(Z_2: (0,\infty ) \rightarrow [0,\infty )\) be a non-negative function satisfying </p>
-<div class="displaymath" id="a0000000033">
+<div class="displaymath" id="a0000000034">
   \begin{equation*}  \| Af(\bar{x})\| \leq Y_0 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000034">
+<div class="displaymath" id="a0000000035">
   \begin{equation*}  \| I - A\text{Df}(\bar{x})\| \leq Z_0 \end{equation*}
 </div>
-<div class="displaymath" id="a0000000035">
+<div class="displaymath" id="a0000000036">
   \begin{equation*}  \| A[\text{Df}(c) - \text{Df}(\bar{x})]\| \leq Z_2(r) \cdot r, \quad \text{for all } c \in \overline{B}_r(\bar{x}) \text{ and all } r {\gt} 0. \end{equation*}
 </div>
 <p> Define \(p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0\). </p>
@@ -1464,7 +2572,7 @@ graphContainer.graphviz({useWorker: true})
     .width(width)
     .height(height)
     .fit(true)
-    .renderDot(`strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	"thm:simple_radii_poly_same"	[color=green,		fillcolor="#9CEC8B",		label=simple_radii_poly_same,		shape=ellipse,		style=filled];	"lem:poly_neg_implies_contraction"	[color=green,		fillcolor="#1CAC78",		label=poly_neg_implies_contraction,		shape=ellipse,		style=filled];	"lem:poly_neg_implies_contraction" -> "thm:simple_radii_poly_same"	[style=dashed];	"thm:radii_poly_fd"	[color=green,		fillcolor="#9CEC8B",		label=radii_poly_fd,		shape=ellipse,		style=filled];	"lem:poly_neg_implies_contraction" -> "thm:radii_poly_fd"	[style=dashed];	"cor:sqrt2_unique"	[color=green,		label=sqrt2_unique,		shape=ellipse];	"thm:radii_poly_fd" -> "cor:sqrt2_unique"	[style=dashed];	"def:operator_norm"	[color=green,		fillcolor="#B0ECA3",		label=operator_norm,		shape=box,		style=filled];	"thm:mean_value"	[color=blue,		fillcolor="#A3D6FF",		label=mean_value,		shape=ellipse,		style=filled];	"def:operator_norm" -> "thm:mean_value"	[style=dashed];	"prop:operator_norm_properties"	[color=green,		label=operator_norm_properties,		shape=ellipse];	"def:operator_norm" -> "prop:operator_norm_properties"	[style=dashed];	"thm:neumann_series"	[color=green,		fillcolor="#1CAC78",		label=neumann_series,		shape=ellipse,		style=filled];	"def:operator_norm" -> "thm:neumann_series"	[style=dashed];	"cor:mean_value_inequality"	[color=green,		fillcolor="#9CEC8B",		label=mean_value_inequality,		shape=ellipse,		style=filled];	"thm:mean_value" -> "cor:mean_value_inequality"	[style=dashed];	"prop:operator_norm_properties" -> "cor:mean_value_inequality"	[style=dashed];	"thm:neumann_series" -> "thm:radii_poly_fd"	[style=dashed];	"lem:explicit_inverse"	[color=green,		label=explicit_inverse,		shape=ellipse];	"thm:neumann_series" -> "lem:explicit_inverse"	[style=dashed];	"thm:fixed_point_radii"	[color=blue,		fillcolor="#A3D6FF",		label=fixed_point_radii,		shape=ellipse,		style=filled];	"cor:mean_value_inequality" -> "thm:fixed_point_radii"	[style=dashed];	"lem:maps_ball_to_itself"	[color=green,		fillcolor="#9CEC8B",		label=maps_ball_to_itself,		shape=ellipse,		style=filled];	"cor:mean_value_inequality" -> "lem:maps_ball_to_itself"	[style=dashed];	"thm:fixed_point_radii" -> "thm:radii_poly_fd"	[style=dashed];	"thm:general_fixed_point"	[color=green,		fillcolor="#9CEC8B",		label=general_fixed_point,		shape=ellipse,		style=filled];	"lem:maps_ball_to_itself" -> "thm:general_fixed_point"	[style=dashed];	"lem:invertible_comp_form"	[color=green,		label=invertible_comp_form,		shape=ellipse];	"lem:explicit_inverse" -> "lem:invertible_comp_form"	[style=dashed];	"def:radii_polynomial"	[color=green,		fillcolor="#B0ECA3",		label=radii_polynomial,		shape=box,		style=filled];	"def:existence_interval"	[color=blue,		fillcolor="#A3D6FF",		label=existence_interval,		shape=box,		style=filled];	"def:radii_polynomial" -> "def:existence_interval"	[style=dashed];	"lem:radii_poly_alt_form"	[color=green,		fillcolor="#1CAC78",		label=radii_poly_alt_form,		shape=ellipse,		style=filled];	"def:radii_polynomial" -> "lem:radii_poly_alt_form"	[style=dashed];	"lem:radii_poly_alt_form" -> "lem:poly_neg_implies_contraction"	[style=dashed];	"thm:simple_radii_poly_ef"	[color=green,		label=simple_radii_poly_ef,		shape=ellipse];	"lem:radii_poly_alt_form" -> "thm:simple_radii_poly_ef"	[style=dashed];	"lem:simple_poly_neg_implies_contraction"	[color=green,		label=simple_poly_neg_implies_contraction,		shape=ellipse];	"lem:simple_poly_neg_implies_contraction" -> "thm:general_fixed_point"	[style=dashed];	"thm:general_fixed_point" -> "thm:simple_radii_poly_same"	[style=dashed];	"thm:general_fixed_point" -> "thm:simple_radii_poly_ef"	[style=dashed];	"thm:general_radii_poly_theorem"	[color=green,		fillcolor="#9CEC8B",		label=general_radii_poly_theorem,		shape=ellipse,		style=filled];	"thm:general_fixed_point" -> "thm:general_radii_poly_theorem"	[style=dashed];	"lem:newton_deriv_bound_simple"	[color=green,		label=newton_deriv_bound_simple,		shape=ellipse];	"lem:newton_deriv_bound_simple" -> "thm:simple_radii_poly_same"	[style=dashed];	"lem:newton_deriv_bound_simple" -> "thm:simple_radii_poly_ef"	[style=dashed];	"lem:closed_ball_complete"	[color=green,		label=closed_ball_complete,		shape=ellipse];	"lem:closed_ball_complete" -> "thm:general_fixed_point"	[style=dashed];	"def:Z_bound_general"	[color=green,		fillcolor="#B0ECA3",		label=Z_bound_general,		shape=box,		style=filled];	"lem:general_poly_alt_form"	[color=green,		label=general_poly_alt_form,		shape=ellipse];	"def:Z_bound_general" -> "lem:general_poly_alt_form"	[style=dashed];	"lem:newton_deriv_bound_general"	[color=green,		fillcolor="#1CAC78",		label=newton_deriv_bound_general,		shape=ellipse,		style=filled];	"def:Z_bound_general" -> "lem:newton_deriv_bound_general"	[style=dashed];	"lem:general_poly_neg_implies_contraction"	[color=green,		label=general_poly_neg_implies_contraction,		shape=ellipse];	"lem:general_poly_alt_form" -> "lem:general_poly_neg_implies_contraction"	[style=dashed];	"lem:newton_deriv_bound_general" -> "thm:general_radii_poly_theorem"	[style=dashed];	"lem:general_poly_neg_implies_contraction" -> "thm:general_radii_poly_theorem"	[style=dashed];	"lem:construct_deriv_inverse"	[color=green,		fillcolor="#9CEC8B",		label=construct_deriv_inverse,		shape=ellipse,		style=filled];	"lem:invertible_comp_form" -> "lem:construct_deriv_inverse"	[style=dashed];	"lem:construct_deriv_inverse" -> "thm:simple_radii_poly_same"	[style=dashed];	"def:classical_newton"	[label=classical_newton,		shape=box];	"def:Z_bound"	[color=green,		fillcolor="#B0ECA3",		label=Z_bound,		shape=box,		style=filled];	"def:Z_bound" -> "lem:radii_poly_alt_form"	[style=dashed];	"def:Z_bound" -> "lem:newton_deriv_bound_simple"	[style=dashed];	"prop:fixed_zero_ef"	[color=green,		label=fixed_zero_ef,		shape=ellipse];	"prop:fixed_zero_ef" -> "thm:simple_radii_poly_same"	[style=dashed];	"prop:fixed_zero_ef" -> "thm:simple_radii_poly_ef"	[style=dashed];	"prop:fixed_zero_ef" -> "thm:general_radii_poly_theorem"	[style=dashed];	"def:general_radii_poly"	[color=green,		fillcolor="#B0ECA3",		label=general_radii_poly,		shape=box,		style=filled];	"def:general_radii_poly" -> "lem:general_poly_alt_form"	[style=dashed];	"thm:contraction_mapping"	[color=green,		fillcolor="#1CAC78",		label=contraction_mapping,		shape=ellipse,		style=filled];	"thm:contraction_mapping" -> "thm:fixed_point_radii"	[style=dashed];	"thm:contraction_mapping" -> "thm:general_fixed_point"	[style=dashed];	"def:contraction"	[color=green,		fillcolor="#B0ECA3",		label=contraction,		shape=box,		style=filled];	"def:contraction" -> "thm:contraction_mapping"	[style=dashed];	"def:nondegenerate_zero"	[color=blue,		fillcolor="#A3D6FF",		label=nondegenerate_zero,		shape=box,		style=filled];	"def:nondegenerate_zero" -> "thm:radii_poly_fd"	[style=dashed];	"def:nondegenerate_zero" -> "def:classical_newton"	[style=dashed];	"def:newton_ef"	[color=green,		fillcolor="#B0ECA3",		label=newton_ef,		shape=box,		style=filled];	"def:newton_ef" -> "prop:fixed_zero_ef"	[style=dashed];	"lem:newton_fderiv"	[color=green,		fillcolor="#1CAC78",		label=newton_fderiv,		shape=ellipse,		style=filled];	"def:newton_ef" -> "lem:newton_fderiv"	[style=dashed];	"lem:newton_Y_bound"	[color=green,		fillcolor="#1CAC78",		label=newton_Y_bound,		shape=ellipse,		style=filled];	"def:newton_ef" -> "lem:newton_Y_bound"	[style=dashed];	"lem:newton_fderiv" -> "lem:newton_deriv_bound_simple"	[style=dashed];	"lem:newton_fderiv" -> "lem:newton_deriv_bound_general"	[style=dashed];	"lem:newton_Y_bound" -> "thm:simple_radii_poly_same"	[style=dashed];	"lem:newton_Y_bound" -> "thm:simple_radii_poly_ef"	[style=dashed];	"lem:newton_Y_bound" -> "thm:general_radii_poly_theorem"	[style=dashed];	"def:simple_radii_poly_banach"	[color=green,		fillcolor="#B0ECA3",		label=simple_radii_poly_banach,		shape=box,		style=filled];	"def:simple_radii_poly_banach" -> "lem:maps_ball_to_itself"	[style=dashed];	"def:simple_radii_poly_banach" -> "lem:simple_poly_neg_implies_contraction"	[style=dashed];	"lem:edist_finite"	[color=green,		label=edist_finite,		shape=ellipse];	"lem:edist_finite" -> "thm:general_fixed_point"	[style=dashed];	"prop:fixed_point_iff_zero"	[color=green,		fillcolor="#1CAC78",		label=fixed_point_iff_zero,		shape=ellipse,		style=filled];	"prop:fixed_point_iff_zero" -> "thm:radii_poly_fd"	[style=dashed];	"prop:fixed_point_iff_zero" -> "prop:fixed_zero_ef"	[style=dashed];	"def:complete_metric_space"	[color=green,		fillcolor="#B0ECA3",		label=complete_metric_space,		shape=box,		style=filled];	"def:complete_metric_space" -> "lem:closed_ball_complete"	[style=dashed];	"def:complete_metric_space" -> "thm:contraction_mapping"	[style=dashed];	"def:newton_like_map"	[color=green,		fillcolor="#B0ECA3",		label=newton_like_map,		shape=box,		style=filled];	"def:newton_like_map" -> "def:classical_newton"	[style=dashed];	"def:newton_like_map" -> "def:newton_ef"	[style=dashed];	"def:newton_like_map" -> "prop:fixed_point_iff_zero"	[style=dashed];}`)
+    .renderDot(`strict digraph "" {	graph [bgcolor=transparent];	node [label="\N",		penwidth=1.8	];	edge [arrowhead=vee];	"def:newton_ef"	[color=green,		fillcolor="#B0ECA3",		label=newton_ef,		shape=box,		style=filled];	"lem:newton_Y_bound"	[color=green,		fillcolor="#1CAC78",		label=newton_Y_bound,		shape=ellipse,		style=filled];	"def:newton_ef" -> "lem:newton_Y_bound"	[style=dashed];	"prop:fixed_zero_ef"	[color=green,		label=fixed_zero_ef,		shape=ellipse];	"def:newton_ef" -> "prop:fixed_zero_ef"	[style=dashed];	"lem:newton_fderiv"	[color=green,		fillcolor="#1CAC78",		label=newton_fderiv,		shape=ellipse,		style=filled];	"def:newton_ef" -> "lem:newton_fderiv"	[style=dashed];	"thm:simple_radii_poly_ef"	[color=green,		label=simple_radii_poly_ef,		shape=ellipse];	"lem:newton_Y_bound" -> "thm:simple_radii_poly_ef"	[style=dashed];	"thm:simple_radii_poly_same"	[color=green,		fillcolor="#9CEC8B",		label=simple_radii_poly_same,		shape=ellipse,		style=filled];	"lem:newton_Y_bound" -> "thm:simple_radii_poly_same"	[style=dashed];	"thm:general_radii_poly_theorem"	[color=green,		fillcolor="#9CEC8B",		label=general_radii_poly_theorem,		shape=ellipse,		style=filled];	"lem:newton_Y_bound" -> "thm:general_radii_poly_theorem"	[style=dashed];	"prop:fixed_zero_ef" -> "thm:simple_radii_poly_ef"	[style=dashed];	"prop:fixed_zero_ef" -> "thm:simple_radii_poly_same"	[style=dashed];	"prop:fixed_zero_ef" -> "thm:general_radii_poly_theorem"	[style=dashed];	"lem:newton_deriv_bound_simple"	[color=green,		label=newton_deriv_bound_simple,		shape=ellipse];	"lem:newton_fderiv" -> "lem:newton_deriv_bound_simple"	[style=dashed];	"lem:newton_deriv_bound_general"	[color=green,		fillcolor="#1CAC78",		label=newton_deriv_bound_general,		shape=ellipse,		style=filled];	"lem:newton_fderiv" -> "lem:newton_deriv_bound_general"	[style=dashed];	"lem:newton_deriv_bound_simple" -> "thm:simple_radii_poly_ef"	[style=dashed];	"lem:newton_deriv_bound_simple" -> "thm:simple_radii_poly_same"	[style=dashed];	"lem:newton_deriv_bound_general" -> "thm:general_radii_poly_theorem"	[style=dashed];	"def:Z0_bound"	[color=green,		fillcolor="#B0ECA3",		label=Z0_bound,		shape=box,		style=filled];	"lem:Z0_verified"	[color=green,		label=Z0_verified,		shape=ellipse];	"def:Z0_bound" -> "lem:Z0_verified"	[style=dashed];	"lem:radii_poly_neg"	[color=green,		label=radii_poly_neg,		shape=ellipse];	"lem:Z0_verified" -> "lem:radii_poly_neg"	[style=dashed];	"thm:example_7_7_existence"	[color=green,		fillcolor="#9CEC8B",		label=example_7_7_existence,		shape=ellipse,		style=filled];	"lem:radii_poly_neg" -> "thm:example_7_7_existence"	[style=dashed];	"lem:l1_mem_iff"	[color=green,		label=l1_mem_iff,		shape=ellipse];	"thm:example_7_7_main"	[color=blue,		label=example_7_7_main,		shape=ellipse];	"prop:fixed_point_iff_zero"	[color=green,		fillcolor="#1CAC78",		label=fixed_point_iff_zero,		shape=ellipse,		style=filled];	"prop:fixed_point_iff_zero" -> "prop:fixed_zero_ef"	[style=dashed];	"thm:radii_poly_fd"	[color=green,		fillcolor="#9CEC8B",		label=radii_poly_fd,		shape=ellipse,		style=filled];	"prop:fixed_point_iff_zero" -> "thm:radii_poly_fd"	[style=dashed];	"cor:sqrt2_unique"	[color=green,		label=sqrt2_unique,		shape=ellipse];	"thm:radii_poly_fd" -> "cor:sqrt2_unique"	[style=dashed];	"def:contraction"	[color=green,		fillcolor="#B0ECA3",		label=contraction,		shape=box,		style=filled];	"thm:contraction_mapping"	[color=green,		fillcolor="#1CAC78",		label=contraction_mapping,		shape=ellipse,		style=filled];	"def:contraction" -> "thm:contraction_mapping"	[style=dashed];	"thm:fixed_point_radii"	[color=blue,		fillcolor="#A3D6FF",		label=fixed_point_radii,		shape=ellipse,		style=filled];	"thm:contraction_mapping" -> "thm:fixed_point_radii"	[style=dashed];	"thm:general_fixed_point"	[color=green,		fillcolor="#9CEC8B",		label=general_fixed_point,		shape=ellipse,		style=filled];	"thm:contraction_mapping" -> "thm:general_fixed_point"	[style=dashed];	"thm:fixed_point_radii" -> "thm:radii_poly_fd"	[style=dashed];	"thm:general_fixed_point" -> "thm:simple_radii_poly_ef"	[style=dashed];	"thm:general_fixed_point" -> "thm:simple_radii_poly_same"	[style=dashed];	"thm:general_fixed_point" -> "thm:general_radii_poly_theorem"	[style=dashed];	"def:existence_interval"	[color=blue,		fillcolor="#A3D6FF",		label=existence_interval,		shape=box,		style=filled];	"def:Z_bound_general"	[color=green,		fillcolor="#B0ECA3",		label=Z_bound_general,		shape=box,		style=filled];	"def:Z_bound_general" -> "lem:newton_deriv_bound_general"	[style=dashed];	"lem:general_poly_alt_form"	[color=green,		label=general_poly_alt_form,		shape=ellipse];	"def:Z_bound_general" -> "lem:general_poly_alt_form"	[style=dashed];	"lem:general_poly_neg_implies_contraction"	[color=green,		label=general_poly_neg_implies_contraction,		shape=ellipse];	"lem:general_poly_alt_form" -> "lem:general_poly_neg_implies_contraction"	[style=dashed];	"lem:general_poly_neg_implies_contraction" -> "thm:general_radii_poly_theorem"	[style=dashed];	"def:approx_solution"	[color=green,		fillcolor="#B0ECA3",		label=approx_solution,		shape=box,		style=filled];	"def:approx_solution" -> "def:Z0_bound"	[style=dashed];	"def:Y0_bound"	[color=green,		fillcolor="#B0ECA3",		label=Y0_bound,		shape=box,		style=filled];	"def:approx_solution" -> "def:Y0_bound"	[style=dashed];	"def:concrete_approx"	[color=green,		fillcolor="#B0ECA3",		label=concrete_approx,		shape=box,		style=filled];	"def:approx_solution" -> "def:concrete_approx"	[style=dashed];	"lem:Y0_verified"	[color=green,		label=Y0_verified,		shape=ellipse];	"def:Y0_bound" -> "lem:Y0_verified"	[style=dashed];	"def:concrete_approx" -> "lem:Z0_verified"	[style=dashed];	"def:concrete_approx" -> "lem:Y0_verified"	[style=dashed];	"lem:Z2_verified"	[color=green,		label=Z2_verified,		shape=ellipse];	"def:concrete_approx" -> "lem:Z2_verified"	[style=dashed];	"lem:Y0_verified" -> "lem:radii_poly_neg"	[style=dashed];	"lem:Z2_verified" -> "lem:radii_poly_neg"	[style=dashed];	"lem:poly_neg_implies_contraction"	[color=green,		fillcolor="#1CAC78",		label=poly_neg_implies_contraction,		shape=ellipse,		style=filled];	"lem:poly_neg_implies_contraction" -> "thm:simple_radii_poly_same"	[style=dashed];	"lem:poly_neg_implies_contraction" -> "thm:radii_poly_fd"	[style=dashed];	"lem:simple_poly_neg_implies_contraction"	[color=green,		label=simple_poly_neg_implies_contraction,		shape=ellipse];	"lem:simple_poly_neg_implies_contraction" -> "thm:general_fixed_point"	[style=dashed];	"thm:mean_value"	[color=blue,		fillcolor="#A3D6FF",		label=mean_value,		shape=ellipse,		style=filled];	"cor:mean_value_inequality"	[color=green,		fillcolor="#9CEC8B",		label=mean_value_inequality,		shape=ellipse,		style=filled];	"thm:mean_value" -> "cor:mean_value_inequality"	[style=dashed];	"cor:mean_value_inequality" -> "thm:fixed_point_radii"	[style=dashed];	"lem:maps_ball_to_itself"	[color=green,		fillcolor="#9CEC8B",		label=maps_ball_to_itself,		shape=ellipse,		style=filled];	"cor:mean_value_inequality" -> "lem:maps_ball_to_itself"	[style=dashed];	"lem:maps_ball_to_itself" -> "thm:general_fixed_point"	[style=dashed];	"thm:coeff_mul_eq_cauchy"	[color=green,		label=coeff_mul_eq_cauchy,		shape=ellipse];	"thm:formal_sq_eq_param"	[color=green,		label=formal_sq_eq_param,		shape=ellipse];	"thm:coeff_mul_eq_cauchy" -> "thm:formal_sq_eq_param"	[style=dashed];	"def:complete_metric_space"	[color=green,		fillcolor="#B0ECA3",		label=complete_metric_space,		shape=box,		style=filled];	"def:complete_metric_space" -> "thm:contraction_mapping"	[style=dashed];	"lem:closed_ball_complete"	[color=green,		label=closed_ball_complete,		shape=ellipse];	"def:complete_metric_space" -> "lem:closed_ball_complete"	[style=dashed];	"lem:closed_ball_complete" -> "thm:general_fixed_point"	[style=dashed];	"def:newton_like_map"	[color=green,		fillcolor="#B0ECA3",		label=newton_like_map,		shape=box,		style=filled];	"def:newton_like_map" -> "def:newton_ef"	[style=dashed];	"def:newton_like_map" -> "prop:fixed_point_iff_zero"	[style=dashed];	"def:classical_newton"	[label=classical_newton,		shape=box];	"def:newton_like_map" -> "def:classical_newton"	[style=dashed];	"def:cauchy_product"	[color=green,		fillcolor="#B0ECA3",		label=cauchy_product,		shape=box,		style=filled];	"def:cauchy_product" -> "thm:coeff_mul_eq_cauchy"	[style=dashed];	"thm:eval_mul"	[color=green,		fillcolor="#1CAC78",		label=eval_mul,		shape=ellipse,		style=filled];	"def:cauchy_product" -> "thm:eval_mul"	[style=dashed];	"def:sq_map"	[color=green,		fillcolor="#B0ECA3",		label=sq_map,		shape=box,		style=filled];	"def:cauchy_product" -> "def:sq_map"	[style=dashed];	"def:F_map"	[color=green,		fillcolor="#B0ECA3",		label=F_map,		shape=box,		style=filled];	"def:cauchy_product" -> "def:F_map"	[style=dashed];	"thm:cauchy_product_mem"	[color=green,		fillcolor="#1CAC78",		label=cauchy_product_mem,		shape=ellipse,		style=filled];	"def:cauchy_product" -> "thm:cauchy_product_mem"	[style=dashed];	"thm:norm_submultiplicative"	[color=green,		label=norm_submultiplicative,		shape=ellipse];	"def:cauchy_product" -> "thm:norm_submultiplicative"	[style=dashed];	"thm:eval_sq_eq"	[color=green,		fillcolor="#9CEC8B",		label=eval_sq_eq,		shape=ellipse,		style=filled];	"thm:eval_mul" -> "thm:eval_sq_eq"	[style=dashed];	"thm:fderiv_sq"	[color=green,		label=fderiv_sq,		shape=ellipse];	"def:sq_map" -> "thm:fderiv_sq"	[style=dashed];	"def:F_map" -> "def:Y0_bound"	[style=dashed];	"cor:analytic_is_sqrt"	[color=green,		label=analytic_is_sqrt,		shape=ellipse];	"thm:eval_sq_eq" -> "cor:analytic_is_sqrt"	[style=dashed];	"thm:fderiv_sq" -> "def:Z0_bound"	[style=dashed];	"def:Z2_bound"	[color=green,		fillcolor="#B0ECA3",		label=Z2_bound,		shape=box,		style=filled];	"thm:fderiv_sq" -> "def:Z2_bound"	[style=dashed];	"def:Z2_bound" -> "lem:Z2_verified"	[style=dashed];	"def:param_seq"	[color=green,		fillcolor="#B0ECA3",		label=param_seq,		shape=box,		style=filled];	"def:param_seq" -> "def:F_map"	[style=dashed];	"def:param_power_series"	[color=green,		fillcolor="#B0ECA3",		label=param_power_series,		shape=box,		style=filled];	"def:param_seq" -> "def:param_power_series"	[style=dashed];	"def:param_power_series" -> "thm:formal_sq_eq_param"	[style=dashed];	"thm:analytic_eq_sqrt"	[color=green,		fillcolor="#9CEC8B",		label=analytic_eq_sqrt,		shape=ellipse,		style=filled];	"cor:analytic_is_sqrt" -> "thm:analytic_eq_sqrt"	[style=dashed];	"def:Z1_bound"	[color=green,		fillcolor="#B0ECA3",		label=Z1_bound,		shape=box,		style=filled];	"lem:construct_deriv_inverse"	[color=green,		fillcolor="#9CEC8B",		label=construct_deriv_inverse,		shape=ellipse,		style=filled];	"lem:construct_deriv_inverse" -> "thm:simple_radii_poly_same"	[style=dashed];	"thm:example_7_7_existence" -> "thm:eval_sq_eq"	[style=dashed];	"thm:analytic_eq_sqrt" -> "thm:example_7_7_main"	[style=dashed];	"def:operator_norm"	[color=green,		fillcolor="#B0ECA3",		label=operator_norm,		shape=box,		style=filled];	"def:operator_norm" -> "thm:mean_value"	[style=dashed];	"prop:operator_norm_properties"	[color=green,		label=operator_norm_properties,		shape=ellipse];	"def:operator_norm" -> "prop:operator_norm_properties"	[style=dashed];	"thm:neumann_series"	[color=green,		fillcolor="#1CAC78",		label=neumann_series,		shape=ellipse,		style=filled];	"def:operator_norm" -> "thm:neumann_series"	[style=dashed];	"prop:operator_norm_properties" -> "cor:mean_value_inequality"	[style=dashed];	"thm:neumann_series" -> "thm:radii_poly_fd"	[style=dashed];	"lem:explicit_inverse"	[color=green,		label=explicit_inverse,		shape=ellipse];	"thm:neumann_series" -> "lem:explicit_inverse"	[style=dashed];	"lem:invertible_comp_form"	[color=green,		label=invertible_comp_form,		shape=ellipse];	"lem:explicit_inverse" -> "lem:invertible_comp_form"	[style=dashed];	"lem:radii_poly_alt_form"	[color=green,		fillcolor="#1CAC78",		label=radii_poly_alt_form,		shape=ellipse,		style=filled];	"lem:radii_poly_alt_form" -> "thm:simple_radii_poly_ef"	[style=dashed];	"lem:radii_poly_alt_form" -> "lem:poly_neg_implies_contraction"	[style=dashed];	"lem:invertible_comp_form" -> "lem:construct_deriv_inverse"	[style=dashed];	"def:Z_bound"	[color=green,		fillcolor="#B0ECA3",		label=Z_bound,		shape=box,		style=filled];	"def:Z_bound" -> "lem:newton_deriv_bound_simple"	[style=dashed];	"def:Z_bound" -> "lem:radii_poly_alt_form"	[style=dashed];	"def:eval"	[color=green,		fillcolor="#B0ECA3",		label=eval,		shape=box,		style=filled];	"lem:summable_eval"	[color=green,		fillcolor="#1CAC78",		label=summable_eval,		shape=ellipse,		style=filled];	"def:eval" -> "lem:summable_eval"	[style=dashed];	"lem:eval_zero"	[color=green,		label=eval_zero,		shape=ellipse];	"def:eval" -> "lem:eval_zero"	[style=dashed];	"lem:summable_eval" -> "thm:eval_mul"	[style=dashed];	"lem:eval_zero" -> "thm:analytic_eq_sqrt"	[style=dashed];	"def:nondegenerate_zero"	[color=blue,		fillcolor="#A3D6FF",		label=nondegenerate_zero,		shape=box,		style=filled];	"def:nondegenerate_zero" -> "thm:radii_poly_fd"	[style=dashed];	"def:nondegenerate_zero" -> "def:classical_newton"	[style=dashed];	"def:radii_polynomial"	[color=green,		fillcolor="#B0ECA3",		label=radii_polynomial,		shape=box,		style=filled];	"def:radii_polynomial" -> "def:existence_interval"	[style=dashed];	"def:radii_polynomial" -> "lem:radii_poly_alt_form"	[style=dashed];	"def:general_radii_poly"	[color=green,		fillcolor="#B0ECA3",		label=general_radii_poly,		shape=box,		style=filled];	"def:general_radii_poly" -> "lem:general_poly_alt_form"	[style=dashed];	"def:simple_radii_poly_banach"	[color=green,		fillcolor="#B0ECA3",		label=simple_radii_poly_banach,		shape=box,		style=filled];	"def:simple_radii_poly_banach" -> "lem:simple_poly_neg_implies_contraction"	[style=dashed];	"def:simple_radii_poly_banach" -> "lem:maps_ball_to_itself"	[style=dashed];	"def:to_power_series"	[color=green,		fillcolor="#B0ECA3",		label=to_power_series,		shape=box,		style=filled];	"def:to_power_series" -> "thm:coeff_mul_eq_cauchy"	[style=dashed];	"lem:edist_finite"	[color=green,		label=edist_finite,		shape=ellipse];	"lem:edist_finite" -> "thm:general_fixed_point"	[style=dashed];	"def:posreal"	[color=green,		fillcolor="#B0ECA3",		label=posreal,		shape=box,		style=filled];	"def:l1_weighted"	[color=green,		fillcolor="#B0ECA3",		label=l1_weighted,		shape=box,		style=filled];	"def:posreal" -> "def:l1_weighted"	[style=dashed];	"def:l1_weighted" -> "lem:l1_mem_iff"	[style=dashed];	"def:l1_weighted" -> "def:approx_solution"	[style=dashed];	"def:l1_weighted" -> "def:sq_map"	[style=dashed];	"def:l1_weighted" -> "def:F_map"	[style=dashed];	"def:l1_weighted" -> "thm:cauchy_product_mem"	[style=dashed];	"def:l1_weighted" -> "thm:norm_submultiplicative"	[style=dashed];	"def:l1_weighted" -> "def:eval"	[style=dashed];	"def:l1_weighted" -> "def:to_power_series"	[style=dashed];}`)
     .on("end", interactive);
 
 latexLabelEscaper = function(label) {

@@ -72,6 +72,13 @@
 \providecommand{\lVert}{\|}
 \providecommand{\rVert}{\|}
 
+% FORMAL POWER SERIES
+% Usage: $\PowerSeries{X}$ renders as R[[X]]
+\newcommand{\PowerSeries}[1]{\mathbb{R}[\![#1]\!]}
+
+% WEIGHTED SEQUENCE SPACES (for Example 7.7)
+\newcommand{\lweighted}[1]{\ell^1_{#1}}  % \lweighted{\nu} = ℓ¹_ν
+
 % NOTATION FOR APPROXIMATE AND EXACT VALUES
 \newcommand{\xbar}{\bar{x}}      % Approximate zero
 \newcommand{\xtilde}{\tilde{x}}  % Exact zero
