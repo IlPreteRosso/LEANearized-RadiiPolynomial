@@ -21,7 +21,7 @@ of a fixed point, then interpret this fixed point as a convergent power series.
 \begin{definition}[Weighted $\ell^1$ space]\label{def:l1_weighted}
   \lean{l1Weighted}
   \leanok
-  \uses{def:posreal}
+  \uses{def:posreal,def:complete_metric_space}
   For $\nu > 0$, the weighted $\ell^1_\nu$ space consists of sequences $a : \mathbb{N} \to \mathbb{R}$ such that
   \begin{equation*}
   \lVert a\rVert_{\ell^1_\nu} := \sum_{n=0}^\infty |a_n| \nu^n < \infty.
