@@ -6,7 +6,8 @@ The contraction mapping theorem is a fundamental tool for proving existence and 
 of fixed points. This section establishes the basic definitions and the classical theorem.
 
 \begin{definition}[Complete metric space]\label{def:complete_metric_space}
-  % Mathlib: CompleteSpace
+  \lean{CompleteSpace}
+  \leanok
   A metric space $(X, d)$ is \textit{complete} if every Cauchy sequence converges in $X$, 
   i.e., if given any $\varepsilon > 0$ there exists $N(\varepsilon)$ such that 
   $n, m > N(\varepsilon)$ implies $d(x_n, x_m) < \varepsilon$, then there is some 
@@ -14,7 +15,8 @@ of fixed points. This section establishes the basic definitions and the classica
 \end{definition}
 
 \begin{definition}[Contraction mapping]\label{def:contraction}
-  % Mathlib: ContractingWith
+  \lean{ContractingWith}
+  \leanok
   Let $(X, d)$ be a metric space. A function $T: X \to X$ is a \textit{contraction} if 
   there is a number $\kappa \in [0, 1)$, called a \textit{contraction constant}, such that
   \begin{equation*}
@@ -24,7 +26,8 @@ of fixed points. This section establishes the basic definitions and the classica
 \end{definition}
 
 \begin{theorem}[Contraction Mapping Theorem]\label{thm:contraction_mapping}
-  % Mathlib: ContractingWith.exists_fixedPoint'
+  \lean{ContractingWith.exists_fixedPoint'}
+  \leanok
   \uses{def:complete_metric_space,def:contraction}
   Let $(X, d)$ be a complete metric space. If $T: X \to X$ is a contraction with 
   contraction constant $\kappa$, then there exists a unique fixed point $\tilde{x} \in X$ 
@@ -35,6 +38,7 @@ of fixed points. This section establishes the basic definitions and the classica
 \end{theorem}
 
 \begin{proof}
+  \leanok
   Choose $x_0 \in X$ and recursively define $x_{n+1} := T(x_n)$. By the contraction property,
   $d(x_{n+1}, x_n) \leq \kappa \cdot d(x_n, x_{n-1})$, so by induction 
   $d(x_{n+1}, x_n) \leq \kappa^n d(x_1, x_0)$.

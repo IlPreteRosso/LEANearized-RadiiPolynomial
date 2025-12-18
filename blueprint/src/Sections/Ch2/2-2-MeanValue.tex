@@ -6,7 +6,8 @@ The mean value theorem and its corollary provide the analytical tools needed to
 verify contraction properties of Newton-like operators.
 
 \begin{definition}[Operator norm]\label{def:operator_norm}
-  % Mathlib: ContinuousLinearMap.opNorm
+  \lean{ContinuousLinearMap.opNorm}
+  \leanok
   Let $(X, \lVert \cdot\rVert_X)$ and $(Y, \lVert \cdot\rVert_Y)$ be normed linear spaces and let 
   $A: X \to Y$ be a continuous linear map. The \textit{operator norm} on $A$ is given by
   \begin{equation*}
@@ -16,7 +17,8 @@ verify contraction properties of Newton-like operators.
 \end{definition}
 
 \begin{proposition}[Properties of operator norm]\label{prop:operator_norm_properties}
-  % Mathlib: ContinuousLinearMap.opNorm_comp_le, ContinuousLinearMap.le_opNorm
+  \lean{ContinuousLinearMap.opNorm_comp_le, ContinuousLinearMap.le_opNorm}
+  \leanok
   \uses{def:operator_norm}
   Let $(X, \lVert \cdot\rVert)$ be a normed linear space and let $A, B: X \to X$ be linear maps. Then:
   
@@ -47,7 +49,8 @@ verify contraction properties of Newton-like operators.
 \end{proof}
 
 \begin{corollary}[Mean Value Inequality]\label{cor:mean_value_inequality}
-  % Mathlib: Convex.norm_image_sub_le_of_norm_fderiv_le
+  \lean{Convex.norm_image_sub_le_of_norm_fderiv_le}
+  \leanok
   \uses{thm:mean_value,def:operator_norm,prop:operator_norm_properties}
   Consider an open set $U \subset \mathbb{R}^n$. Let $f: U \to \mathbb{R}^n$ be a $C^1$ function. 
   Fix a point $x_0 \in U$ and assume $\overline{B}_\rho(x_0) \subset U$ for some $\rho > 0$. 
@@ -60,6 +63,7 @@ verify contraction properties of Newton-like operators.
 \end{corollary}
 
 \begin{proof}
+  \leanok
   The line segment from $x$ to $y$ lies in $\overline{B}_\rho(x_0)$ by convexity.
   By the Mean Value Theorem:
   \begin{equation*}
