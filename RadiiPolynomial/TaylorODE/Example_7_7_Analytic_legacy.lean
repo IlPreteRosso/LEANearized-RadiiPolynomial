@@ -1,20 +1,3 @@
-/-
-This file was edited by Aristotle.
-
-Lean version: leanprover/lean4:v4.24.0
-Mathlib version: f897ebcf72cd16f89ab4577d0c826cd14afaafc7
-This project request had uuid: 61a726ac-1741-438f-b316-0dd79dd7bb34
-
-The following was proved by Aristotle:
-
-- theorem analyticSolution_eq_sqrt {ν : PosReal} (aTilde : l1Weighted ν) (lam0 : ℝ)
-    (hF : ∀ n, (lpWeighted.toSeq aTilde ⋆ lpWeighted.toSeq aTilde) n = Example_7_7.paramSeq lam0 n)
-    (hlam0_pos : 0 < lam0)
-    {lam : ℝ} (hlam : |lam - lam0| ≤ ν) (hlam_pos : 0 < lam)
-    (ha0_pos : 0 < lpWeighted.toSeq aTilde 0) :
-    analyticSolution aTilde (lam - lam0) = Real.sqrt lam
--/
-
 import RadiiPolynomial.TaylorODE.lpWeighted
 import RadiiPolynomial.TaylorODE.CauchyProduct
 import RadiiPolynomial.TaylorODE.Example_7_7
@@ -22,7 +5,6 @@ import Mathlib.Topology.Algebra.InfiniteSum.Real
 import Mathlib.Analysis.Normed.Group.InfiniteSum
 import Mathlib.Analysis.Normed.Group.FunctionSeries
 import Mathlib.RingTheory.PowerSeries.Basic
-
 
 /-!
 # From Coefficient Space to Analytic Functions
@@ -55,7 +37,6 @@ This completes the formalization of Example 7.7 from the radii polynomial textbo
 -/
 
 open scoped BigOperators NNReal ENNReal
-
 open PowerSeries (coeff)
 
 noncomputable section
@@ -268,37 +249,78 @@ theorem analyticSolution_eq_sqrt {ν : PosReal} (aTilde : l1Weighted ν) (lam0 :
 
   -- Step 4: By continuity, x̃ stays positive (IVT argument)
   have hpos : 0 < analyticSolution aTilde (lam - lam0) := by
-    -- Since $x̃$ is continuous and $x̃(0) = \sqrt{lam0} > 0$, $x̃(\lambda)$ cannot be negative for $\lambda > 0$.
-    have h_cont : ContinuousOn (fun z => Example_7_7.analyticSolution aTilde z) (Set.Icc (-ν) (ν)) := by
-      refine' continuousOn_tsum _ _ _;
-      use fun n => |lpWeighted.toSeq aTilde n| * ( ν : ℝ ) ^ n;
-      · fun_prop;
-      · simpa [abs_mul] using aTilde.2.summable;
-      · exact fun n x hx => by simpa [abs_mul] using mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( abs_nonneg _ ) ( abs_le.mpr hx ) _ ) ( abs_nonneg _ ) ;
-    contrapose! hlam_pos;
-    -- By the Intermediate Value Theorem, since $x̃$ is continuous and $x̃(0) = \sqrt{lam0} > 0$, $x̃(\lambda)$ cannot be negative for $\lambda > 0$.
-    have h_ivt : ∃ z ∈ Set.Icc (lam - lam0) 0, Example_7_7.analyticSolution aTilde z = 0 := by
-      apply_rules [intermediate_value_Icc];
-      · -- Since $lam - lam0 \leq 0$, we have $lam - lam0 \leq 0$.
-        apply le_of_not_gt; intro h_neg;
-        have h_ivt : ∃ z ∈ Set.Ioo 0 (lam - lam0), Example_7_7.analyticSolution aTilde z = 0 := by
-          apply_rules [intermediate_value_Ioo'];
-          · linarith;
-          · exact h_cont.mono ( Set.Icc_subset_Icc ( by linarith [abs_le.mp hlam] ) ( by linarith [abs_le.mp hlam] ) );
-          · exact ⟨ lt_of_le_of_ne hlam_pos ( by rintro h; rw [h] at hsq; nlinarith ), by linarith ⟩;
-        obtain ⟨ z, ⟨ hz₁, hz₂ ⟩, hz₃ ⟩ := h_ivt;
-        have h_ivt : Example_7_7.analyticSolution aTilde z ^ 2 = lam0 + z := by
-          apply eval_sq_eq;
-          · exact abs_le.mpr ⟨ by linarith [abs_le.mp hlam], by linarith [abs_le.mp hlam] ⟩;
-          · assumption;
-        nlinarith;
-      · exact h_cont.mono ( Set.Icc_subset_Icc ( by linarith [abs_le.mp hlam] ) ( by linarith [abs_le.mp hlam] ) );
-      · constructor <;> linarith;
-    obtain ⟨ z, ⟨ hz₁, hz₂ ⟩, hz₃ ⟩ := h_ivt;
-    have h_ivt : (Example_7_7.analyticSolution aTilde z) ^ 2 = lam0 + z := by
-      apply_rules [l1Weighted.eval_sq_eq];
-      exact abs_le.mpr ⟨ by linarith [abs_le.mp hlam], by linarith [abs_le.mp hlam] ⟩;
-    nlinarith
+    -- x̃² = lam > 0, so x̃ ≠ 0
+    have hne : analyticSolution aTilde (lam - lam0) ≠ 0 := by
+      intro heq
+      rw [heq, pow_two, mul_zero] at hsq
+      exact hlam_pos.ne' hsq.symm
+    -- x̃(0) = a₀ > 0
+    have hpos0 : 0 < analyticSolution aTilde 0 := by
+      rw [h_at_zero]; exact ha0_pos
+    -- By contrapositive of IVT
+    by_contra hle
+    push_neg at hle
+    have hneg : analyticSolution aTilde (lam - lam0) < 0 := lt_of_le_of_ne hle hne
+    -- Continuity of power series on the interval
+    have hcontOn : ContinuousOn (analyticSolution aTilde) (Set.uIcc 0 (lam - lam0)) := by
+      have hcontBall : ContinuousOn (fun z => ∑' n, lpWeighted.toSeq aTilde n * z ^ n) {z : ℝ | |z| ≤ ν} := by
+        apply continuousOn_tsum (u := fun n => |lpWeighted.toSeq aTilde n| * (ν : ℝ) ^ n)
+        · intro n; exact (continuous_const.mul (continuous_pow n)).continuousOn
+        · exact (l1Weighted.mem_iff _).mp aTilde.2
+        · intro n z hz
+          simp only [Set.mem_setOf_eq] at hz
+          simp only [Real.norm_eq_abs, abs_mul, abs_pow]
+          gcongr
+      apply hcontBall.mono
+      intro z hz
+      simp only [Set.mem_setOf_eq]
+      simp only [Set.uIcc, Set.mem_Icc] at hz
+      have h1 : |lam - lam0| ≤ ν := hlam
+      rw [abs_le]
+      constructor
+      · calc -(ν : ℝ) ≤ -|lam - lam0| := by linarith
+           _ ≤ min 0 (lam - lam0) := by
+               simp only [le_min_iff]
+               exact ⟨neg_nonpos.mpr (abs_nonneg _), neg_abs_le _⟩
+           _ ≤ z := hz.1
+      · calc z ≤ max 0 (lam - lam0) := hz.2
+           _ ≤ max 0 |lam - lam0| := max_le_max_left 0 (le_abs_self _)
+           _ = |lam - lam0| := by simp [abs_nonneg]
+           _ ≤ ν := h1
+    -- Apply IVT
+    have hIVT := intermediate_value_uIcc hcontOn
+    have h0_in : (0 : ℝ) ∈ Set.uIcc (analyticSolution aTilde 0) (analyticSolution aTilde (lam - lam0)) := by
+      rw [Set.mem_uIcc]
+      exact Or.inr ⟨hneg.le, hpos0.le⟩
+    obtain ⟨c, hc_mem, hc_eq⟩ := hIVT h0_in
+    -- At c, we have 0² = lam0 + c, so c = -lam0
+    have hc_bound : |c| ≤ ν := by
+      simp only [Set.uIcc, Set.mem_Icc] at hc_mem
+      rw [abs_le]
+      constructor
+      · calc -(ν : ℝ) ≤ -|lam - lam0| := by linarith [hlam]
+           _ ≤ min 0 (lam - lam0) := by
+               simp only [le_min_iff]
+               exact ⟨neg_nonpos.mpr (abs_nonneg _), neg_abs_le _⟩
+           _ ≤ c := hc_mem.1
+      · calc c ≤ max 0 (lam - lam0) := hc_mem.2
+           _ ≤ max 0 |lam - lam0| := max_le_max_left 0 (le_abs_self _)
+           _ = |lam - lam0| := by simp [abs_nonneg]
+           _ ≤ ν := hlam
+    have hc_bound' : |(lam0 + c) - lam0| ≤ ν := by simp [hc_bound]
+    have hsq_c := analyticSolution_is_sqrt aTilde lam0 hF hc_bound'
+    simp only [add_sub_cancel_left] at hsq_c
+    rw [hc_eq, pow_two, mul_zero] at hsq_c
+    have hc_val : c = -lam0 := by linarith
+    simp only [Set.uIcc, Set.mem_Icc] at hc_mem
+    have hneg_lam0 : -lam0 < 0 := neg_neg_of_pos hlam0_pos
+    rw [hc_val] at hc_mem
+    by_cases h : lam - lam0 ≥ 0
+    · simp only [min_eq_left h.le, max_eq_right h.le] at hc_mem
+      linarith [hc_mem.1]
+    · push_neg at h
+      simp only [min_eq_right h.le, max_eq_left h.le] at hc_mem
+      linarith [hc_mem.1]
 
   -- Step 5: sqrt(x²) = x when x > 0
   have h := Real.sqrt_sq hpos.le
