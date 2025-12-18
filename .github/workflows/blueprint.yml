@@ -3,8 +3,8 @@ name: Compile blueprint
 on:
   push:
     branches:
-      - master # Trigger on pushes to the default branch
-  workflow_dispatch:        # Allow manual triggering of the workflow from the GitHub Actions interface
+      - master
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.ref }}
@@ -16,24 +16,37 @@ permissions:
   id-token: write
 
 jobs:
-  build_project:
+  # Job 1: Build Lean project and docs (slowest part)
+  build_lean:
     runs-on: ubuntu-latest
-    name: Build project
+    name: Build Lean project
     steps:
       - name: Free up disk space
         run: |
-          df -h
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/boost
           sudo apt-get clean
-          sudo rm -rf /var/lib/apt/lists/*
           df -h
-          
+
       - name: Checkout project
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Install elan
-        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+
+      - name: Cache Lake build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.elan
+            .lake/packages
+            .lake/build/lib
+            .lake/build/ir
+          key: lake-build-${{ hashFiles('lake-manifest.json', 'lakefile.toml', 'lean-toolchain') }}-${{ hashFiles('**/*.lean') }}
+          restore-keys: |
+            lake-build-${{ hashFiles('lake-manifest.json', 'lakefile.toml', 'lean-toolchain') }}-
+            lake-build-
 
       - name: Get Mathlib cache
         run: ~/.elan/bin/lake exe cache get || true
@@ -41,7 +54,7 @@ jobs:
       - name: Build project
         run: ~/.elan/bin/lake build RadiiPolynomial
 
-      - name: Cache API docs
+      - name: Cache API docs (Mathlib etc)
         uses: actions/cache@v4
         with:
           path: |
@@ -52,24 +65,35 @@ jobs:
             .lake/build/doc/Lake
             .lake/build/doc/Lean
             .lake/build/doc/Mathlib
+            .lake/build/doc/Plausible
+            .lake/build/doc/ProofWidgets
+            .lake/build/doc/Qq
             .lake/build/doc/Std
+            .lake/build/doc/ImportGraph
+            .lake/build/doc/LeanSearchClient
           key: Docs-${{ hashFiles('lake-manifest.json') }}
 
       - name: Build project API documentation
         run: ~/.elan/bin/lake -R -Kenv=dev build RadiiPolynomial:docs
-      
-      - name: Check for `home_page` folder
-        id: check_home_page
-        run: |
-          if [ -d home_page ]; then
-            echo "The 'home_page' folder exists in the repository."
-            echo "HOME_PAGE_EXISTS=true" >> $GITHUB_ENV
-          else
-            echo "The 'home_page' folder does not exist in the repository."
-            echo "HOME_PAGE_EXISTS=false" >> $GITHUB_ENV
-          fi
 
-      - name: Build blueprint and copy to `home_page/blueprint`
+      - name: Upload Lean artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-build
+          path: |
+            .lake/build/doc
+            .lake/build/lib
+          retention-days: 1
+
+  # Job 2: Build blueprint (runs in parallel with Lean build)
+  build_blueprint:
+    runs-on: ubuntu-latest
+    name: Build blueprint
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Build blueprint
         uses: xu-cheng/texlive-action@v2
         with:
           docker_image: ghcr.io/xu-cheng/texlive-full:20250101
@@ -84,19 +108,72 @@ jobs:
             pip install pygraphviz --config-settings="--global-option=build_ext" --config-settings="--global-option=-L/usr/lib/graphviz/" --config-settings="--global-option=-R/usr/lib/graphviz/"
             pip install leanblueprint
             leanblueprint pdf
-            mkdir -p home_page
-            cp blueprint/print/print.pdf home_page/blueprint.pdf
             leanblueprint web
-            cp -r blueprint/web home_page/blueprint
 
-      - name: Check declarations mentioned in the blueprint exist in Lean code
-        run: ~/.elan/bin/lake exe checkdecls blueprint/lean_decls
+      - name: Upload blueprint artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: blueprint-build
+          path: |
+            blueprint/print/print.pdf
+            blueprint/web
+            blueprint/lean_decls
+          retention-days: 1
 
-      - name: Copy API documentation to `home_page/docs`
-        run: cp -r .lake/build/doc home_page/docs
+  # Job 3: Merge and deploy (depends on both parallel jobs)
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy website
+    needs: [build_lean, build_blueprint]
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
 
-      - name: Remove unnecessary lake files from documentation in `home_page/docs`
+      - name: Download Lean artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: lean-build
+          path: .lake/build
+
+      - name: Download blueprint artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: blueprint-build
+          path: blueprint-artifacts
+
+      - name: Install elan (for checkdecls)
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+
+      - name: Cache Lake for checkdecls
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.elan
+            .lake/packages
+            .lake/build/lib
+            .lake/build/ir
+          key: lake-build-${{ hashFiles('lake-manifest.json', 'lakefile.toml', 'lean-toolchain') }}-${{ hashFiles('**/*.lean') }}
+
+      - name: Get Mathlib cache
+        run: ~/.elan/bin/lake exe cache get || true
+
+      - name: Check declarations
+        run: ~/.elan/bin/lake exe checkdecls blueprint-artifacts/lean_decls
+
+      - name: Check for home_page folder
         run: |
+          if [ -d home_page ]; then
+            echo "HOME_PAGE_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "HOME_PAGE_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      - name: Assemble home_page
+        run: |
+          mkdir -p home_page
+          cp blueprint-artifacts/print/print.pdf home_page/blueprint.pdf
+          cp -r blueprint-artifacts/web home_page/blueprint
+          cp -r .lake/build/doc home_page/docs
           find home_page/docs -name "*.trace" -delete
           find home_page/docs -name "*.hash" -delete
 
@@ -114,7 +191,7 @@ jobs:
           JEKYLL_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: JEKYLL_ENV=production bundle exec jekyll build
 
-      - name: "Upload website (API documentation, blueprint and any home page)"
+      - name: Upload website
         uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ env.HOME_PAGE_EXISTS == 'true' && 'home_page/_site' || 'home_page/' }}
@@ -122,6 +199,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Make sure the API documentation cache works
-        run: mv home_page/docs .lake/build/doc
