@@ -75,10 +75,6 @@ jobs:
       - name: Build project API documentation
         run: ~/.elan/bin/lake -R -Kenv=dev build RadiiPolynomial:docs
 
-      # Run checkdecls HERE while everything is built
-      - name: Check declarations
-        run: ~/.elan/bin/lake exe checkdecls blueprint/lean_decls
-
       - name: Upload docs artifact
         uses: actions/upload-artifact@v4
         with:
@@ -118,6 +114,7 @@ jobs:
           path: |
             blueprint/print/print.pdf
             blueprint/web
+            blueprint/lean_decls
           retention-days: 1
 
   # Job 3: Merge and deploy (lightweight - no Lean rebuild)
@@ -141,6 +138,25 @@ jobs:
           name: blueprint-build
           path: blueprint-artifacts
 
+      - name: Install elan
+        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+
+      - name: Restore Lake cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.elan
+            .lake/packages
+            .lake/build/lib
+            .lake/build/ir
+          key: lake-build-${{ hashFiles('lake-manifest.json', 'lakefile.toml', 'lean-toolchain') }}-${{ hashFiles('**/*.lean') }}
+
+      - name: Get Mathlib cache
+        run: ~/.elan/bin/lake exe cache get || true
+
+      - name: Check declarations
+        run: ~/.elan/bin/lake exe checkdecls blueprint-artifacts/blueprint/lean_decls
+
       - name: Check for home_page folder
         run: |
           if [ -f home_page/Gemfile ]; then
@@ -152,8 +168,8 @@ jobs:
       - name: Assemble home_page
         run: |
           mkdir -p home_page
-          cp blueprint-artifacts/print/print.pdf home_page/blueprint.pdf
-          cp -r blueprint-artifacts/web home_page/blueprint
+          cp blueprint-artifacts/blueprint/print/print.pdf home_page/blueprint.pdf
+          cp -r blueprint-artifacts/blueprint/web home_page/blueprint
           find home_page/docs -name "*.trace" -delete 2>/dev/null || true
           find home_page/docs -name "*.hash" -delete 2>/dev/null || true
 
