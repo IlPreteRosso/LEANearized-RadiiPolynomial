@@ -4,38 +4,26 @@ on:
   push:
     branches:
       - master # Trigger on pushes to the default branch
-  workflow_dispatch:        # Allow manual triggering of the workflow from the GitHub Actions interface
+  workflow_dispatch:        # Allow manual triggering from the GitHub Actions interface
 
-# Cancel previous runs if a new commit is pushed to the same PR or branch
 concurrency:
-  group: ${{ github.ref }}  # Group runs by the ref (branch or PR)
-  cancel-in-progress: true  # Cancel any ongoing runs in the same group
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read  # Read access to repository contents
-  pages: write    # Write access to GitHub Pages
-  id-token: write # Write access to ID tokens
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build_project:
     runs-on: ubuntu-latest
     name: Build project
     steps:
-      - name: Clean up disk space
-        run: |
-          sudo docker system prune -af || true
-          sudo rm -rf /opt/ghc || true
-          sudo rm -rf /usr/share/dotnet || true
-          sudo rm -rf /usr/local/lib/android || true
-          sudo apt-get clean
-          
-
-          
       - name: Checkout project
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all history for all branches and tags
+          fetch-depth: 0
 
       - name: Install elan
         run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
@@ -43,8 +31,54 @@ jobs:
       - name: Get Mathlib cache
         run: ~/.elan/bin/lake exe cache get || true
 
-      - name: Build project
-        run: ~/.elan/bin/lake build RadiiPolynomial
+      # Cache Mathlib/Std build artifacts
+      - name: Cache Mathlib/Std build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            .lake/packages/mathlib/.lake/build
+            .lake/packages/batteries/.lake/build
+            .lake/packages/std/.lake/build
+          key: mathlib-build-${{ hashFiles('lake-manifest.json') }}
+
+      # Cache dependency API docs
+      - name: Cache dependency API docs
+        id: cache-deps-docs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .lake/build/doc/Aesop
+            .lake/build/doc/Batteries
+            .lake/build/doc/find
+            .lake/build/doc/Init
+            .lake/build/doc/Lake
+            .lake/build/doc/Lean
+            .lake/build/doc/Mathlib
+            .lake/build/doc/Std
+          key: DepDocs-${{ hashFiles('lake-manifest.json') }}
+
+      # Only build dependency docs if cache miss
+      - name: Build dependency docs (only if cache miss)
+        if: steps.cache-deps-docs.outputs.cache-hit != 'true'
+        run: ~/.elan/bin/lake build Mathlib:docs Std:docs Batteries:docs
+
+      # Always build your own docs
+      - name: Build project API documentation
+        run: ~/.elan/bin/lake -R -Kenv=dev build RadiiPolynomial:docs
+
+      # Remove Lean build artifacts except docs to free up space for Docker/TeX
+      - name: Free disk space before blueprint build
+        run: |
+          df -h
+          find .lake/build -mindepth 1 -maxdepth 1 ! -name 'doc' -exec rm -rf {} +
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          sudo rm -rf /tmp/*
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          df -h
 
       - name: Cache API docs
         uses: actions/cache@v4
@@ -60,10 +94,7 @@ jobs:
             .lake/build/doc/Std
           key: Docs-${{ hashFiles('lake-manifest.json') }}
 
-      - name: Build project API documentation
-        run: ~/.elan/bin/lake -R -Kenv=dev build RadiiPolynomial:docs
-      
-      - name: Check for `home_page` folder # this is meant to detect a Jekyll-based website
+      - name: Check for `home_page` folder
         id: check_home_page
         run: |
           if [ -d home_page ]; then
@@ -79,7 +110,6 @@ jobs:
         with:
           docker_image: ghcr.io/xu-cheng/texlive-full:20250101
           run: |
-            # Install necessary dependencies and build the blueprint
             apk update
             apk add --update make py3-pip git pkgconfig graphviz graphviz-dev gcc musl-dev
             git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -96,8 +126,7 @@ jobs:
             cp -r blueprint/web home_page/blueprint
 
       - name: Check declarations mentioned in the blueprint exist in Lean code
-        run: |
-            ~/.elan/bin/lake exe checkdecls blueprint/lean_decls
+        run: ~/.elan/bin/lake exe checkdecls blueprint/lean_decls
 
       - name: Copy API documentation to `home_page/docs`
         run: cp -r .lake/build/doc home_page/docs
@@ -111,15 +140,15 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           working-directory: home_page
-          ruby-version: "3.0"  # Specify Ruby version
-          bundler-cache: true  # Enable caching for bundler
+          ruby-version: "3.0"
+          bundler-cache: true
 
       - name: Build website using Jekyll
         if: env.HOME_PAGE_EXISTS == 'true'
         working-directory: home_page
         env:
           JEKYLL_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: JEKYLL_ENV=production bundle exec jekyll build  # Note this will also copy the blueprint and API doc into home_page/_site
+        run: JEKYLL_ENV=production bundle exec jekyll build
 
       - name: "Upload website (API documentation, blueprint and any home page)"
         uses: actions/upload-pages-artifact@v3
@@ -132,4 +161,3 @@ jobs:
 
       - name: Make sure the API documentation cache works
         run: mv home_page/docs .lake/build/doc
-     
