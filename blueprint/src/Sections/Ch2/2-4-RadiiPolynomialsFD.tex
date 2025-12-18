@@ -6,6 +6,8 @@ This section develops the radii polynomial method for proving existence of zeros
 finite dimensions. The method provides explicit domains of existence and uniqueness.
 
 \begin{theorem}[Fixed point theorem with radii polynomial (Theorem 2.4.1)]\label{thm:fixed_point_radii}
+  \lean{general_fixed_point_theorem}
+  \leanok
   \uses{def:contraction,cor:mean_value_inequality,thm:contraction_mapping}
   Consider a map $T \in C^1(\mathbb{R}^n, \mathbb{R}^n)$ and let $\bar{x} \in \mathbb{R}^n$. 
   Let $Y_0 \geq 0$ and $Z: (0,\infty) \to [0,\infty)$ be a non-negative function satisfying
@@ -147,6 +149,8 @@ finite dimensions. The method provides explicit domains of existence and uniquen
 \end{proof}
 
 \begin{definition}[Existence interval]\label{def:existence_interval}
+  \lean{ExistenceInterval}
+  \leanok
   \uses{def:radii_polynomial}
   Consider a radii polynomial $p(r) = Z_2(r)r^2 - (1-Z_0)r + Y_0$ where $Z_2(r)$ is a polynomial 
   with non-negative coefficients (or a non-decreasing function of $r$). The maximal interval 

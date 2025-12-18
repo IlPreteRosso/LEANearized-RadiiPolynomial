@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master # Trigger on pushes to the default branch
-  workflow_dispatch:        # Allow manual triggering from the GitHub Actions interface
+  workflow_dispatch:        # Allow manual triggering of the workflow from the GitHub Actions interface
 
 concurrency:
   group: ${{ github.ref }}
@@ -20,6 +20,13 @@ jobs:
     runs-on: ubuntu-latest
     name: Build project
     steps:
+      - name: Free up disk space
+        run: |
+          df -h
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          df -h
+          
       - name: Checkout project
         uses: actions/checkout@v4
         with:
@@ -31,54 +38,8 @@ jobs:
       - name: Get Mathlib cache
         run: ~/.elan/bin/lake exe cache get || true
 
-      # Cache Mathlib/Std build artifacts
-      - name: Cache Mathlib/Std build artifacts
-        uses: actions/cache@v4
-        with:
-          path: |
-            .lake/packages/mathlib/.lake/build
-            .lake/packages/batteries/.lake/build
-            .lake/packages/std/.lake/build
-          key: mathlib-build-${{ hashFiles('lake-manifest.json') }}
-
-      # Cache dependency API docs
-      - name: Cache dependency API docs
-        id: cache-deps-docs
-        uses: actions/cache@v4
-        with:
-          path: |
-            .lake/build/doc/Aesop
-            .lake/build/doc/Batteries
-            .lake/build/doc/find
-            .lake/build/doc/Init
-            .lake/build/doc/Lake
-            .lake/build/doc/Lean
-            .lake/build/doc/Mathlib
-            .lake/build/doc/Std
-          key: DepDocs-${{ hashFiles('lake-manifest.json') }}
-
-      # Only build dependency docs if cache miss
-      - name: Build dependency docs (only if cache miss)
-        if: steps.cache-deps-docs.outputs.cache-hit != 'true'
-        run: ~/.elan/bin/lake build Mathlib:docs Batteries:docs
-
-      # Always build your own docs
-      - name: Build project API documentation
-        run: ~/.elan/bin/lake -R -Kenv=dev build RadiiPolynomial:docs
-
-      # Remove Lean build artifacts except docs to free up space for Docker/TeX
-      - name: Free disk space before blueprint build
-        run: |
-          df -h
-          find .lake/build -mindepth 1 -maxdepth 1 ! -name 'doc' -exec rm -rf {} +
-          sudo apt-get clean
-          sudo rm -rf /var/lib/apt/lists/*
-          sudo rm -rf /tmp/*
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          df -h
+      - name: Build project
+        run: ~/.elan/bin/lake build RadiiPolynomial
 
       - name: Cache API docs
         uses: actions/cache@v4
@@ -94,6 +55,9 @@ jobs:
             .lake/build/doc/Std
           key: Docs-${{ hashFiles('lake-manifest.json') }}
 
+      - name: Build project API documentation
+        run: ~/.elan/bin/lake -R -Kenv=dev build RadiiPolynomial:docs
+      
       - name: Check for `home_page` folder
         id: check_home_page
         run: |

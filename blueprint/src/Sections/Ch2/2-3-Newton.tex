@@ -36,12 +36,16 @@ Newton-like operators.
 \end{proof}
 
 \begin{definition}[Nondegenerate zero]\label{def:nondegenerate_zero}
+  \lean{NondegenerateZero}
+  \leanok
   Let $f \in C^1(U, \mathbb{R}^n)$ where $U \subset \mathbb{R}^n$ is an open set. 
   A point $\tilde{x} \in U$ is a \textit{nondegenerate zero} of $f$ if $f(\tilde{x}) = 0$ 
   and $\text{Df}(\tilde{x})$ is invertible.
 \end{definition}
 
 \begin{definition}[Classical Newton operator]\label{def:classical_newton}
+  \lean{ClassicalNewton}
+  \leanok
   \uses{def:nondegenerate_zero,def:newton_like_map}
   If $f \in C^2(U, \mathbb{R}^n)$ where $U \subset \mathbb{R}^n$ is an open set, 
   the \textit{classical Newton operator} is given by
