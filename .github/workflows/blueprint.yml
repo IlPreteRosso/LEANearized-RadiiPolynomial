@@ -60,7 +60,7 @@ jobs:
       # Only build dependency docs if cache miss
       - name: Build dependency docs (only if cache miss)
         if: steps.cache-deps-docs.outputs.cache-hit != 'true'
-        run: ~/.elan/bin/lake build Mathlib:docs Std:docs Batteries:docs
+        run: ~/.elan/bin/lake build Mathlib:docs Batteries:docs
 
       # Always build your own docs
       - name: Build project API documentation
