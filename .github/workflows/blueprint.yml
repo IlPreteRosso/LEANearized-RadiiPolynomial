@@ -16,7 +16,7 @@ permissions:
   id-token: write
 
 jobs:
-  # Job 1: Build Lean project and docs (slowest part)
+  # Job 1: Build Lean project and docs
   build_lean:
     runs-on: ubuntu-latest
     name: Build Lean project
@@ -25,7 +25,6 @@ jobs:
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/boost
           sudo apt-get clean
-          df -h
 
       - name: Checkout project
         uses: actions/checkout@v4
@@ -54,7 +53,7 @@ jobs:
       - name: Build project
         run: ~/.elan/bin/lake build RadiiPolynomial
 
-      - name: Cache API docs (Mathlib etc)
+      - name: Cache API docs
         uses: actions/cache@v4
         with:
           path: |
@@ -76,16 +75,18 @@ jobs:
       - name: Build project API documentation
         run: ~/.elan/bin/lake -R -Kenv=dev build RadiiPolynomial:docs
 
-      - name: Upload Lean artifacts
+      # Run checkdecls HERE while everything is built
+      - name: Check declarations
+        run: ~/.elan/bin/lake exe checkdecls blueprint/lean_decls
+
+      - name: Upload docs artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lean-build
-          path: |
-            .lake/build/doc
-            .lake/build/lib
+          name: lean-docs
+          path: .lake/build/doc
           retention-days: 1
 
-  # Job 2: Build blueprint (runs in parallel with Lean build)
+  # Job 2: Build blueprint (runs in parallel)
   build_blueprint:
     runs-on: ubuntu-latest
     name: Build blueprint
@@ -117,10 +118,9 @@ jobs:
           path: |
             blueprint/print/print.pdf
             blueprint/web
-            blueprint/lean_decls
           retention-days: 1
 
-  # Job 3: Merge and deploy (depends on both parallel jobs)
+  # Job 3: Merge and deploy (lightweight - no Lean rebuild)
   deploy:
     runs-on: ubuntu-latest
     name: Deploy website
@@ -129,11 +129,11 @@ jobs:
       - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Download Lean artifacts
+      - name: Download docs artifact
         uses: actions/download-artifact@v4
         with:
-          name: lean-build
-          path: .lake/build
+          name: lean-docs
+          path: home_page/docs
 
       - name: Download blueprint artifacts
         uses: actions/download-artifact@v4
@@ -141,28 +141,9 @@ jobs:
           name: blueprint-build
           path: blueprint-artifacts
 
-      - name: Install elan (for checkdecls)
-        run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
-
-      - name: Cache Lake for checkdecls
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.elan
-            .lake/packages
-            .lake/build/lib
-            .lake/build/ir
-          key: lake-build-${{ hashFiles('lake-manifest.json', 'lakefile.toml', 'lean-toolchain') }}-${{ hashFiles('**/*.lean') }}
-
-      - name: Get Mathlib cache
-        run: ~/.elan/bin/lake exe cache get || true
-
-      - name: Check declarations
-        run: ~/.elan/bin/lake exe checkdecls blueprint-artifacts/lean_decls
-
       - name: Check for home_page folder
         run: |
-          if [ -d home_page ]; then
+          if [ -f home_page/Gemfile ]; then
             echo "HOME_PAGE_EXISTS=true" >> $GITHUB_ENV
           else
             echo "HOME_PAGE_EXISTS=false" >> $GITHUB_ENV
@@ -173,11 +154,11 @@ jobs:
           mkdir -p home_page
           cp blueprint-artifacts/print/print.pdf home_page/blueprint.pdf
           cp -r blueprint-artifacts/web home_page/blueprint
-          cp -r .lake/build/doc home_page/docs
-          find home_page/docs -name "*.trace" -delete
-          find home_page/docs -name "*.hash" -delete
+          find home_page/docs -name "*.trace" -delete 2>/dev/null || true
+          find home_page/docs -name "*.hash" -delete 2>/dev/null || true
 
       - name: Bundle dependencies
+        if: env.HOME_PAGE_EXISTS == 'true'
         uses: ruby/setup-ruby@v1
         with:
           working-directory: home_page
