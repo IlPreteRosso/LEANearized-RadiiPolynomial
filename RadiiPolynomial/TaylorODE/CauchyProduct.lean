@@ -1,39 +1,169 @@
-import Mathlib.Analysis.Normed.Lp.lpSpace
-import Mathlib.Algebra.Order.Antidiag.Prod
+import Mathlib.RingTheory.PowerSeries.Basic
+import Mathlib.Algebra.BigOperators.NatAntidiagonal
 
-open scoped BigOperators NNReal ENNReal
+/-!
+# Cauchy Product (Convolution) of Sequences
 
-/-! ### Cauchy Product
+The Cauchy product of sequences `a, b : ℕ → R` is defined as:
 
-The Cauchy product (convolution) of sequences: `(a ⋆ b)ₙ = Σ_{k+l=n} aₖ bₗ`
+  `(a ⋆ b)ₙ = Σₖ₊ₗ₌ₙ aₖ bₗ`
 
-Using `Finset.antidiagonal`, the Cauchy product is submultiplicative: ‖a ⋆ b‖₁,ν ≤ ‖a‖₁,ν · ‖b‖₁,ν
+## Design Philosophy: Transport from PowerSeries
+
+This file establishes ring axioms for the Cauchy product by **transporting** them
+from `PowerSeries R`, rather than proving them directly via sum manipulations.
+
+### The Key Insight
+
+The Cauchy product `(a ⋆ b)ₙ` is exactly the coefficient of `Xⁿ` in the product
+of formal power series `(Σ aₖ Xᵏ) · (Σ bₗ Xˡ)`. This is formalized as:
+
+  `toPowerSeries (a ⋆ b) = toPowerSeries a * toPowerSeries b`
+
+Since Mathlib already proves `CommSemiring (PowerSeries R)`, we get all ring
+axioms (associativity, distributivity, identity, commutativity) for free.
+
+### Why This Matters
+
+**Without this approach**, proving associativity requires manipulating triple sums:
+```
+  ((a ⋆ b) ⋆ c)ₙ = Σᵢ₊ⱼ₌ₙ (Σₖ₊ₗ₌ᵢ aₖ bₗ) cⱼ
+                = Σᵢ₊ⱼ₌ₙ Σₖ₊ₗ₌ᵢ aₖ bₗ cⱼ
+                = ... (tedious reindexing) ...
+                = (a ⋆ (b ⋆ c))ₙ
+```
+
+**With this approach**, associativity is a one-liner:
+```lean
+theorem assoc (a b c : ℕ → R) : (a ⋆ b) ⋆ c = a ⋆ (b ⋆ c) := by
+  -- Transport mul_assoc from PowerSeries
+  have h := mul_assoc (toPowerSeries a) (toPowerSeries b) (toPowerSeries c)
+  ...
+```
+
+### Architectural Role
+
+This file is **purely algebraic** — it knows nothing about norms or analysis.
+The separation of concerns is:
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│ CauchyProduct.lean (this file)                                           │
+│ ════════════════════════════════                                         │
+│ Pure algebra: ring axioms for sequences under Cauchy product             │
+│ • Depends only on: PowerSeries.Basic, NatAntidiagonal                    │
+│ • Provides: assoc, comm, left_distrib, right_distrib, one_mul, mul_one   │
+│ • Also: smul_mul, mul_smul (scalar-sequence compatibility)               │
+└──────────────────────────────────────────────────────────────────────────┘
+                                    ↓
+                         Used by (no norm proofs needed)
+                                    ↓
+┌──────────────────────────────────────────────────────────────────────────┐
+│ lpWeighted.lean                                                          │
+│ ═══════════════                                                          │
+│ Analysis: weighted norms, membership, submultiplicativity                │
+│ • Lifts ring axioms to l1Weighted via thin wrappers                      │
+│ • Proves analytic properties: mem, norm_mul_le, norm_one                 │
+│ • Registers typeclass instances: Ring, CommRing, NormedRing              │
+└──────────────────────────────────────────────────────────────────────────┘
+                                    ↓
+                         Enables (ring tactic works)
+                                    ↓
+┌──────────────────────────────────────────────────────────────────────────┐
+│ FrechetCauchyProduct.lean                                                │
+│ ═════════════════════════                                                │
+│ Calculus: Fréchet derivatives using CommRing structure                   │
+│ • Key identity (a+h)² - a² - 2ah = h² proved via `ring` tactic           │
+│ • No sum manipulations needed — algebra is inherited                     │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+### Scalar Compatibility
+
+The instances `SMulCommClass` and `IsScalarTower` in `lpWeighted.lean` rely on:
+- `smul_mul`: `(c • a) ⋆ b = c • (a ⋆ b)` (works in any Semiring)
+- `mul_smul`: `a ⋆ (c • b) = c • (a ⋆ b)` (requires CommSemiring)
+
+These enable `smul_mul_assoc` and `smul_comm` for the derivative formula in
+`FrechetCauchyProduct.lean`.
+
+## Main Results
+
+### PowerSeries Connection
+* `toPowerSeries_mul`: `toPowerSeries (a ⋆ b) = toPowerSeries a * toPowerSeries b`
+
+### Ring Axioms (Transported)
+* `assoc`: `(a ⋆ b) ⋆ c = a ⋆ (b ⋆ c)`
+* `comm`: `a ⋆ b = b ⋆ a` (requires `CommSemiring`)
+* `left_distrib`, `right_distrib`: Distributivity
+* `one_mul`, `mul_one`: Identity element
+
+### Scalar Compatibility
+* `smul_mul`: `(c • a) ⋆ b = c • (a ⋆ b)`
+* `mul_smul`: `a ⋆ (c • b) = c • (a ⋆ b)` (requires `CommSemiring`)
+
+## Implementation Notes
+
+### Why `CauchyProduct.apply` is not @[simp]
+
+We deliberately do NOT mark `apply` as `@[simp]`. Keeping the `⋆` notation
+abstract prevents issues where:
+
+1. A hypothesis `h : (a ⋆ b) n = 0` uses folded notation
+2. The goal `∑ kl ∈ antidiagonal n, a kl.1 * b kl.2 = 0` is unfolded
+3. The `simp` tactic fails to match them
+
+Use `rw [CauchyProduct.apply]` to explicitly unfold when needed.
 
 ## References
 
 - Definition 7.4.2: Cauchy product definition
+- Theorem 7.4.4: Ring axioms for Cauchy product
+- Corollary 7.4.5: Commutativity for commutative coefficient rings
 -/
 
-noncomputable section nonComp
+open scoped BigOperators
+
+noncomputable section
+
+variable {R : Type*}
 
 /-- Cauchy product (convolution) of sequences.
-    See Definition 7.4.2: `(a ⋆ b)ₙ = Σₖ₌₀ⁿ aₙ₋ₖ bₖ` -/
-def CauchyProduct (a b : ℕ → ℝ) : ℕ → ℝ :=
+
+    `(a ⋆ b)ₙ = Σₖ₊ₗ₌ₙ aₖ bₗ`
+
+    This is Definition 7.4.2, written using the antidiagonal formulation. -/
+def CauchyProduct [Semiring R] (a b : ℕ → R) : ℕ → R :=
   fun n => ∑ kl ∈ Finset.antidiagonal n, a kl.1 * b kl.2
 
-notation:70 a " ⋆ " b => CauchyProduct a b
+notation:70 a:70 " ⋆ " b:71 => CauchyProduct a b
 
 namespace CauchyProduct
 
-variable {ν : PosReal}
+/-! ## Semiring Section
 
-lemma apply (a b : ℕ → ℝ) (n : ℕ) :
+Results that only require `Semiring R`. This includes most ring axioms
+except commutativity and right scalar multiplication. -/
+
+section Semiring
+
+variable [Semiring R]
+
+/-! ### Basic API -/
+
+/-- The Cauchy product evaluated at index n.
+
+    **Note**: Deliberately NOT marked `@[simp]` to keep the `⋆` notation abstract.
+    This prevents simp from unfolding in ways that break hypothesis matching.
+    Use `rw [CauchyProduct.apply]` to explicitly unfold when needed. -/
+lemma apply (a b : ℕ → R) (n : ℕ) :
     (a ⋆ b) n = ∑ kl ∈ Finset.antidiagonal n, a kl.1 * b kl.2 := rfl
 
-/-- Alternative form using range, matching Definition 7.4.2 exactly -/
-lemma apply_range (a b : ℕ → ℝ) (n : ℕ) :
+/-- Alternative form using range, matching Definition 7.4.2 exactly:
+    `(a ⋆ b)ₙ = Σⱼ₌₀ⁿ aₙ₋ⱼ bⱼ` -/
+lemma apply_range (a b : ℕ → R) (n : ℕ) :
     (a ⋆ b) n = ∑ j ∈ Finset.range (n + 1), a (n - j) * b j := by
-  simp only [CauchyProduct.apply]
+  simp only [apply]
   rw [Finset.Nat.sum_antidiagonal_eq_sum_range_succ (fun i j => a i * b j)]
   rw [← Finset.sum_range_reflect]
   apply Finset.sum_congr rfl
@@ -41,123 +171,134 @@ lemma apply_range (a b : ℕ → ℝ) (n : ℕ) :
   simp only [Nat.succ_sub_succ_eq_sub, tsub_zero]
   rw [Nat.sub_sub_self (Nat.lt_succ_iff.mp (Finset.mem_range.mp hj))]
 
-/-- Commutativity of Cauchy product: `a ⋆ b = b ⋆ a`.
+/-! ### Connection to PowerSeries
 
-    Uses `Finset.sum_equiv` with the swap equivalence `Equiv.prodComm`:
-    - The antidiagonal is symmetric under `(i, j) ↦ (j, i)`
-    - `Finset.swap_mem_antidiagonal` witnesses membership preservation
-    - Summands match after applying `mul_comm` -/
-lemma comm (a b : ℕ → ℝ) : (a ⋆ b) = (b ⋆ a) := by
+This is the heart of the "transport from PowerSeries" approach.
+We show that `CauchyProduct` is definitionally the same as `PowerSeries`
+multiplication, then use this to import all ring axioms. -/
+
+/-- Convert a sequence to a formal power series.
+
+    This is the bridge between our sequence-based formulation and Mathlib's
+    `PowerSeries` which has a verified `CommSemiring` instance. -/
+def toPowerSeries (a : ℕ → R) : PowerSeries R := PowerSeries.mk a
+
+@[simp]
+lemma coeff_toPowerSeries (a : ℕ → R) (n : ℕ) :
+    PowerSeries.coeff n (toPowerSeries a) = a n := PowerSeries.coeff_mk n a
+
+/-- **Key theorem**: Cauchy product equals PowerSeries multiplication.
+
+    This is the bridge that lets us transport all ring axioms from
+    `CommSemiring (PowerSeries R)` without reproving them.
+
+    Proof: Both are defined as `Σₖ₊ₗ₌ₙ aₖ bₗ`. -/
+theorem toPowerSeries_mul (a b : ℕ → R) :
+    toPowerSeries (a ⋆ b) = toPowerSeries a * toPowerSeries b := by
   ext n
-  -- After unfolding, need to show Σ a_i b_j = Σ b_i a_j over antidiagonal
-  simp only [apply, mul_comm]
-  -- Apply the equivalence (i,j) ↔ (j,i) via Equiv.prodComm
-  exact Finset.sum_equiv (Equiv.prodComm ℕ ℕ)
-    (fun _ => Finset.swap_mem_antidiagonal.symm) (by simp)
+  simp only [apply, toPowerSeries, PowerSeries.coeff_mul, PowerSeries.coeff_mk]
 
-/-- Associativity of Cauchy product: `(a ⋆ b) ⋆ c = a ⋆ (b ⋆ c)`.
+/-- Coefficient form of `toPowerSeries_mul`. -/
+theorem eq_coeff_mul (a b : ℕ → R) (n : ℕ) :
+    (a ⋆ b) n = PowerSeries.coeff n (toPowerSeries a * toPowerSeries b) := by
+  rw [← coeff_toPowerSeries (a ⋆ b) n, toPowerSeries_mul]
 
-    Both sides equal the triple convolution `Σ_{i+j+k=n} aᵢ bⱼ cₖ`.
+/-! ### Ring Axioms (Transported from PowerSeries)
 
-    Uses `Finset.sum_nbij'` with explicit forward/backward maps on sigma types:
-    - Forward:  `((i, j), (k, l)) ↦ ((k, l + j), (l, j))` where `i + j = n`, `k + l = i`
-    - Backward: `((i, j), (k, l)) ↦ ((i + k, l), (i, k))` where `i + j = n`, `k + l = j`
+Each axiom follows the same pattern:
+1. State the property for `PowerSeries` (which Mathlib proves)
+2. Convert both sides using `toPowerSeries_mul`
+3. Extract coefficients to get the sequence equality
 
-    The `aesop` tactic with `add_assoc` and `mul_assoc` hints automatically verifies:
-    - Both maps are well-defined (indices land in correct antidiagonals)
-    - Maps are mutual inverses
-    - Summands are equal after reindexing -/
-lemma assoc (a b c : ℕ → ℝ) : ((a ⋆ b) ⋆ c) = (a ⋆ (b ⋆ c)) := by
+This is more maintainable than direct sum manipulation proofs. -/
+
+/-- **Associativity**: `(a ⋆ b) ⋆ c = a ⋆ (b ⋆ c)`
+
+    Transported from `mul_assoc` on `PowerSeries R`. -/
+theorem assoc (a b c : ℕ → R) : (a ⋆ b) ⋆ c = a ⋆ (b ⋆ c) := by
+  apply funext; intro n
+  have h := congrArg (PowerSeries.coeff n)
+    (mul_assoc (toPowerSeries a) (toPowerSeries b) (toPowerSeries c))
+  simp only [← toPowerSeries_mul, coeff_toPowerSeries] at h
+  exact h
+
+/-- **Left distributivity**: `a ⋆ (b + c) = a ⋆ b + a ⋆ c`
+
+    Direct proof via sum distribution (no PowerSeries needed). -/
+theorem left_distrib (a b c : ℕ → R) : a ⋆ (b + c) = a ⋆ b + a ⋆ c := by
   ext n
-  -- Expand nested Cauchy products into sigma-type sums over antidiagonals
-  simp only [apply, Finset.sum_mul, Finset.mul_sum, Finset.sum_sigma']
-  -- Establish bijection between the two nested sigma types
-  apply Finset.sum_nbij'
-    (fun ⟨⟨_i, j⟩, ⟨k, l⟩⟩ ↦ ⟨(k, l + j), (l, j)⟩)   -- forward map
-    (fun ⟨⟨i, _j⟩, ⟨k, l⟩⟩ ↦ ⟨(i + k, l), (i, k)⟩) <;> -- backward map
-  -- aesop verifies: membership, inverses, and summand equality
-  aesop (add simp [add_assoc, mul_assoc])
+  simp only [Pi.add_apply, apply, mul_add, Finset.sum_add_distrib]
 
-/-!
-### Alternative explicit proof of associativity
+/-- **Right distributivity**: `(a + b) ⋆ c = a ⋆ c + b ⋆ c`
 
-The following is a more explicit proof that constructs the bijection manually
-using `Finset.sum_bij`. Preserved for reference.
+    Direct proof via sum distribution (no PowerSeries needed). -/
+theorem right_distrib (a b c : ℕ → R) : (a + b) ⋆ c = a ⋆ c + b ⋆ c := by
+  ext n
+  simp only [apply, Pi.add_apply, add_mul, Finset.sum_add_distrib]
 
-```lean
-lemma assoc_explicit (a b c : ℕ → ℝ) : ((a ⋆ b) ⋆ c) = (a ⋆ (b ⋆ c)) := by
-  rw [funext_iff]
-  unfold CauchyProduct
-  -- Rewrite antidiagonal sums as range sums: Σ_{(i,j) ∈ antidiag n} f(i,j) = Σ_{i=0}^n f(i, n-i)
-  simp (config := { decide := Bool.true }) [Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
-  intro n
-  -- Distribute multiplication through sums: (Σᵢ aᵢ) · c = Σᵢ (aᵢ · c)
-  simp (config := { decide := Bool.true }) only [mul_assoc, Finset.mul_sum _ _ _, Finset.sum_mul]
-  -- Convert nested range sums to sigma types for reindexing
-  rw [Finset.range_eq_Ico, Finset.sum_sigma', Finset.sum_sigma']
-  -- Bijection: (i, j) with 0 ≤ j ≤ i ≤ n  ↔  (j, i-j) with 0 ≤ j ≤ n, 0 ≤ i-j ≤ n-j
-  refine Finset.sum_bij (fun x _ => ⟨x.2, x.1 - x.2⟩)
-      ?h_mem ?h_inj ?h_surj ?h_comp
-  -- h_mem: The map sends indices to valid indices in the target sigma set
-  · intro a ha
-    rcases a with ⟨fst, snd⟩
-    simp [Nat.Ico_zero_eq_range, Finset.mem_sigma, Finset.mem_range] at ha ⊢
-    rcases ha with ⟨left, right⟩
-    refine ⟨?_, ?_⟩
-    · exact lt_of_le_of_lt (Nat.lt_succ_iff.mp right) left
-    · have hfst_le : fst ≤ n := Nat.lt_succ_iff.mp left
-      exact lt_of_le_of_lt (Nat.sub_le_sub_right hfst_le snd) (Nat.lt_succ_self _)
-  -- h_inj: The reindexing map is injective
-  · intro a₁ ha₁ a₂ ha₂ h
-    rcases a₁ with ⟨i1, j1⟩
-    rcases a₂ with ⟨i2, j2⟩
-    simp [Nat.Ico_zero_eq_range, Finset.mem_sigma, Finset.mem_range] at ha₁ ha₂
-    have hfst  : j1 = j2 := by simpa using congrArg Sigma.fst h
-    have hdiff : i1 - j1 = i2 - j2 := by simpa using congrArg Sigma.snd h
-    have hj1 : j1 ≤ i1 := Nat.lt_succ_iff.mp ha₁.2
-    have hj2 : j2 ≤ i2 := Nat.lt_succ_iff.mp ha₂.2
-    have hdiff' : i1 - j1 = i2 - j1 := by simpa [hfst] using hdiff
-    have hi : i1 = i2 := by
-      have hsum := congrArg (fun t => t + j1) hdiff'
-      simpa [Nat.sub_add_cancel hj1, Nat.sub_add_cancel (hfst ▸ hj2)] using hsum
-    subst hi; subst hfst; rfl
-  -- h_surj: The map is surjective; preimage of (j, k) is (j + k, j)
-  · intro b hb
-    rcases b with ⟨fst, snd⟩
-    simp [Nat.Ico_zero_eq_range, Finset.mem_sigma, Finset.mem_range] at hb
-    rcases hb with ⟨left, right⟩
-    have hle : snd ≤ n - fst := Nat.lt_succ_iff.mp right
-    refine ⟨⟨fst + snd, fst⟩, ?_, ?_⟩
-    · simp [Nat.Ico_zero_eq_range, Finset.mem_sigma, Finset.mem_range]
-      constructor
-      · have hfst_le : fst ≤ n := Nat.lt_succ_iff.mp left
-        have : fst + snd ≤ fst + (n - fst) := Nat.add_le_add_left hle _
-        have : fst + snd ≤ n := by
-          have hf : fst + (n - fst) = n := Nat.add_sub_of_le hfst_le
-          simpa [hf] using this
-        exact lt_of_le_of_lt this (Nat.lt_succ_self _)
-      · exact Nat.lt_succ_of_le (Nat.le_add_right _ _)
-    · simp only [add_tsub_cancel_left]
-  -- h_comp: Summands agree after reindexing: a_j · b_{i-j} · c_{n-i} = a_j · b_{i-j} · c_{n-j-(i-j)}
-  · intro a ha
-    rcases a with ⟨fst, snd⟩
-    simp [Nat.Ico_zero_eq_range, Finset.mem_sigma, Finset.mem_range] at ha
-    have hle : snd ≤ fst := Nat.lt_succ_iff.mp ha.2
-    -- Key calculation: n - snd - (fst - snd) = n - fst
-    have hcalc : n - snd - (fst - snd) = n - fst := by
-      calc
-        n - snd - (fst - snd) = n - (snd + (fst - snd)) := Nat.sub_sub _ _ _
-        _ = n - fst := by
-          have : snd + (fst - snd) = fst := by
-            have := Nat.sub_add_cancel hle
-            simpa [Nat.add_comm] using this
-          simp [this]
-    simp [hcalc]
-```
--/
+/-- Zero absorbs on the left: `0 ⋆ a = 0` -/
+theorem zero_mul (a : ℕ → R) : (0 : ℕ → R) ⋆ a = 0 := by
+  ext n; simp only [apply, Pi.zero_apply, MulZeroClass.zero_mul, Finset.sum_const_zero]
 
-/-- If both sequences vanish beyond M, their Cauchy product vanishes beyond 2M -/
-lemma zero_of_support {a b : ℕ → ℝ} {M : ℕ}
+/-- Zero absorbs on the right: `a ⋆ 0 = 0` -/
+theorem mul_zero (a : ℕ → R) : a ⋆ (0 : ℕ → R) = 0 := by
+  ext n; simp only [apply, Pi.zero_apply, MulZeroClass.mul_zero, Finset.sum_const_zero]
+
+/-! ### Identity Element
+
+The multiplicative identity is the Kronecker delta: `e₀ = 1, eₙ = 0` for `n ≥ 1`.
+
+This corresponds to the power series `1 = 1 + 0·X + 0·X² + ...`.
+See Theorem 7.4.6: "the sequence e defined by eₙ := δₙ,₀ is the identity element" -/
+
+/-- The multiplicative identity sequence: `e₀ = 1, eₙ = 0` for `n ≥ 1`. -/
+def one : ℕ → R := fun n => if n = 0 then 1 else 0
+
+@[simp] lemma one_zero : (one : ℕ → R) 0 = 1 := rfl
+@[simp] lemma one_succ (n : ℕ) : (one : ℕ → R) (n + 1) = 0 := rfl
+
+theorem toPowerSeries_one : toPowerSeries (one : ℕ → R) = 1 := by
+  ext n
+  simp only [coeff_toPowerSeries, one, PowerSeries.coeff_one]
+
+/-- **Left identity**: `one ⋆ a = a`
+
+    Transported from `one_mul` on `PowerSeries R`. -/
+theorem one_mul (a : ℕ → R) : one ⋆ a = a := by
+  apply funext; intro n
+  have h := congrArg (PowerSeries.coeff n) (_root_.one_mul (toPowerSeries a))
+  rw [coeff_toPowerSeries, ← toPowerSeries_one, ← toPowerSeries_mul, coeff_toPowerSeries] at h
+  exact h
+
+/-- **Right identity**: `a ⋆ one = a`
+
+    Transported from `mul_one` on `PowerSeries R`. -/
+theorem mul_one (a : ℕ → R) : a ⋆ one = a := by
+  apply funext; intro n
+  have h := congrArg (PowerSeries.coeff n) (_root_.mul_one (toPowerSeries a))
+  rw [coeff_toPowerSeries, ← toPowerSeries_one, ← toPowerSeries_mul, coeff_toPowerSeries] at h
+  exact h
+
+/-! ### Scalar Multiplication (Semiring Case)
+
+Scalar multiplication by ring elements pulls out on the left.
+This is used for `IsScalarTower` in lpWeighted.lean.
+
+For pulling out on the right, see `mul_smul` which requires `CommSemiring`. -/
+
+/-- Scalars pull out on the left: `(c • a) ⋆ b = c • (a ⋆ b)`
+
+    This enables `IsScalarTower ℝ (l1Weighted ν) (l1Weighted ν)`. -/
+theorem smul_mul (c : R) (a b : ℕ → R) : (c • a) ⋆ b = c • (a ⋆ b) := by
+  ext n
+  simp only [apply, Pi.smul_apply, smul_eq_mul, Finset.mul_sum, mul_assoc]
+
+/-! ### Support Lemmas
+
+Lemmas about sequences with finite support, useful for polynomial computations. -/
+
+/-- If both sequences vanish beyond M, their Cauchy product vanishes beyond 2M. -/
+lemma zero_of_support {a b : ℕ → R} {M : ℕ}
     (ha : ∀ n, M < n → a n = 0) (hb : ∀ n, M < n → b n = 0)
     (n : ℕ) (hn : 2 * M < n) :
     (a ⋆ b) n = 0 := by
@@ -171,35 +312,65 @@ lemma zero_of_support {a b : ℕ → ℝ} {M : ℕ}
     have hl : M < l := by omega
     simp [hb l hl]
 
-/-- Cauchy product split when first sequence has support in [0,N] and n > N:
-    (a⋆h)_n = a_0 h_n + ∑_{k=1}^N a_k h_{n-k} -/
-lemma apply_of_support_le_split {a h : ℕ → ℝ} {N n : ℕ}
+/-- Cauchy product split when first sequence has support in `[0, N]` and `n > N`:
+    `(a ⋆ h)ₙ = a₀ hₙ + Σₖ₌₁ᴺ aₖ hₙ₋ₖ`
+
+    Useful for fixed-point iterations where `a` is a finite polynomial. -/
+lemma apply_of_support_le_split {a h : ℕ → R} {N n : ℕ}
     (ha : ∀ k, N < k → a k = 0) (hn : N < n) :
     (a ⋆ h) n = a 0 * h n + ∑ k ∈ Finset.Icc 1 N, a k * h (n - k) := by
-  rw [apply]
-  rw [Finset.Nat.sum_antidiagonal_eq_sum_range_succ (fun k l => a k * h l)]
-  -- Restrict to range(N+1) since a_k = 0 for k > N
+  rw [apply, Finset.Nat.sum_antidiagonal_eq_sum_range_succ (fun k l => a k * h l)]
   have h_restrict : ∑ k ∈ Finset.range (n + 1), a k * h (n - k) =
       ∑ k ∈ Finset.range (N + 1), a k * h (n - k) := by
     symm
     apply Finset.sum_subset
-    · intro k hk
-      simp only [Finset.mem_range] at hk ⊢
-      omega
+    · intro k hk; simp only [Finset.mem_range] at hk ⊢; omega
     · intro k hk hk'
       simp only [Finset.mem_range] at hk hk'
       push_neg at hk'
-      rw [ha k hk', zero_mul]
+      rw [ha k hk', MulZeroClass.zero_mul]
   rw [h_restrict]
-  -- Split off k=0 term: range(N+1) = {0} ∪ Icc 1 N
   have h_range_eq : Finset.range (N + 1) = insert 0 (Finset.Icc 1 N) := by
-    ext k
-    simp only [Finset.mem_range, Finset.mem_insert, Finset.mem_Icc]
-    omega
+    ext k; simp only [Finset.mem_range, Finset.mem_insert, Finset.mem_Icc]; omega
   rw [h_range_eq, Finset.sum_insert]
   · simp only [Nat.sub_zero]
   · simp only [Finset.mem_Icc]; omega
 
+end Semiring
+
+/-! ## CommSemiring Section
+
+Results requiring commutativity of the coefficient ring. This includes
+commutativity of the Cauchy product and right scalar multiplication. -/
+
+section CommSemiring
+
+variable [CommSemiring R]
+
+/-- **Commutativity**: `a ⋆ b = b ⋆ a`
+
+    Transported from `mul_comm` on `PowerSeries R`.
+    This is what makes ℓ¹_ν a *commutative* Banach algebra (Corollary 7.4.5). -/
+theorem comm (a b : ℕ → R) : a ⋆ b = b ⋆ a := by
+  apply funext; intro n
+  have h := congrArg (PowerSeries.coeff n)
+    (mul_comm (toPowerSeries a) (toPowerSeries b))
+  simp only [← toPowerSeries_mul, coeff_toPowerSeries] at h
+  exact h
+
+/-- Scalars pull out on the right: `a ⋆ (c • b) = c • (a ⋆ b)`
+
+    Requires commutativity since we need `aₖ * (c * bₗ) = c * (aₖ * bₗ)`.
+    This enables `SMulCommClass ℝ (l1Weighted ν) (l1Weighted ν)`. -/
+theorem mul_smul (c : R) (a b : ℕ → R) : a ⋆ (c • b) = c • (a ⋆ b) := by
+  ext n
+  simp only [apply, Pi.smul_apply, smul_eq_mul, Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro kl _
+  ring
+
+end CommSemiring
+
 end CauchyProduct
 
-end nonComp
+end

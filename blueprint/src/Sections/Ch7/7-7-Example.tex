@@ -4,113 +4,9 @@
 
 This section applies the radii polynomial method to prove existence of an analytic 
 branch of $\sqrt{\lambda}$ near a base point $\lambda_0 > 0$. We work in the 
-weighted sequence space $\ell^1_\nu$ and verify all bounds to establish existence 
-of a fixed point, then interpret this fixed point as a convergent power series.
-
-\subsection{The Weighted Sequence Space}\label{subsec:weighted_space}
-
-\begin{definition}[Positive real numbers]\label{def:posreal}
-  \lean{PosReal}
-  \leanok
-  The type of positive real numbers is
-  \begin{equation*}
-  \texttt{PosReal} := \{x : \mathbb{R} \mid 0 < x\}.
-  \end{equation*}
-\end{definition}
-
-\begin{definition}[Weighted $\ell^1$ space]\label{def:l1_weighted}
-  \lean{l1Weighted}
-  \leanok
-  \uses{def:posreal,def:complete_metric_space}
-  For $\nu > 0$, the weighted $\ell^1_\nu$ space consists of sequences $a : \mathbb{N} \to \mathbb{R}$ such that
-  \begin{equation*}
-  \lVert a\rVert_{\ell^1_\nu} := \sum_{n=0}^\infty |a_n| \nu^n < \infty.
-  \end{equation*}
-\end{definition}
-
-\begin{lemma}[Membership criterion]\label{lem:l1_mem_iff}
-  \lean{l1Weighted.mem_iff}
-  \leanok
-  \uses{def:l1_weighted}
-  A sequence $a$ belongs to $\ell^1_\nu$ if and only if $\sum_{n=0}^\infty |a_n| \nu^n$ converges.
-\end{lemma}
-
-\subsection{Cauchy Product and Banach Algebra Structure}\label{subsec:cauchy_product}
-
-\begin{definition}[Cauchy product]\label{def:cauchy_product}
-  \lean{CauchyProduct}
-  \leanok
-  The \textit{Cauchy product} of sequences $a, b : \mathbb{N} \to \mathbb{R}$ is
-  \begin{equation*}
-  (a \star b)_n := \sum_{k=0}^n a_k b_{n-k}.
-  \end{equation*}
-\end{definition}
-
-\begin{lemma}[Commutativity of Cauchy product]\label{lem:cauchy_comm}
-  \lean{CauchyProduct.comm}
-  \leanok
-  \uses{def:cauchy_product}
-  For sequences $a, b : \mathbb{N} \to \mathbb{R}$:
-  \begin{equation*}
-  a \star b = b \star a.
-  \end{equation*}
-\end{lemma}
-
-\begin{proof}
-  \leanok
-  Reindex the sum: $\sum_{k=0}^n a_k b_{n-k} = \sum_{j=0}^n a_{n-j} b_j = \sum_{j=0}^n b_j a_{n-j}$.
-\end{proof}
-
-\begin{lemma}[Associativity of Cauchy product]\label{lem:cauchy_assoc}
-  \lean{CauchyProduct.assoc}
-  \leanok
-  \uses{def:cauchy_product}
-  For sequences $a, b, c : \mathbb{N} \to \mathbb{R}$:
-  \begin{equation*}
-  (a \star b) \star c = a \star (b \star c).
-  \end{equation*}
-\end{lemma}
-
-\begin{proof}
-  \leanok
-  Both sides equal the triple convolution $\sum_{i+j+k=n} a_i b_j c_k$.
-  Establish a bijection between the nested index sets:
-  \begin{align*}
-  \text{LHS: } & \sum_{p=0}^n \left(\sum_{i=0}^p a_i b_{p-i}\right) c_{n-p} 
-    = \sum_{i+j+k=n} a_i b_j c_k \\
-  \text{RHS: } & \sum_{i=0}^n a_i \left(\sum_{j=0}^{n-i} b_j c_{n-i-j}\right) 
-    = \sum_{i+j+k=n} a_i b_j c_k.
-  \end{align*}
-\end{proof}
-
-\begin{theorem}[Closure under Cauchy product]\label{thm:cauchy_product_mem}
-  \lean{l1Weighted.mem}
-  \leanok
-  \uses{def:l1_weighted,def:cauchy_product}
-  If $a, b \in \ell^1_\nu$, then $a \star b \in \ell^1_\nu$.
-\end{theorem}
-
-\begin{proof}
-  \leanok
-  By the triangle inequality and rearrangement:
-  \begin{align*}
-  \sum_{n=0}^\infty |(a \star b)_n| \nu^n 
-  &\leq \sum_{n=0}^\infty \sum_{k=0}^n |a_k| |b_{n-k}| \nu^n \\
-  &= \sum_{n=0}^\infty \sum_{k=0}^n |a_k| \nu^k \cdot |b_{n-k}| \nu^{n-k} \\
-  &= \lVert a\rVert_{\ell^1_\nu} \cdot \lVert b\rVert_{\ell^1_\nu} < \infty.
-  \end{align*}
-\end{proof}
-
-\begin{theorem}[Submultiplicative norm]\label{thm:norm_submultiplicative}
-  \lean{l1Weighted.norm_mul_le}
-  \leanok
-  \uses{def:l1_weighted,def:cauchy_product}
-  For $a, b \in \ell^1_\nu$:
-  \begin{equation*}
-  \lVert a \star b\rVert_{\ell^1_\nu} \leq \lVert a\rVert_{\ell^1_\nu} \cdot \lVert b\rVert_{\ell^1_\nu}.
-  \end{equation*}
-  This makes $(\ell^1_\nu, \star)$ a Banach algebra.
-\end{theorem}
+weighted sequence space $\ell^1_\nu$ (Section~\ref{sec:weighted_l1}) and verify all 
+bounds to establish existence of a fixed point, then interpret this fixed point as 
+a convergent power series.
 
 \subsection{The Fixed-Point Problem}\label{subsec:fixed_point_problem}
 
@@ -131,7 +27,7 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
 \begin{definition}[The map $F$]\label{def:F_map}
   \lean{Example_7_7.F}
   \leanok
-  \uses{def:l1_weighted,def:cauchy_product,def:param_seq}
+  \uses{def:l1Weighted,def:CauchyProduct,def:param_seq}
   The fixed-point map $F: \ell^1_\nu \to \ell^1_\nu$ is defined by
   \begin{equation*}
   F(a)_n = (a \star a)_n - c_n.
@@ -142,14 +38,14 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
 \begin{definition}[Squaring map]\label{def:sq_map}
   \lean{l1Weighted.sq}
   \leanok
-  \uses{def:l1_weighted,def:cauchy_product}
+  \uses{def:l1Weighted,def:CauchyProduct}
   The squaring map $\text{sq}: \ell^1_\nu \to \ell^1_\nu$ is $\text{sq}(a) = a \star a$.
 \end{definition}
 
 \begin{theorem}[Fr\'echet derivative of squaring]\label{thm:fderiv_sq}
   \lean{l1Weighted.hasFDerivAt_sq}
   \leanok
-  \uses{def:sq_map,def:cauchy_product}
+  \uses{def:sq_map,thm:l1Weighted_CommRing,thm:norm_mul_le,thm:l1Weighted_SMulCommClass}
   The squaring map is Fr\'echet differentiable with derivative at $a$:
   \begin{equation*}
   D_a[\text{sq}](h) = 2(a \star h).
@@ -161,7 +57,7 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
 \begin{definition}[Approximate solution structure]\label{def:approx_solution}
   \lean{Example_7_7.ApproxSolution}
   \leanok
-  \uses{def:l1_weighted}
+  \uses{def:l1Weighted}
   An \textit{approximate solution} of order $N$ consists of:
   \begin{itemize}
     \item Finite coefficients $\bar{a}_0, \bar{a}_1, \ldots, \bar{a}_N \in \mathbb{R}$
@@ -281,7 +177,7 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
 \begin{theorem}[Existence of fixed point]\label{thm:example_7_7_existence}
   \lean{Example_7_7.example_7_7_main_theorem}
   \leanok
-  \uses{thm:simple_radii_poly_same,lem:radii_poly_neg,def:F_map,def:concrete_approx}
+  \uses{thm:simple_radii_poly_same,lem:radii_poly_neg,def:F_map,def:concrete_approx,cor:l1Weighted_Banach_algebra}
   There exists a unique $\tilde{a} \in \ell^1_\nu$ with 
   $\lVert \tilde{a} - \bar{a}\rVert_{\ell^1_\nu} \leq r_0$ such that $F(\tilde{a}) = 0$, 
   i.e., $(\tilde{a} \star \tilde{a})_n = c_n$ for all $n$.
@@ -290,6 +186,8 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
 \begin{proof}
   \leanok
   Apply Theorem~\ref{thm:simple_radii_poly_same} with the verified bounds.
+  The Banach algebra structure of $\ell^1_\nu$ (Corollary~\ref{cor:l1Weighted_Banach_algebra})
+  provides the necessary completeness and submultiplicativity.
 \end{proof}
 
 \subsection{Analytic Interpretation}\label{subsec:analytic_interpretation}
@@ -307,7 +205,7 @@ as convergence of a power series. We separate this into two levels:
 \begin{definition}[Formal power series embedding]\label{def:to_power_series}
   \lean{l1Weighted.toPowerSeries}
   \leanok
-  \uses{def:l1_weighted}
+  \uses{def:l1Weighted}
   For $a \in \ell^1_\nu$, the formal power series is
   \begin{equation*}
   \texttt{toPowerSeries}(a) := \sum_{n=0}^\infty a_n X^n \in \PowerSeries{X}.
@@ -327,7 +225,7 @@ as convergence of a power series. We separate this into two levels:
 \begin{theorem}[Cauchy product is formal multiplication]\label{thm:coeff_mul_eq_cauchy}
   \lean{l1Weighted.coeff_mul_eq_cauchyProduct}
   \leanok
-  \uses{def:to_power_series,def:cauchy_product}
+  \uses{def:to_power_series,def:CauchyProduct,thm:toPowerSeries_mul}
   For $a, b \in \ell^1_\nu$:
   \begin{equation*}
   \texttt{coeff}_n(\texttt{toPowerSeries}(a) \cdot \texttt{toPowerSeries}(b)) = (a \star b)_n.
@@ -350,7 +248,7 @@ as convergence of a power series. We separate this into two levels:
 \begin{definition}[Analytic evaluation]\label{def:eval}
   \lean{l1Weighted.eval}
   \leanok
-  \uses{def:l1_weighted}
+  \uses{def:l1Weighted}
   For $a \in \ell^1_\nu$ and $z \in \mathbb{R}$, the evaluation is
   \begin{equation*}
   \texttt{eval}(a, z) := \sum_{n=0}^\infty a_n z^n.
@@ -361,7 +259,7 @@ as convergence of a power series. We separate this into two levels:
 \begin{lemma}[Absolute convergence]\label{lem:summable_eval}
   \lean{l1Weighted.summable_eval}
   \leanok
-  \uses{def:l1_weighted,def:eval}
+  \uses{def:l1Weighted,def:eval,lem:l1_mem_iff}
   If $a \in \ell^1_\nu$ and $|z| \leq \nu$, then $\sum_{n=0}^\infty a_n z^n$ 
   converges absolutely.
 \end{lemma}
@@ -375,7 +273,7 @@ as convergence of a power series. We separate this into two levels:
 \begin{theorem}[Mertens' theorem: evaluation commutes with multiplication]\label{thm:eval_mul}
   \lean{l1Weighted.eval_mul}
   \leanok
-  \uses{def:cauchy_product,lem:summable_eval}
+  \uses{def:CauchyProduct,lem:summable_eval,thm:norm_mul_le}
   For $a, b \in \ell^1_\nu$ and $|z| \leq \nu$:
   \begin{equation*}
   \texttt{eval}(a, z) \cdot \texttt{eval}(b, z) = \sum_{n=0}^\infty (a \star b)_n z^n.

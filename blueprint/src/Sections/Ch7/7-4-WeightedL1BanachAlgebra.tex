@@ -1,0 +1,312 @@
+% blueprint/src/Sections/Ch7/7-4-WeightedL1BanachAlgebra.tex
+
+\section{Weighted Sequence Spaces (Section 7.4)}\label{sec:weighted_l1}
+
+This section establishes the weighted $\ell^1_\nu$ space as a commutative Banach algebra
+under the Cauchy product. The algebraic structure is derived by connecting to
+\texttt{PowerSeries} multiplication, then the analytic properties (submultiplicativity)
+are proven using weight factorization.
+
+\subsection{Scaled Real Numbers}\label{subsec:scaled_real}
+
+\begin{definition}[Positive real numbers]\label{def:posreal}
+  \lean{PosReal}
+  \leanok
+  The type of positive real numbers:
+  $\texttt{PosReal} := \{x : \mathbb{R} \mid 0 < x\}$.
+\end{definition}
+
+\begin{definition}[Scaled real type]\label{def:ScaledReal}
+  \lean{ScaledReal}
+  \leanok
+  \uses{def:posreal}
+  For $\nu > 0$ and $n \in \mathbb{N}$, the type $\texttt{ScaledReal}\ \nu\ n$ is $\mathbb{R}$
+  equipped with the scaled norm $\|x\|_n := |x| \cdot \nu^n$.
+\end{definition}
+
+\subsection{Weighted $\ell^p$ Spaces}\label{subsec:weighted_lp}
+
+\begin{definition}[Weighted $\ell^p$ space]\label{def:lpWeighted}
+  \lean{lpWeighted}
+  \leanok
+  \uses{def:ScaledReal}
+  The weighted $\ell^p_\nu$ space is realized as $\texttt{lp}\ (\texttt{ScaledReal}\ \nu)\ p$.
+  The norm is:
+  \begin{equation*}
+  \|a\|_{p,\nu} := \left(\sum_{n=0}^\infty |a_n|^p \nu^{pn}\right)^{1/p}.
+  \end{equation*}
+\end{definition}
+
+\begin{definition}[Weighted $\ell^1$ space]\label{def:l1Weighted}
+  \lean{l1Weighted}
+  \leanok
+  \uses{def:lpWeighted}
+  Specialization of $\ell^p_\nu$ to $p = 1$:
+  \begin{equation*}
+  \ell^1_\nu = \left\{ a : \mathbb{N} \to \mathbb{R} \;\middle|\; \|a\|_{1,\nu} := \sum_{n=0}^\infty |a_n| \nu^n < \infty \right\}.
+  \end{equation*}
+\end{definition}
+
+\begin{lemma}[Completeness]\label{lem:lpWeighted_complete}
+  \lean{lpWeighted.instCompleteSpace}
+  \leanok
+  \uses{def:lpWeighted}
+  The space $\ell^p_\nu$ is complete (a Banach space) for $p \geq 1$.
+\end{lemma}
+
+\begin{lemma}[Membership criterion]\label{lem:l1_mem_iff}
+  \lean{l1Weighted.mem_iff}
+  \leanok
+  \uses{def:l1Weighted}
+  A sequence $a$ belongs to $\ell^1_\nu$ iff $\sum_{n=0}^\infty |a_n| \nu^n$ converges.
+\end{lemma}
+
+\begin{lemma}[Weight factorization]\label{lem:antidiagonal_weight}
+  \lean{l1Weighted.antidiagonal_weight}
+  \leanok
+  \uses{def:posreal}
+  For $k + l = n$: $\nu^k \cdot \nu^l = \nu^n$.
+  This is the key property enabling submultiplicativity.
+\end{lemma}
+
+
+\subsection{Cauchy Product (Definition 7.4.2)}\label{subsec:cauchy_product}
+
+The Cauchy product (convolution) defines multiplication on sequence spaces.
+
+\begin{definition}[Cauchy product]\label{def:CauchyProduct}
+  \lean{CauchyProduct}
+  \leanok
+  The \emph{Cauchy product} of sequences $a, b : \mathbb{N} \to R$ is:
+  \begin{equation*}
+  (a \star b)_n = \sum_{k+l=n} a_k b_l = \sum_{j=0}^{n} a_{n-j} b_j.
+  \end{equation*}
+\end{definition}
+
+\begin{theorem}[Connection to PowerSeries]\label{thm:toPowerSeries_mul}
+  \lean{CauchyProduct.toPowerSeries_mul}
+  \leanok
+  \uses{def:CauchyProduct}
+  Let $\texttt{toPowerSeries}(a) = \sum_n a_n X^n$. Then:
+  \begin{equation*}
+  \texttt{toPowerSeries}(a \star b) = \texttt{toPowerSeries}(a) \cdot \texttt{toPowerSeries}(b).
+  \end{equation*}
+  This bridge lets us transport all ring axioms from \texttt{PowerSeries R}.
+\end{theorem}
+
+\begin{theorem}[Associativity]\label{thm:CauchyProduct_assoc}
+  \lean{CauchyProduct.assoc}
+  \leanok
+  \uses{thm:toPowerSeries_mul}
+  $(a \star b) \star c = a \star (b \star c)$.
+\end{theorem}
+
+\begin{theorem}[Commutativity]\label{thm:CauchyProduct_comm}
+  \lean{CauchyProduct.comm}
+  \leanok
+  \uses{thm:toPowerSeries_mul}
+  $a \star b = b \star a$ (when $R$ is commutative).
+\end{theorem}
+
+\begin{theorem}[Left distributivity]\label{thm:CauchyProduct_left_distrib}
+  \lean{CauchyProduct.left_distrib}
+  \leanok
+  \uses{def:CauchyProduct}
+  $a \star (b + c) = a \star b + a \star c$.
+\end{theorem}
+
+\begin{theorem}[Right distributivity]\label{thm:CauchyProduct_right_distrib}
+  \lean{CauchyProduct.right_distrib}
+  \leanok
+  \uses{def:CauchyProduct}
+  $(a + b) \star c = a \star c + b \star c$.
+\end{theorem}
+
+\begin{definition}[Identity sequence]\label{def:CauchyProduct_one}
+  \lean{CauchyProduct.one}
+  \leanok
+  The identity element is the Kronecker delta:
+  \begin{equation*}
+  e_n = \delta_{n,0} = \begin{cases} 1 & n = 0 \\ 0 & n \geq 1. \end{cases}
+  \end{equation*}
+\end{definition}
+
+\begin{theorem}[Left identity]\label{thm:CauchyProduct_one_mul}
+  \lean{CauchyProduct.one_mul}
+  \leanok
+  \uses{def:CauchyProduct_one,thm:toPowerSeries_mul}
+  $e \star a = a$.
+\end{theorem}
+
+\begin{theorem}[Right identity]\label{thm:CauchyProduct_mul_one}
+  \lean{CauchyProduct.mul_one}
+  \leanok
+  \uses{def:CauchyProduct_one,thm:toPowerSeries_mul}
+  $a \star e = a$.
+\end{theorem}
+
+
+\subsection{Scalar-Sequence Compatibility}\label{subsec:scalar_compat}
+
+These lemmas establish compatibility between scalar multiplication and the Cauchy product.
+They are essential for the Fréchet derivative formula in Section~\ref{sec:example_7_7}.
+
+\begin{theorem}[Left scalar multiplication]\label{thm:CauchyProduct_smul_mul}
+  \lean{CauchyProduct.smul_mul}
+  \leanok
+  \uses{def:CauchyProduct}
+  Scalars pull out on the left: $(c \cdot a) \star b = c \cdot (a \star b)$.
+\end{theorem}
+
+\begin{theorem}[Right scalar multiplication]\label{thm:CauchyProduct_mul_smul}
+  \lean{CauchyProduct.mul_smul}
+  \leanok
+  \uses{def:CauchyProduct,thm:CauchyProduct_comm}
+  Scalars pull out on the right: $a \star (c \cdot b) = c \cdot (a \star b)$.
+  Requires commutativity of the coefficient ring.
+\end{theorem}
+
+
+\subsection{Banach Algebra Structure (Theorem 7.4.4)}\label{subsec:banach_algebra}
+
+\begin{lemma}[Closure under multiplication]\label{lem:l1Weighted_mem}
+  \lean{l1Weighted.mem}
+  \leanok
+  \uses{def:l1Weighted,def:CauchyProduct,lem:antidiagonal_weight}
+  If $a, b \in \ell^1_\nu$, then $a \star b \in \ell^1_\nu$.
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  By Mertens' theorem and weight factorization:
+  \begin{align*}
+  \sum_{n=0}^\infty |(a \star b)_n| \nu^n 
+  &\leq \sum_{n=0}^\infty \sum_{k=0}^n |a_k| |b_{n-k}| \nu^n \\
+  &= \sum_{n=0}^\infty \sum_{k=0}^n |a_k| \nu^k \cdot |b_{n-k}| \nu^{n-k} \\
+  &= \|a\|_{\ell^1_\nu} \cdot \|b\|_{\ell^1_\nu} < \infty.
+  \end{align*}
+\end{proof}
+
+\begin{definition}[Multiplication on $\ell^1_\nu$]\label{def:l1Weighted_mul}
+  \lean{l1Weighted.mul}
+  \leanok
+  \uses{def:l1Weighted,def:CauchyProduct,lem:l1Weighted_mem}
+  $\texttt{mul}(a, b) := a \star b$ lifted to $\ell^1_\nu$.
+\end{definition}
+
+\begin{theorem}[Submultiplicativity]\label{thm:norm_mul_le}
+  \lean{l1Weighted.norm_mul_le}
+  \leanok
+  \uses{def:l1Weighted_mul,lem:antidiagonal_weight}
+  $\|a \star b\|_{1,\nu} \leq \|a\|_{1,\nu} \cdot \|b\|_{1,\nu}$.
+  
+  This is \textbf{axiom (4)} of Definition 7.4.1, the key analytic property.
+  The proof uses Mertens' theorem and weight factorization $\nu^n = \nu^k \cdot \nu^l$.
+\end{theorem}
+
+\begin{definition}[Identity element]\label{def:l1Weighted_one}
+  \lean{l1Weighted.one}
+  \leanok
+  \uses{def:l1Weighted,def:CauchyProduct_one}
+  The identity $e \in \ell^1_\nu$ with $e_0 = 1$, $e_n = 0$ for $n \geq 1$.
+\end{definition}
+
+\begin{lemma}[Norm of identity]\label{lem:norm_one}
+  \lean{l1Weighted.norm_one}
+  \leanok
+  \uses{def:l1Weighted_one}
+  $\|e\|_{1,\nu} = 1$.
+\end{lemma}
+
+
+\subsection{Typeclass Instances (Corollary 7.4.5)}\label{subsec:l1_instances}
+
+\begin{theorem}[Ring instance]\label{thm:l1Weighted_Ring}
+  \lean{l1Weighted.instRing}
+  \leanok
+  \uses{def:l1Weighted_mul,def:l1Weighted_one,thm:CauchyProduct_assoc,thm:CauchyProduct_left_distrib,thm:CauchyProduct_right_distrib,thm:CauchyProduct_one_mul,thm:CauchyProduct_mul_one}
+  $\ell^1_\nu$ is a ring under Cauchy product multiplication.
+\end{theorem}
+
+\begin{theorem}[Commutative ring instance]\label{thm:l1Weighted_CommRing}
+  \lean{l1Weighted.instCommRing}
+  \leanok
+  \uses{thm:l1Weighted_Ring,thm:CauchyProduct_comm}
+  $\ell^1_\nu$ is a commutative ring.
+\end{theorem}
+
+\begin{theorem}[Normed ring instance]\label{thm:l1Weighted_NormedRing}
+  \lean{l1Weighted.instNormedRing}
+  \leanok
+  \uses{thm:l1Weighted_Ring,thm:norm_mul_le}
+  $\ell^1_\nu$ is a normed ring (submultiplicativity holds).
+\end{theorem}
+
+\begin{theorem}[Norm one class]\label{thm:l1Weighted_NormOneClass}
+  \lean{l1Weighted.instNormOneClass}
+  \leanok
+  \uses{thm:l1Weighted_NormedRing,lem:norm_one}
+  $\|1\| = 1$ in $\ell^1_\nu$.
+\end{theorem}
+
+
+\subsection{Algebra Structure}\label{subsec:algebra_structure}
+
+These instances establish that $\ell^1_\nu$ is an $\mathbb{R}$-algebra, meaning scalar multiplication
+is compatible with ring multiplication. This is essential for the Fréchet derivative formula
+$D[\mathrm{sq}](a) h = 2(a \star h)$, where the scalar $2$ must commute with the multiplication.
+
+\begin{theorem}[Scalar commutes with multiplication]\label{thm:l1Weighted_SMulCommClass}
+  \lean{l1Weighted.instSMulCommClass}
+  \leanok
+  \uses{thm:l1Weighted_Ring,thm:CauchyProduct_mul_smul}
+  For $c \in \mathbb{R}$ and $a, b \in \ell^1_\nu$:
+  \begin{equation*}
+  c \cdot (a \star b) = a \star (c \cdot b).
+  \end{equation*}
+  This is the \texttt{SMulCommClass} instance.
+\end{theorem}
+
+\begin{theorem}[Scalar tower property]\label{thm:l1Weighted_IsScalarTower}
+  \lean{l1Weighted.instIsScalarTower}
+  \leanok
+  \uses{thm:l1Weighted_Ring,thm:CauchyProduct_smul_mul}
+  For $c \in \mathbb{R}$ and $a, b \in \ell^1_\nu$:
+  \begin{equation*}
+  (c \cdot a) \star b = c \cdot (a \star b).
+  \end{equation*}
+  This is the \texttt{IsScalarTower} instance.
+\end{theorem}
+
+
+\begin{corollary}[Commutative Banach algebra]\label{cor:l1Weighted_Banach_algebra}
+  \uses{lem:lpWeighted_complete,thm:l1Weighted_CommRing,thm:l1Weighted_NormedRing,thm:l1Weighted_NormOneClass,thm:l1Weighted_SMulCommClass,thm:l1Weighted_IsScalarTower}
+  $\ell^1_\nu$ is a commutative Banach algebra over $\mathbb{R}$:
+  \begin{enumerate}
+    \item Complete normed space (Banach)
+    \item Commutative ring under $\star$
+    \item Submultiplicative: $\|a \star b\| \leq \|a\| \cdot \|b\|$
+    \item $\|1\| = 1$
+    \item Scalar-ring compatibility ($\mathbb{R}$-algebra structure)
+  \end{enumerate}
+\end{corollary}
+
+
+\subsection{Architecture Summary}\label{subsec:architecture}
+
+The formalization separates concerns into two files:
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{File} & \textbf{Contents} & \textbf{Dependencies} \\
+\hline
+\texttt{CauchyProduct.lean} & Ring axioms, scalar compat & \texttt{PowerSeries.Basic} \\
+\texttt{lpWeighted.lean} & Banach structure, instances & \texttt{CauchyProduct}, \texttt{lpSpace} \\
+\hline
+\end{tabular}
+\end{center}
+
+Key insight: Ring axioms are transported from \texttt{PowerSeries} via \texttt{toPowerSeries\_mul},
+avoiding manual verification of associativity/distributivity. The \texttt{SMulCommClass} and 
+\texttt{IsScalarTower} instances similarly lift scalar compatibility from \texttt{CauchyProduct}.

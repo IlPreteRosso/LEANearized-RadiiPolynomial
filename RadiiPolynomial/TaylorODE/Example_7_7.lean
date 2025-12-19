@@ -363,7 +363,7 @@ lemma F_toSeq_zero_of_gt_two_N {N : ℕ} (lam0 : ℝ) (sol : ApproxSolution N) (
     | 0 => omega
     | 1 => omega
     | _ + 2 => rfl
-  simp [h1, h2]
+  rw [h1, h2, sub_zero]
 
 /-- Action of approxInverse `A` on finite indices (n ≤ N)
     Needed to compute [A(F(ā))]ₙ for 0 ≤ n ≤ N -/
