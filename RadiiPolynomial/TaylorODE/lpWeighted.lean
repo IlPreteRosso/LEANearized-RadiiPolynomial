@@ -323,10 +323,27 @@ This section establishes that ℓ¹_ν is a commutative Banach algebra (Corollar
 
 A **Banach algebra** is a Banach space X with multiplication `·: X × X → X` satisfying:
 
-1. **Associativity**: `(x · y) · z = x · (y · z)`
-2. **Distributivity**: `(x + y) · z = x · z + y · z` and `x · (y + z) = x · y + x · z`
-3. **Scalar compatibility**: `α(x · y) = (αx) · y = x · (αy)`
-4. **Submultiplicativity**: `‖x · y‖ ≤ ‖x‖ · ‖y‖`
+1. **Associativity** (7.11): `x · (y · z) = (x · y) · z`
+2. **Distributivity** (7.12): `(x + y) · z = x · z + y · z` and `x · (y + z) = x · y + x · z`
+3. **Scalar compatibility** (7.13): `α(x · y) = (αx) · y = x · (αy)`
+4. **Submultiplicativity** (7.14): `‖x · y‖ ≤ ‖x‖ · ‖y‖`
+
+The algebra is **commutative** if `x · y = y · x` for all x, y.
+
+### Correspondence: Textbook ↔ Lean
+
+| Textbook                | Equation | Lean Instance/Lemma                      |
+|-------------------------|----------|------------------------------------------|
+| Banach space            |          | `CompleteSpace`, `NormedAddCommGroup`    |
+| Associativity           | (7.11)   | `instRing.mul_assoc`                     |
+| Left distributivity     | (7.12)   | `instRing.left_distrib`                  |
+| Right distributivity    | (7.12)   | `instRing.right_distrib`                 |
+| Scalar compatibility    | (7.13)   | `instIsScalarTower`, `instSMulCommClass` |
+| Submultiplicativity     | (7.14)   | `instNormedRing.norm_mul_le`             |
+| Commutativity           |          | `instCommRing.mul_comm`                  |
+| Unit element            |          | `instRing.one_mul`, `instRing.mul_one`   |
+| ‖1‖ = 1                 |          | `instNormOneClass`                       |
+| ℝ-algebra structure     |          | `instAlgebra`, `instNormedAlgebra`       |
 
 ### Why This Architecture?
 
@@ -341,11 +358,11 @@ This is proven here using Mertens' theorem and weight factorization.
 
 1. **Membership closure** (`mem`): Proves `a, b ∈ ℓ¹_ν ⟹ a ⋆ b ∈ ℓ¹_ν`
 2. **Multiplication** (`mul`): Defines the ring multiplication
-3. **Submultiplicativity** (`norm_mul_le`): The key analytic result
-4. **Ring axioms**: Thin wrappers lifting `CauchyProduct` lemmas
+3. **Submultiplicativity** (`norm_mul_le`): The key analytic result (7.14)
+4. **Ring axioms**: Thin wrappers lifting `CauchyProduct` lemmas (7.11-7.13)
 5. **Identity element** (`one`): The Kronecker delta sequence
 6. **Typeclass instances**: `Ring`, `CommRing`, `NormedRing`, `NormOneClass`
-7. **Algebra structure**: `SMulCommClass`, `IsScalarTower`
+7. **Algebra structure**: `SMulCommClass`, `IsScalarTower`, `Algebra`, `NormedAlgebra`
 -/
 
 section CauchyProductBanachAlgebra

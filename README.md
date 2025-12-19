@@ -1,187 +1,129 @@
-<img src="assets/lean_logo-grey.svg" alt="LEAN"> 
+# Radii Polynomial — A Lean 4 Blueprint Project
 
-# Radii Polynomial — A LEAN Blueprint Project 
+**Live blueprint:** https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial
 
-### Live blueprint page
+This repository formalizes the **Radii Polynomial Method** for computer-assisted proofs
+in Banach spaces, including a complete worked example (Section 7.7: analytic square root).
 
-- https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial  
+---
 
-This repository contains a **Lean blueprint** for the theorem
-**Radii Polynomials in General Banach Spaces**.
-
-> Proof flow at a glance:  
-> data → Newton map \(T = x - A f(x)\) → a‑priori bounds \((Y_0, Z_0, Z_2)\) → radii polynomial \(p(r)\) → derivative bound → fixed‑point radii lemma → main theorem (existence, uniqueness, nondegeneracy).
-
-## Directory Structure
-
-This project have the following structure:
+## Project Directory
 
 ```
-RadiiPolynomial/                    
-├── lakefile.toml                   
-├── Main.lean                       
-├── makefile                        
-├── RadiiPolynomial/               
-│   └── RadiiPolyGeneral.lean     
-└── blueprint/                               
-    └── src/                       
-        ├── content.tex            
-        ├── macros/                
-        │   └── common.tex         # LaTeX macros (leanblueprint standard)
-        └── Sections/              
-            ├── Ch0/               
-            │   ├── Abstract.tex
-            │   └── Notations.tex
-            ├── Ch2/               
+RadiiPolynomial/
+├── lakefile.toml
+├── makefile
+├── RadiiPolynomial/
+│   ├── Basic.lean                    # Core utilities
+│   ├── RadiiPolyGeneral.lean         # Theorems 2.4.1, 2.4.2, 7.6.1, 7.6.2
+│   └── TaylorODE/                    # Chapter 7: Infinite-dimensional theory
+│       ├── ScaledReal.lean           # Scaled fiber type for weighted norms
+│       ├── lpWeighted.lean           # Weighted ℓᵖ spaces, Banach algebra (§7.4)
+│       ├── CauchyProduct.lean        # Cauchy product ring structure
+│       ├── FrechetCauchyProduct.lean # Fréchet derivatives (Thm 7.4.7)
+│       ├── OperatorNorm.lean         # Operator norms, Prop 7.3.13-14
+│       ├── Example_7_7.lean          # Main example: x² = λ
+│       ├── Example_7_7_Analytic.lean # Power series interpretation
+│       └── Example_7_7_Dyadic.lean   # Computable bound verification
+└── blueprint/
+    ├── web.toml
+    ├── lean_decls
+    └── src/
+        ├── content.tex
+        ├── macros/
+        │   └── common.tex
+        └── Sections/
+            ├── Ch2/
             │   ├── 2-1-ContractionMapping.tex
             │   ├── 2-2-MeanValue.tex
             │   ├── 2-3-Newton.tex
             │   └── 2-4-RadiiPolynomialsFD.tex
-            └── Ch7/               
+            └── Ch7/
+                ├── 7-4-WeightedL1BanachAlgebra.tex
                 ├── 7-6-RadiiPolynomialBanach.tex
                 └── 7-7-Example.tex
 ```
 
 ---
 
-### Macros
+## Core Theory Files
 
-Reusable LaTeX macros live in `blueprint/src/macros`. These define commands and presentation differences used by the blueprint outputs:
+| File | Content | Reference |
+|------|---------|-----------|
+| `lpWeighted.lean` | Weighted ℓ¹_ν as commutative Banach algebra | §7.4, Def 7.4.1 |
+| `CauchyProduct.lean` | Ring axioms via PowerSeries transport | §7.4, Def 7.4.2 |
+| `FrechetCauchyProduct.lean` | D(a·b) = a·Db + Da·b | Thm 7.4.7 |
+| `OperatorNorm.lean` | Block-diagonal operator bounds | Prop 7.3.13-14 |
+| `RadiiPolyGeneral.lean` | Radii polynomial theorems | Thm 2.4.2, 7.6.2 |
 
-- `blueprint/src/macros/common.tex` — shared macros and notation used across web/print versions. 
-- `blueprint/src/macros/print.tex` — rules and commands used when producing printable/PDF outputs. In usual cases, this file should be minimal.
-- `blueprint/src/macros/web.tex` — web-specific tweaks for the HTML blueprint pages. In usual cases, this file should be minimal.
+### Banach Algebra Structure (Definition 7.4.1)
+
+The file `lpWeighted.lean` establishes ℓ¹_ν as a commutative Banach algebra:
+
+| Axiom | Equation | Lean Instance |
+|-------|----------|---------------|
+| Associativity | (7.11) | `instRing.mul_assoc` |
+| Distributivity | (7.12) | `instRing.left_distrib`, `right_distrib` |
+| Scalar compatibility | (7.13) | `instIsScalarTower`, `instSMulCommClass` |
+| Submultiplicativity | (7.14) | `instNormedRing.norm_mul_le` |
+| Commutativity | | `instCommRing.mul_comm` |
+| Unit element | | `instNormOneClass` |
+| ℝ-algebra | | `instAlgebra`, `instNormedAlgebra` |
 
 ---
 
-## LaTeX ↔ LEAN 
+## Example 7.7 Workflow
 
-### Lean Label Commands
+The formalization follows this pipeline:
 
-- `\lean{declaration_name}` - Links to the Lean declaration
-- `\leanok` - Marks that the formalization is complete
-- `\uses{label1, label2}` - Indicates dependencies on other results
-- `\label{latex_label}` - Standard LaTeX label for cross-references
+1. **Coefficient space:** Work in weighted ℓ¹_ν with Cauchy product
+2. **Fixed-point equation:** F(ã) = ã ⋆ ã − c = 0
+3. **Bound verification:** Y₀, Z₀, Z₂ bounds via rational/dyadic arithmetic
+4. **Radii polynomial:** p(r₀) < 0 verified by `native_decide`
+5. **Semantic bridge:** ℓ¹_ν ↪ PowerSeries ℝ, then Mertens' theorem
+6. **Branch selection:** IVT argument proves eval(ã, λ−λ₀) = √λ
 
-When writing the blueprint `.tex` files you link LaTeX statements (theorems, definitions, lemmas, etc.) to LEAN declaration using the `\lean{}` handle. The handle must name an existing *true* declaration in LEAN so the `checkdecls` in `leanblueprint` can build the dependency graph.
+---
 
-### Example
+## LaTeX ↔ Lean Linking
 
-```tex
-\begin{theorem}[Mean Value Theorem]\label{thm:MVT}
-	\lean{RP.MeanValueTheorem}
-	Let $g:\mathbb R^n\to\mathbb R$ be $C^1$. For all $x,y\in\mathbb R^n$ there exists $t\in(0,1)$ such that
-	\[
-		g(x)-g(y)=\nabla g\bigl(y+t(x-y)\bigr)\cdot (x-y).
-	\]
+| Command | Purpose |
+|---------|---------|
+| `\lean{decl_name}` | Links to Lean declaration |
+| `\leanok` | Marks formalization complete |
+| `\uses{label1, label2}` | Declares dependencies |
+
+**Example:**
+```latex
+\begin{theorem}[Submultiplicativity]\label{thm:norm_mul_le}
+  \lean{l1Weighted.norm_mul_le}
+  \leanok
+  \uses{def:l1Weighted,def:CauchyProduct}
+  For $a, b \in \ell^1_\nu$: $\|a \star b\| \leq \|a\| \cdot \|b\|$.
 \end{theorem}
 ```
 
-Here `\lean{RP.MeanValueTheorem}` is a handle that points to the Lean declaration named `RP.MeanValueTheorem` in the LEAN sources.
-
-
-```lean
-namespace RP
-/-- Mean Value Theorem (placeholder). -/
-theorem MeanValueTheorem : True := True.intro
--- ...
-```
-
-Rules and best practices
-- Every `\lean{...}` handle used in the `.tex` files must reference an existing Lean object (fully qualified when in a namespace). If the object doesn't exist the blueprint check will fail.
-- Placeholders are fine while writing the blueprint: it's common to add a temporary `theorem ... : True := True.intro` so the dependency graph and checks succeed. Replace placeholders with real statements/proofs as you formalize.
-- Lean sources for the blueprint live under `RadiiPolynomial/`. Update or add files there when you introduce new handles in the `.tex` files.
-- After editing `.tex` files, push to GitHub to trigger the CI workflow, or run `leanblueprint web` locally to preview changes.
-
-If you ever need help locating the Lean declaration for a LaTeX handle, search the `RadiiPolynomial/` folder for the name (e.g. `grep -R "MeanValueTheorem" RadiiPolynomial/`).
+Run `lake exe checkdecls blueprint/lean_decls` to verify all `\lean{...}` references.
 
 ---
 
-## InfoView setup
-
-Configure the the LEAN version for VS Code Lean extension (InfoView), to check required version (in currently installed toolchains) run:
-
-```sh
-cat .lake/packages/mathlib/lean-toolchain
-```
-
-Set the VS Code Lean toolchain to that version (for example `v4.26.0-rc1`) in the extension settings or via the InfoView selector. 
-
----
-
-## CI/CD Workflow
-
-The project uses GitHub Actions to automatically build and deploy the blueprint. The workflow is defined in `.github/workflows/blueprint.yml`.
-
-### Workflow Structure
-
-The workflow runs as a **single sequential job** with optimized caching:
-
-```
-┌─────────────────────────────────────────────┐
-│              build_project                  │
-│                                             │
-│  1. Free disk space                         │
-│  2. Build Lean project                      │
-│  3. Build API documentation (cached)        │
-│  4. Build blueprint (PDF + web)             │
-│  5. Check declarations                      │
-│  6. Build Jekyll site                       │
-│  7. Deploy to GitHub Pages                  │
-└─────────────────────────────────────────────┘
-```
-
-### Key Features
-
-1. **Aggressive caching**: 
-   - Lake build artifacts (`.lake/packages`, `.lake/build/lib`, `.lake/build/ir`)
-   - Mathlib API documentation (skips rebuilding ~10GB of docs)
-2. **Disk space optimization**: Removes unused pre-installed software (~15GB freed)
-3. **Single job simplicity**: Easier to debug, no artifact passing overhead
-
-### Build Times
-
-| Scenario | Approximate Time |
-|----------|------------------|
-| First run (cold cache) | ~15-20 min |
-| Subsequent runs (warm cache) | ~8-12 min |
-
-### Local Development
-
-To build the blueprint locally:
+## Building
 
 ```bash
-# Install leanblueprint (in a Python virtual environment)
-python3 -m venv env
-source env/bin/activate
-pip install leanblueprint
+# Build Lean project
+lake build
 
-# Build PDF
-leanblueprint pdf
-
-# Build web version
-leanblueprint web
-
-# Check declarations
+# Check blueprint declarations
 lake exe checkdecls blueprint/lean_decls
+
+# Build blueprint (requires leanblueprint)
+make
 ```
-
-### What to Commit
-
-The following are **generated files** and should NOT be committed (add to `.gitignore`):
-
-```
-blueprint/web/
-blueprint/print/
-blueprint/lean_decls
-```
-
-These are rebuilt by CI on every push. Only commit the source `.tex` files in `blueprint/src/`.
 
 ---
 
-## Additional Resources
+## References
 
 - [Leanblueprint documentation](https://github.com/PatrickMassot/leanblueprint)
-- [Lean 4 documentation](https://leanprover.github.io/lean4/doc/)
 - [Mathlib4 documentation](https://leanprover-community.github.io/mathlib4_docs/)
+- Textbook: *Radii Polynomial Approach* (Chapters 2 and 7)
