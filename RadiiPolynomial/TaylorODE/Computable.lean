@@ -1,7 +1,3 @@
-import RadiiPolynomial.TaylorODE.ScaledReal
-import RadiiPolynomial.TaylorODE.CauchyProduct
-import RadiiPolynomial.TaylorODE.lpWeighted
-import RadiiPolynomial.TaylorODE.OperatorNorm
 import RadiiPolynomial.TaylorODE.Example_7_7
 import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Data.Matrix.Basic
