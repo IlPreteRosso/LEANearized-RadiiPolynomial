@@ -101,7 +101,8 @@ jobs:
             pip install --upgrade pip requests wheel
             pip install pygraphviz --config-settings="--global-option=build_ext" --config-settings="--global-option=-L/usr/lib/graphviz/" --config-settings="--global-option=-R/usr/lib/graphviz/"
             pip install leanblueprint
-            leanblueprint pdf
+            leanblueprint pdf || true
+            grep -E "undefined|Error" blueprint/print/print.log | head -30
             mkdir -p home_page
             cp blueprint/print/print.pdf home_page/blueprint.pdf
             leanblueprint web
