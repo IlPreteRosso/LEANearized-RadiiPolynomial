@@ -1,20 +1,3 @@
-/-
-This file was edited by Aristotle.
-
-Lean version: leanprover/lean4:v4.24.0
-Mathlib version: f897ebcf72cd16f89ab4577d0c826cd14afaafc7
-This project request had uuid: 61a726ac-1741-438f-b316-0dd79dd7bb34
-
-The following was proved by Aristotle:
-
-- theorem analyticSolution_eq_sqrt {ν : PosReal} (aTilde : l1Weighted ν) (lam0 : ℝ)
-    (hF : ∀ n, (lpWeighted.toSeq aTilde ⋆ lpWeighted.toSeq aTilde) n = Example_7_7.paramSeq lam0 n)
-    (hlam0_pos : 0 < lam0)
-    {lam : ℝ} (hlam : |lam - lam0| ≤ ν) (hlam_pos : 0 < lam)
-    (ha0_pos : 0 < lpWeighted.toSeq aTilde 0) :
-    analyticSolution aTilde (lam - lam0) = Real.sqrt lam
--/
-
 import RadiiPolynomial.TaylorODE.lpWeighted
 import RadiiPolynomial.TaylorODE.CauchyProduct
 import RadiiPolynomial.TaylorODE.Example_7_7
