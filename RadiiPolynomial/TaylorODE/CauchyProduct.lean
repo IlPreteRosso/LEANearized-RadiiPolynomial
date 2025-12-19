@@ -1,4 +1,5 @@
 import Mathlib.Analysis.Normed.Lp.lpSpace
+import Mathlib.Algebra.Order.Antidiag.Prod
 
 open scoped BigOperators NNReal ENNReal
 
@@ -40,27 +41,51 @@ lemma apply_range (a b : ℕ → ℝ) (n : ℕ) :
   simp only [Nat.succ_sub_succ_eq_sub, tsub_zero]
   rw [Nat.sub_sub_self (Nat.lt_succ_iff.mp (Finset.mem_range.mp hj))]
 
-/-- Commutativity of Cauchy product.
-    See proof of Theorem 7.4.4: `Σₖ aₙ₋ₖ bₖ = Σₖ bₙ₋ₖ aₖ` -/
+/-- Commutativity of Cauchy product: `a ⋆ b = b ⋆ a`.
+
+    Uses `Finset.sum_equiv` with the swap equivalence `Equiv.prodComm`:
+    - The antidiagonal is symmetric under `(i, j) ↦ (j, i)`
+    - `Finset.swap_mem_antidiagonal` witnesses membership preservation
+    - Summands match after applying `mul_comm` -/
 lemma comm (a b : ℕ → ℝ) : (a ⋆ b) = (b ⋆ a) := by
-  ext n; simp only [CauchyProduct.apply]
-  apply Finset.sum_nbij (fun kl => (kl.2, kl.1))
-  · intro kl hkl; simp only [Finset.mem_antidiagonal] at hkl ⊢; omega
-  · intro kl _ kl' _ h; ext <;> simp_all
-  · intro kl hkl
-    refine ⟨(kl.2, kl.1), ?_, ?_⟩
-    · simp only [Finset.mem_coe, Finset.mem_antidiagonal] at hkl ⊢; omega
-    · simp only [Prod.mk.eta]
-  · intro kl _; ring
+  ext n
+  -- After unfolding, need to show Σ a_i b_j = Σ b_i a_j over antidiagonal
+  simp only [apply, mul_comm]
+  -- Apply the equivalence (i,j) ↔ (j,i) via Equiv.prodComm
+  exact Finset.sum_equiv (Equiv.prodComm ℕ ℕ)
+    (fun _ => Finset.swap_mem_antidiagonal.symm) (by simp)
 
-/-- Associativity of Cauchy product.
-    `((a ⋆ b) ⋆ c)ₙ = (a ⋆ (b ⋆ c))ₙ`
+/-- Associativity of Cauchy product: `(a ⋆ b) ⋆ c = a ⋆ (b ⋆ c)`.
 
-    Both sides reduce to the triple convolution `Σ_{i+j+k=n} aᵢ bⱼ cₖ`.
-    The proof establishes a bijection between the nested index sets:
-    - Map: `(i, j) ↦ (j, i - j)` where `0 ≤ j ≤ i ≤ n`
-    - Inverse: `(j, k) ↦ (j + k, j)` where `0 ≤ j ≤ n`, `0 ≤ k ≤ n - j` -/
+    Both sides equal the triple convolution `Σ_{i+j+k=n} aᵢ bⱼ cₖ`.
+
+    Uses `Finset.sum_nbij'` with explicit forward/backward maps on sigma types:
+    - Forward:  `((i, j), (k, l)) ↦ ((k, l + j), (l, j))` where `i + j = n`, `k + l = i`
+    - Backward: `((i, j), (k, l)) ↦ ((i + k, l), (i, k))` where `i + j = n`, `k + l = j`
+
+    The `aesop` tactic with `add_assoc` and `mul_assoc` hints automatically verifies:
+    - Both maps are well-defined (indices land in correct antidiagonals)
+    - Maps are mutual inverses
+    - Summands are equal after reindexing -/
 lemma assoc (a b c : ℕ → ℝ) : ((a ⋆ b) ⋆ c) = (a ⋆ (b ⋆ c)) := by
+  ext n
+  -- Expand nested Cauchy products into sigma-type sums over antidiagonals
+  simp only [apply, Finset.sum_mul, Finset.mul_sum, Finset.sum_sigma']
+  -- Establish bijection between the two nested sigma types
+  apply Finset.sum_nbij'
+    (fun ⟨⟨_i, j⟩, ⟨k, l⟩⟩ ↦ ⟨(k, l + j), (l, j)⟩)   -- forward map
+    (fun ⟨⟨i, _j⟩, ⟨k, l⟩⟩ ↦ ⟨(i + k, l), (i, k)⟩) <;> -- backward map
+  -- aesop verifies: membership, inverses, and summand equality
+  aesop (add simp [add_assoc, mul_assoc])
+
+/-!
+### Alternative explicit proof of associativity
+
+The following is a more explicit proof that constructs the bijection manually
+using `Finset.sum_bij`. Preserved for reference.
+
+```lean
+lemma assoc_explicit (a b c : ℕ → ℝ) : ((a ⋆ b) ⋆ c) = (a ⋆ (b ⋆ c)) := by
   rw [funext_iff]
   unfold CauchyProduct
   -- Rewrite antidiagonal sums as range sums: Σ_{(i,j) ∈ antidiag n} f(i,j) = Σ_{i=0}^n f(i, n-i)
@@ -128,6 +153,8 @@ lemma assoc (a b c : ℕ → ℝ) : ((a ⋆ b) ⋆ c) = (a ⋆ (b ⋆ c)) := by
             simpa [Nat.add_comm] using this
           simp [this]
     simp [hcalc]
+```
+-/
 
 /-- If both sequences vanish beyond M, their Cauchy product vanishes beyond 2M -/
 lemma zero_of_support {a b : ℕ → ℝ} {M : ℕ}
