@@ -153,7 +153,7 @@ finite dimensions. The method provides explicit domains of existence and uniquen
 We demonstrate the radii polynomial method on the simplest nonlinear function 
 $f(x) = x^2 - 2$, verifying the existence of a unique zero near $\bar{x} = 1.3$.
 
-\begin{example}[Square root verification]\label{ex:sqrt2}
+\begin{theorem}[Square root verification (Example 2.4.5)]\label{ex:sqrt2}
   \lean{example_2_4_5}
   \leanok
   \uses{thm:radii_poly_fd,def:radii_polynomial}
@@ -166,7 +166,7 @@ $f(x) = x^2 - 2$, verifying the existence of a unique zero near $\bar{x} = 1.3$.
   
   Therefore, there exists a unique $\tilde{x} \in \overline{B}_{0.15}(1.3) = [1.15, 1.45]$ 
   with $\tilde{x}^2 = 2$ and $f'(\tilde{x}) = 2\tilde{x}$ invertible.
-\end{example}
+\end{theorem}
 
 \begin{proof}
   \leanok
