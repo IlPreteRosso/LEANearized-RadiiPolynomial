@@ -93,60 +93,9 @@ finite dimensions. The method provides explicit domains of existence and uniquen
   Since $r_0 > 0$, dividing gives $Z(r_0) - 1 < 0$, i.e., $Z(r_0) < 1$.
 \end{proof}
 
-\begin{theorem}[Radii polynomial theorem in finite dimensions (Theorem 2.4.2)]\label{thm:radii_poly_fd}
-  \lean{simple_radii_polynomial_theorem_same_space}
-  \leanok
-  \uses{def:newton_like_map,def:radii_polynomial,prop:fixed_point_iff_zero,thm:fixed_point_radii,lem:poly_neg_implies_contraction,thm:neumann_series}
-  Consider $f \in C^1(\mathbb{R}^n, \mathbb{R}^n)$. Let $\bar{x} \in \mathbb{R}^n$ and 
-  $A \in M_n(\mathbb{R})$. Let $Y_0$ and $Z_0$ be non-negative constants and 
-  $Z_2: (0,\infty) \to [0,\infty)$ be a non-negative function satisfying
-  \begin{equation*}
-  \lVert Af(\bar{x})\rVert \leq Y_0
-  \end{equation*}
-  \begin{equation*}
-  \lVert I - A\text{Df}(\bar{x})\rVert \leq Z_0
-  \end{equation*}
-  \begin{equation*}
-  \lVert A[\text{Df}(c) - \text{Df}(\bar{x})]\rVert \leq Z_2(r) \cdot r, 
-    \quad \text{for all } c \in \overline{B}_r(\bar{x}) \text{ and all } r > 0.
-  \end{equation*}
-  Define $p(r) := Z_2(r)r^2 - (1-Z_0)r + Y_0$.
-  
-  If there exists $r_0 > 0$ such that $p(r_0) < 0$, then there exists a unique 
-  $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ satisfying $f(\tilde{x}) = 0$ and 
-  $\text{Df}(\tilde{x})$ is invertible (hence $\tilde{x}$ is a nondegenerate zero).
-\end{theorem}
-
-\begin{proof}
-  \leanok
-  \uses{thm:fixed_point_radii,lem:poly_neg_implies_contraction,prop:fixed_point_iff_zero}
-  \textbf{Step 1: Define Newton-like operator.}
-  Let $T(x) = x - Af(x)$. Since $f$ is $C^1$ and $A$ is linear, $T$ is $C^1$.
-  
-  \textbf{Step 2: Verify bounds.}
-  We have $\lVert T(\bar{x}) - \bar{x}\rVert = \lVert Af(\bar{x})\rVert \leq Y_0$.
-  For $c \in \overline{B}_{r_0}(\bar{x})$, $\text{DT}(c) = I - A\text{Df}(c)$, so
-  \begin{equation*}
-  \lVert \text{DT}(c)\rVert \leq \lVert I - A\text{Df}(\bar{x})\rVert + \lVert A[\text{Df}(\bar{x}) - \text{Df}(c)]\rVert
-  \leq Z_0 + Z_2(r_0)r_0 = Z(r_0).
-  \end{equation*}
-  
-  \textbf{Step 3: Show $A$ is invertible.}
-  From $p(r_0) < 0$, Lemma~\ref{lem:poly_neg_implies_contraction} gives $Z(r_0) < 1$.
-  Since $\lVert I - A\text{Df}(\bar{x})\rVert \leq Z_0 \leq Z(r_0) < 1$, by Theorem~\ref{thm:neumann_series},
-  $A\text{Df}(\bar{x})$ is invertible. Since $\text{Df}(\bar{x})$ is square, $A$ is invertible.
-  
-  \textbf{Step 4: Apply fixed point theorem.}
-  By Theorem~\ref{thm:fixed_point_radii}, there exists unique $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$ with $T(\tilde{x}) = \tilde{x}$.
-  
-  \textbf{Step 5: Convert fixed point to zero.}
-  By Proposition~\ref{prop:fixed_point_iff_zero} (with $A$ injective since invertible), $f(\tilde{x}) = 0$.
-  
-  \textbf{Step 6: Show $\text{Df}(\tilde{x})$ is invertible.}
-  Since $\tilde{x} \in \overline{B}_{r_0}(\bar{x})$, $\lVert I - A\text{Df}(\tilde{x})\rVert \leq Z(r_0) < 1$.
-  By Theorem~\ref{thm:neumann_series}, $A\text{Df}(\tilde{x})$ is invertible.
-  Since $A$ is invertible, $\text{Df}(\tilde{x})$ is invertible.
-\end{proof}
+The main radii polynomial theorem (Theorem 2.4.2) is stated and proved in full generality 
+for Banach spaces in Section~\ref{sec:radii_poly_banach} as Theorem~\ref{thm:simple_radii_poly_same}.
+Here we apply it to the finite-dimensional case $E = \mathbb{R}^n$.
 
 \subsection{Example 2.4.5: Finding $\sqrt{2}$}\label{subsec:example_sqrt2}
 
@@ -156,7 +105,7 @@ $f(x) = x^2 - 2$, verifying the existence of a unique zero near $\bar{x} = 1.3$.
 \begin{theorem}[Square root verification (Example 2.4.5)]\label{ex:sqrt2}
   \lean{example_2_4_5}
   \leanok
-  \uses{thm:radii_poly_fd,def:radii_polynomial}
+  \uses{thm:simple_radii_poly_same,def:radii_polynomial}
   Consider $f(x) = x^2 - 2$. Choose initial guess $\bar{x} = \frac{13}{10} = 1.3$,
   approximate inverse $A = \frac{19}{50} = 0.38 \approx (f'(\bar{x}))^{-1} = (2\bar{x})^{-1}$,
   bounds $Y_0 = \frac{3}{25} = 0.12$, $Z_0 = \frac{3}{250} = 0.012$, $Z_2 = \frac{19}{25} = 0.76$,
@@ -181,7 +130,7 @@ $f(x) = x^2 - 2$, verifying the existence of a unique zero near $\bar{x} = 1.3$.
   \textbf{Step 2: Verify polynomial negativity.}
   $p(0.15) = 0.76 \cdot 0.15^2 - 0.988 \cdot 0.15 + 0.12 = 0.0171 - 0.1482 + 0.12 = -0.0111 < 0$.
   
-  \textbf{Step 3: Apply Theorem~\ref{thm:radii_poly_fd}.}
+  \textbf{Step 3: Apply Theorem~\ref{thm:simple_radii_poly_same}.}
   The theorem guarantees a unique zero $\tilde{x} \in [1.15, 1.45]$ with invertible derivative.
   Since $\sqrt{2} \approx 1.414 \in [1.15, 1.45]$, this zero is $\sqrt{2}$.
 \end{proof}
@@ -189,7 +138,7 @@ $f(x) = x^2 - 2$, verifying the existence of a unique zero near $\bar{x} = 1.3$.
 \begin{corollary}\label{cor:sqrt2_unique}
   \lean{example_2_4_5_sqrt2}
   \leanok
-  \uses{thm:radii_poly_fd,ex:sqrt2}
+  \uses{thm:simple_radii_poly_same,ex:sqrt2}
   There exists a unique $\tilde{x} \in \overline{B}_{3/20}(13/10)$ with $\tilde{x}^2 = 2$.
 \end{corollary}
 
