@@ -67,6 +67,9 @@ The ring axiom lemmas in this file are **thin wrappers** that lift the
 - `l1Weighted.instNormOneClass`: ‖1‖ = 1
 - `l1Weighted.instSMulCommClass`: Scalar-ring multiplication compatibility
 - `l1Weighted.instIsScalarTower`: Scalar tower compatibility
+- `l1Weighted.instAlgebra`: ℓ¹_ν is an ℝ-algebra
+- `l1Weighted.instNormedAlgebra`: ℓ¹_ν is a normed ℝ-algebra
+- `l1Weighted.norm_pow_le`: ‖a^n‖ ≤ ‖a‖^n
 
 ## Dependencies
 
@@ -586,6 +589,60 @@ instance instIsScalarTower {ν : PosReal} : IsScalarTower ℝ (l1Weighted ν) (l
     apply lpWeighted.ext; intro n
     simp only [lpWeighted.toSeq_apply, lp.coeFn_smul, Pi.smul_apply, smul_eq_mul]
     exact congrFun (CauchyProduct.smul_mul c a.val b.val) n
+
+/-! ### Full Algebra Structure
+
+These instances complete the Banach algebra structure by registering ℓ¹_ν as an
+ℝ-algebra. The `Algebra ℝ` instance bundles the ring homomorphism `algebraMap`
+that embeds ℝ into ℓ¹_ν via `r ↦ r • 1 = (r, 0, 0, ...)`.
+-/
+
+/-- ℓ¹_ν is an ℝ-algebra.
+
+    The `algebraMap : ℝ →+* l1Weighted ν` sends `r ↦ r • 1 = (r, 0, 0, ...)`.
+    This is synthesized from `SMulCommClass` and `IsScalarTower` via `Algebra.ofModule`. -/
+instance instAlgebra {ν : PosReal} : Algebra ℝ (l1Weighted ν) := Algebra.ofModule
+  (fun r a b => smul_mul_assoc r a b)
+  (fun r a b => mul_smul_comm r a b)
+
+@[simp]
+lemma algebraMap_apply {ν : PosReal} (r : ℝ) : algebraMap ℝ (l1Weighted ν) r = r • 1 := rfl
+
+/-- The algebraMap sends r to the scaled identity: r · 𝟙 = (r, 0, 0, ...). -/
+lemma algebraMap_toSeq {ν : PosReal} (r : ℝ) (n : ℕ) :
+    lpWeighted.toSeq (algebraMap ℝ (l1Weighted ν) r) n = r * CauchyProduct.one n := by
+  rw [algebraMap_apply, lpWeighted.smul_toSeq, ←one_toSeq, lpWeighted.toSeq_apply, mul_eq_mul_left_iff]
+  apply Or.inl
+  rfl
+
+/-- The norm of `algebraMap r` equals `|r|`. -/
+lemma norm_algebraMap {ν : PosReal} (r : ℝ) : ‖algebraMap ℝ (l1Weighted ν) r‖ = ‖r‖ := by
+  simp only [algebraMap_apply, norm_smul, Real.norm_eq_abs, NormOneClass.norm_one, _root_.mul_one]
+
+/-- ℓ¹_ν is a normed ℝ-algebra.
+
+    Requires `‖c • a‖ ≤ ‖c‖ * ‖a‖`, which holds with equality by `norm_smul`. -/
+instance instNormedAlgebra {ν : PosReal} : NormedAlgebra ℝ (l1Weighted ν) where
+  norm_smul_le := fun r a => by rw [norm_smul]
+
+/-! ### Power Bounds
+
+Note: Mathlib provides `norm_pow_le` for `NormedRing` + `NormOneClass`, but we
+include it explicitly for completeness and documentation. -/
+
+/-- Norm bound for powers: ‖a^n‖ ≤ ‖a‖^n.
+
+    Follows from submultiplicativity by induction. -/
+lemma norm_pow_le {ν : PosReal} (a : l1Weighted ν) (n : ℕ) : ‖a ^ n‖ ≤ ‖a‖ ^ n := by
+  induction n with
+  | zero => simp only [pow_zero, NormOneClass.norm_one, le_refl]
+  | succ n ih =>
+    rw [pow_succ, pow_succ]
+    have h : ‖a ^ n * a‖ ≤ ‖a‖ ^ n * ‖a‖ :=
+      calc ‖a ^ n * a‖ ≤ ‖a ^ n‖ * ‖a‖ := norm_mul_le _ _
+        _ ≤ ‖a‖ ^ n * ‖a‖ := mul_le_mul_of_nonneg_right ih (norm_nonneg _)
+    simpa [pow_succ] using h
+
 
 end l1Weighted
 

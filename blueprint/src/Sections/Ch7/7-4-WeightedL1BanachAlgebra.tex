@@ -1,13 +1,13 @@
 % blueprint/src/Sections/Ch7/7-4-WeightedL1BanachAlgebra.tex
 
-\section{Weighted Sequence Spaces (Section 7.4)}\label{sec:weighted_l1}
+\section{Weighted $\ell^1_\nu$ Banach Algebra (Section 7.4)}\label{sec:weighted_l1}
 
 This section establishes the weighted $\ell^1_\nu$ space as a commutative Banach algebra
 under the Cauchy product. The algebraic structure is derived by connecting to
 \texttt{PowerSeries} multiplication, then the analytic properties (submultiplicativity)
 are proven using weight factorization.
 
-\subsection{Scaled Real Numbers}\label{subsec:scaled_real}
+\subsection{Positive Reals and Scaled Spaces}\label{subsec:scaled_real}
 
 \begin{definition}[Positive real numbers]\label{def:posreal}
   \lean{PosReal}
@@ -40,7 +40,7 @@ are proven using weight factorization.
 \begin{definition}[Weighted $\ell^1$ space]\label{def:l1Weighted}
   \lean{l1Weighted}
   \leanok
-  \uses{def:lpWeighted}
+  \uses{def:lpWeighted,def:complete_metric_space}
   Specialization of $\ell^p_\nu$ to $p = 1$:
   \begin{equation*}
   \ell^1_\nu = \left\{ a : \mathbb{N} \to \mathbb{R} \;\middle|\; \|a\|_{1,\nu} := \sum_{n=0}^\infty |a_n| \nu^n < \infty \right\}.
@@ -149,7 +149,7 @@ The Cauchy product (convolution) defines multiplication on sequence spaces.
 \subsection{Scalar-Sequence Compatibility}\label{subsec:scalar_compat}
 
 These lemmas establish compatibility between scalar multiplication and the Cauchy product.
-They are essential for the Fréchet derivative formula in Section~\ref{sec:example_7_7}.
+They are essential for the Fr\'echet derivative formula in Section~\ref{sec:example_7_7}.
 
 \begin{theorem}[Left scalar multiplication]\label{thm:CauchyProduct_smul_mul}
   \lean{CauchyProduct.smul_mul}
@@ -253,7 +253,7 @@ They are essential for the Fréchet derivative formula in Section~\ref{sec:examp
 \subsection{Algebra Structure}\label{subsec:algebra_structure}
 
 These instances establish that $\ell^1_\nu$ is an $\mathbb{R}$-algebra, meaning scalar multiplication
-is compatible with ring multiplication. This is essential for the Fréchet derivative formula
+is compatible with ring multiplication. This is essential for the Fr\'echet derivative formula
 $D[\mathrm{sq}](a) h = 2(a \star h)$, where the scalar $2$ must commute with the multiplication.
 
 \begin{theorem}[Scalar commutes with multiplication]\label{thm:l1Weighted_SMulCommClass}
@@ -279,22 +279,72 @@ $D[\mathrm{sq}](a) h = 2(a \star h)$, where the scalar $2$ must commute with the
 \end{theorem}
 
 
+\begin{theorem}[$\mathbb{R}$-Algebra instance]\label{thm:l1Weighted_Algebra}
+  \lean{l1Weighted.instAlgebra}
+  \leanok
+  \uses{thm:l1Weighted_Ring,thm:l1Weighted_SMulCommClass,thm:l1Weighted_IsScalarTower}
+  $\ell^1_\nu$ is an $\mathbb{R}$-algebra. The algebra map $\mathbb{R} \to \ell^1_\nu$
+  sends $r$ to $r \cdot e$ where $e$ is the identity sequence.
+\end{theorem}
+
+\begin{lemma}[Norm of scalar multiplication]\label{lem:norm_smul}
+  % Uses Mathlib's norm_smul for NormedSpace
+  \uses{def:l1Weighted}
+  For $c \in \mathbb{R}$ and $a \in \ell^1_\nu$:
+  \begin{equation*}
+  \|c \cdot a\|_{1,\nu} = |c| \cdot \|a\|_{1,\nu}.
+  \end{equation*}
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Direct computation:
+  $\|c \cdot a\| = \sum_n |c \cdot a_n| \nu^n = |c| \sum_n |a_n| \nu^n = |c| \cdot \|a\|$.
+\end{proof}
+
+\begin{theorem}[Normed $\mathbb{R}$-Algebra instance]\label{thm:l1Weighted_NormedAlgebra}
+  \lean{l1Weighted.instNormedAlgebra}
+  \leanok
+  \uses{thm:l1Weighted_Algebra,thm:l1Weighted_NormedRing,lem:norm_smul}
+  $\ell^1_\nu$ is a normed $\mathbb{R}$-algebra, satisfying $\|c \cdot a\| \leq |c| \cdot \|a\|$.
+  (In fact, equality holds.)
+\end{theorem}
+
+\begin{lemma}[Norm bound for powers]\label{lem:norm_pow_le}
+  \lean{l1Weighted.norm_pow_le}
+  \leanok
+  \uses{thm:l1Weighted_NormedRing}
+  For $a \in \ell^1_\nu$ and $n \in \mathbb{N}$:
+  \begin{equation*}
+  \|a^n\|_{1,\nu} \leq \|a\|_{1,\nu}^n.
+  \end{equation*}
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  By induction on $n$. The base case $n = 0$ gives $\|1\| = 1 = \|a\|^0$.
+  For the inductive step, submultiplicativity gives
+  $\|a^{n+1}\| = \|a \cdot a^n\| \leq \|a\| \cdot \|a^n\| \leq \|a\| \cdot \|a\|^n = \|a\|^{n+1}$.
+\end{proof}
+
 \begin{corollary}[Commutative Banach algebra]\label{cor:l1Weighted_Banach_algebra}
-  \uses{lem:lpWeighted_complete,thm:l1Weighted_CommRing,thm:l1Weighted_NormedRing,thm:l1Weighted_NormOneClass,thm:l1Weighted_SMulCommClass,thm:l1Weighted_IsScalarTower}
+  \uses{lem:lpWeighted_complete,thm:l1Weighted_CommRing,thm:l1Weighted_NormedRing,thm:l1Weighted_NormOneClass,thm:l1Weighted_Algebra,thm:l1Weighted_NormedAlgebra}
   $\ell^1_\nu$ is a commutative Banach algebra over $\mathbb{R}$:
   \begin{enumerate}
     \item Complete normed space (Banach)
     \item Commutative ring under $\star$
+    \item $\mathbb{R}$-algebra with compatible scalar multiplication
     \item Submultiplicative: $\|a \star b\| \leq \|a\| \cdot \|b\|$
+    \item Scalar-norm compatibility: $\|c \cdot a\| = |c| \cdot \|a\|$
     \item $\|1\| = 1$
-    \item Scalar-ring compatibility ($\mathbb{R}$-algebra structure)
   \end{enumerate}
+  This is the full Mathlib \texttt{NormedAlgebra} + \texttt{CompleteSpace} structure.
 \end{corollary}
 
 
 \subsection{Architecture Summary}\label{subsec:architecture}
 
-The formalization separates concerns into two files:
+The formalization separates concerns into layers:
 
 \begin{center}
 \begin{tabular}{|l|l|l|}
@@ -303,6 +353,7 @@ The formalization separates concerns into two files:
 \hline
 \texttt{CauchyProduct.lean} & Ring axioms, scalar compat & \texttt{PowerSeries.Basic} \\
 \texttt{lpWeighted.lean} & Banach structure, instances & \texttt{CauchyProduct}, \texttt{lpSpace} \\
+\texttt{FrechetCauchyProduct.lean} & Fr\'echet derivatives & Ring instances \\
 \hline
 \end{tabular}
 \end{center}

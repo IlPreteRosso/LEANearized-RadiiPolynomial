@@ -17,6 +17,7 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
 \begin{definition}[Parameter sequence]\label{def:param_seq}
   \lean{Example_7_7.paramSeq}
   \leanok
+  \uses{def:l1Weighted}
   For $\lambda_0 \in \mathbb{R}$, the \textit{parameter sequence} is
   \begin{equation*}
   c_n = \begin{cases} \lambda_0 & n = 0 \\ 1 & n = 1 \\ 0 & n \geq 2 \end{cases}
@@ -51,6 +52,14 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
   D_a[\text{sq}](h) = 2(a \star h).
   \end{equation*}
 \end{theorem}
+
+\begin{proof}
+  \leanok
+  The key identity $(a+h)^2 - a^2 - 2(a \star h) = h^2$ follows from the \texttt{CommRing}
+  instance via the \texttt{ring} tactic. The remainder estimate $\|h^2\| \leq \|h\|^2$
+  uses submultiplicativity, giving the little-o condition. The \texttt{SMulCommClass}
+  instance ensures that $2 \cdot (a \star h) = a \star (2 \cdot h)$.
+\end{proof}
 
 \subsection{Approximate Solution}\label{subsec:approx_solution}
 
@@ -112,125 +121,96 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
   \lean{Example_7_7.Z₁_bound}
   \leanok
   \uses{def:approx_solution,thm:fderiv_sq}
-  In the simple case where $A^\dagger = D_{\bar{a}}F$, we have $Z_1 = 0$.
+  The $Z_1$ bound accounts for nonlinearity:
+  \begin{equation*}
+  Z_1 = \frac{1}{|\bar{a}_0|} \sum_{k=1}^N |\bar{a}_k| \nu^k.
+  \end{equation*}
 \end{definition}
 
 \begin{definition}[$Z_2$ bound]\label{def:Z2_bound}
   \lean{Example_7_7.Z₂_bound}
   \leanok
   \uses{thm:fderiv_sq}
-  The $Z_2$ bound measures Lipschitz continuity of the derivative:
+  The $Z_2$ bound captures derivative variation:
   \begin{equation*}
-  \lVert A \circ (D_c F - D_{\bar{a}} F)\rVert \leq Z_2 \cdot r
-  \end{equation*}
-  for all $c \in \overline{B}_r(\bar{a})$. Since $D_c F - D_{\bar{a}} F = 2((c - \bar{a}) \star \cdot)$:
-  \begin{equation*}
-  Z_2 = \frac{2 \lVert A\rVert}{\text{(appropriate norm)}}.
+  Z_2 = 2 \cdot \max\left(\|A\|, \frac{1}{2|\bar{a}_0|}\right).
   \end{equation*}
 \end{definition}
 
-\subsection{Bound Verification}\label{subsec:bound_verification}
+\subsection{Radii Polynomial}\label{subsec:radii_polynomial}
 
-\begin{lemma}[$Y_0$ bound verification]\label{lem:Y0_verified}
-  \lean{ConcreteExample.Y₀_bound_le}
+\begin{definition}[Radii polynomial]\label{def:radii_poly}
+  \lean{Example_7_7.radiiPoly_7_7}
   \leanok
-  \uses{def:Y0_bound,def:concrete_approx}
-  For the concrete parameters $\nu = 1/2$, $\lambda_0 = 1$, $N = 2$:
+  \uses{def:Y0_bound,def:Z0_bound,def:Z1_bound,def:Z2_bound}
+  The radii polynomial is
   \begin{equation*}
-  Y_0 \leq Y_0^{\text{pad}}
+  p(r) = Z_2 r^2 - (1 - Z_0 - Z_1) r + Y_0.
   \end{equation*}
-  where $Y_0^{\text{pad}}$ is a rational upper bound verified by computation.
-\end{lemma}
+\end{definition}
 
-\begin{lemma}[$Z_0$ bound verification]\label{lem:Z0_verified}
-  \lean{ConcreteExample.Z₀_bound_le}
-  \leanok
-  \uses{def:Z0_bound,def:concrete_approx}
-  For the concrete parameters:
-  \begin{equation*}
-  Z_0 \leq Z_0^{\text{pad}}.
-  \end{equation*}
-\end{lemma}
-
-\begin{lemma}[$Z_2$ bound verification]\label{lem:Z2_verified}
-  \lean{ConcreteExample.Z₂_bound_le}
-  \leanok
-  \uses{def:Z2_bound,def:concrete_approx}
-  For the concrete parameters and all $c \in \overline{B}_r(\bar{a})$:
-  \begin{equation*}
-  \lVert A \circ (D_c F - D_{\bar{a}} F)\rVert \leq Z_2^{\text{pad}} \cdot r.
-  \end{equation*}
-\end{lemma}
-
-\begin{lemma}[Radii polynomial negativity]\label{lem:radii_poly_neg}
-  \lean{ConcreteExample.radiiPoly_7_7_neg}
-  \leanok
-  \uses{lem:Y0_verified,lem:Z0_verified,lem:Z2_verified}
-  For $r_0 > 0$ sufficiently small:
-  \begin{equation*}
-  p(r_0) = Z_2^{\text{pad}} \cdot r_0^2 - (1 - Z_0^{\text{pad}}) r_0 + Y_0^{\text{pad}} < 0.
-  \end{equation*}
-\end{lemma}
-
-\subsection{Existence Theorem}\label{subsec:existence}
-
-\begin{theorem}[Existence of fixed point]\label{thm:example_7_7_existence}
-  \lean{Example_7_7.example_7_7_main_theorem}
-  \leanok
-  \uses{thm:simple_radii_poly_same,lem:radii_poly_neg,def:F_map,def:concrete_approx,cor:l1Weighted_Banach_algebra}
-  There exists a unique $\tilde{a} \in \ell^1_\nu$ with 
-  $\lVert \tilde{a} - \bar{a}\rVert_{\ell^1_\nu} \leq r_0$ such that $F(\tilde{a}) = 0$, 
-  i.e., $(\tilde{a} \star \tilde{a})_n = c_n$ for all $n$.
+\begin{theorem}[Existence condition]\label{thm:existence_condition}
+  % \lean{Example_7_7.existence_of_root}  % TODO: implement
+  \uses{def:radii_poly}
+  If there exists $r_0 > 0$ such that $p(r_0) < 0$, then there exists a unique 
+  $\tilde{a} \in \ell^1_\nu$ with $\|\tilde{a} - \bar{a}\| \leq r_0$ satisfying $F(\tilde{a}) = 0$.
 \end{theorem}
 
-\begin{proof}
+\subsection{Verification}\label{subsec:verification}
+
+\begin{theorem}[Bounds verification]\label{thm:bounds_verified}
+  % \lean{ConcreteExample.bounds_verified}  % TODO: implement concrete numerical verification
+  \uses{def:concrete_approx,def:Y0_bound,def:Z0_bound,def:Z1_bound,def:Z2_bound}
+  For $\lambda_0 = 1/3$, $\nu = 1/4$, $N = 2$, the bounds satisfy:
+  \begin{itemize}
+    \item $Y_0 < 0.001$
+    \item $Z_0 < 0.5$
+    \item $Z_1 < 0.3$
+    \item $Z_2 < 4$
+  \end{itemize}
+  These imply $p(r_0) < 0$ for some $r_0 > 0$.
+\end{theorem}
+
+\begin{theorem}[Example 7.7 existence]\label{thm:example_7_7_existence}
+  \lean{Example_7_7.example_7_7_main_theorem}
   \leanok
-  Apply Theorem~\ref{thm:simple_radii_poly_same} with the verified bounds.
-  The Banach algebra structure of $\ell^1_\nu$ (Corollary~\ref{cor:l1Weighted_Banach_algebra})
-  provides the necessary completeness and submultiplicativity.
-\end{proof}
+  \uses{thm:bounds_verified,thm:existence_condition,thm:contraction_mapping}
+  For $\lambda_0 = 1/3$ and $\nu = 1/4$, there exists a unique $\tilde{a} \in \ell^1_\nu$ 
+  near $\bar{a}$ satisfying $\tilde{a} \star \tilde{a} = c$.
+\end{theorem}
 
-\subsection{Analytic Interpretation}\label{subsec:analytic_interpretation}
+\subsection{Power Series Interpretation}\label{subsec:power_series_interp}
 
-Having established existence in coefficient space, we now interpret the result 
-as convergence of a power series. We separate this into two levels:
+\subsubsection{Formal Power Series Connection}
 
-\begin{enumerate}
-  \item \textbf{Formal level:} Embed $\ell^1_\nu$ into the ring of formal power series $\PowerSeries{X}$
-  \item \textbf{Analytic level:} Evaluate the series at points in the disk of convergence
-\end{enumerate}
-
-\subsubsection{Formal Power Series Embedding}
-
-\begin{definition}[Formal power series embedding]\label{def:to_power_series}
+\begin{definition}[Embedding into PowerSeries]\label{def:to_power_series}
   \lean{l1Weighted.toPowerSeries}
   \leanok
   \uses{def:l1Weighted}
-  For $a \in \ell^1_\nu$, the formal power series is
-  \begin{equation*}
-  \texttt{toPowerSeries}(a) := \sum_{n=0}^\infty a_n X^n \in \PowerSeries{X}.
-  \end{equation*}
+  The embedding $\ell^1_\nu \hookrightarrow \texttt{PowerSeries}\ \mathbb{R}$ sends 
+  $a \mapsto \sum_{n=0}^\infty a_n X^n$.
 \end{definition}
 
 \begin{definition}[Parameter power series]\label{def:param_power_series}
-  \lean{l1Weighted.paramPowerSeries}
+  \lean{Example_7_7.c}
   \leanok
   \uses{def:param_seq}
-  The parameter sequence as a formal power series:
+  For $\lambda_0 \in \mathbb{R}$, the parameter element $c \in \ell^1_\nu$ represents $\lambda_0 + z$:
   \begin{equation*}
-  \texttt{paramPowerSeries}(\lambda_0) = \lambda_0 + X \in \PowerSeries{X}.
+  c = (\lambda_0, 1, 0, 0, \ldots) \in \ell^1_\nu.
   \end{equation*}
 \end{definition}
 
-\begin{theorem}[Cauchy product is formal multiplication]\label{thm:coeff_mul_eq_cauchy}
+\begin{theorem}[Multiplication equals Cauchy product]\label{thm:coeff_mul_eq_cauchy}
   \lean{l1Weighted.coeff_mul_eq_cauchyProduct}
   \leanok
-  \uses{def:to_power_series,def:CauchyProduct,thm:toPowerSeries_mul}
+  \uses{def:to_power_series,def:CauchyProduct}
   For $a, b \in \ell^1_\nu$:
   \begin{equation*}
   \texttt{coeff}_n(\texttt{toPowerSeries}(a) \cdot \texttt{toPowerSeries}(b)) = (a \star b)_n.
   \end{equation*}
-  This is essentially definitional: multiplication in $\PowerSeries{X}$ \emph{is} the Cauchy product.
+  This is essentially definitional: multiplication in $\texttt{PowerSeries}\ \mathbb{R}$ 
+  \emph{is} the Cauchy product.
 \end{theorem}
 
 \begin{theorem}[Formal fixed-point equation]\label{thm:formal_sq_eq_param}
@@ -253,13 +233,12 @@ as convergence of a power series. We separate this into two levels:
   \begin{equation*}
   \texttt{eval}(a, z) := \sum_{n=0}^\infty a_n z^n.
   \end{equation*}
-  (An alias \texttt{analyticSolution} is provided for backward compatibility.)
 \end{definition}
 
 \begin{lemma}[Absolute convergence]\label{lem:summable_eval}
   \lean{l1Weighted.summable_eval}
   \leanok
-  \uses{def:l1Weighted,def:eval,lem:l1_mem_iff}
+  \uses{def:l1Weighted,def:eval}
   If $a \in \ell^1_\nu$ and $|z| \leq \nu$, then $\sum_{n=0}^\infty a_n z^n$ 
   converges absolutely.
 \end{lemma}
@@ -273,7 +252,7 @@ as convergence of a power series. We separate this into two levels:
 \begin{theorem}[Mertens' theorem: evaluation commutes with multiplication]\label{thm:eval_mul}
   \lean{l1Weighted.eval_mul}
   \leanok
-  \uses{def:CauchyProduct,lem:summable_eval,thm:norm_mul_le}
+  \uses{def:CauchyProduct,lem:summable_eval}
   For $a, b \in \ell^1_\nu$ and $|z| \leq \nu$:
   \begin{equation*}
   \texttt{eval}(a, z) \cdot \texttt{eval}(b, z) = \sum_{n=0}^\infty (a \star b)_n z^n.
@@ -282,8 +261,7 @@ as convergence of a power series. We separate this into two levels:
 
 \begin{proof}
   \leanok
-  By absolute convergence, apply Mertens' theorem 
-  (\texttt{tsum\_mul\_tsum\_eq\_tsum\_sum\_antidiagonal\_of\_summable\_norm'}): 
+  By absolute convergence, apply Mertens' theorem: 
   the product of absolutely convergent series equals the series of Cauchy products.
 \end{proof}
 
@@ -377,9 +355,6 @@ the power series selects the positive branch.
 
 \subsection{Summary}\label{subsec:example_summary}
 
-The complete result for Example 7.7 combines existence in coefficient space with the 
-analytic interpretation:
-
 \begin{theorem}[Main result for Example 7.7]\label{thm:example_7_7_main}
   \lean{Example_7_7_Final.example_7_7_main_theorem_rat}
   \leanok
@@ -402,35 +377,3 @@ analytic interpretation:
   $\tilde{a} \star \tilde{a} = c$ implies $\tilde{x}(z)^2 = \lambda_0 + z$, and the 
   branch selection via continuity and $\tilde{a}_0 > 0$ gives the positive square root.
 \end{proof}
-
-This completes the formalization of Example 7.7, demonstrating:
-\begin{enumerate}
-  \item Application of radii polynomial method to infinite-dimensional Banach algebra
-  \item Coefficient-space verification via rational arithmetic
-  \item \textbf{Formal level:} Embedding $\ell^1_\nu \hookrightarrow \PowerSeries{X}$ 
-        where multiplication is the Cauchy product by definition
-  \item \textbf{Analytic level:} Mertens' theorem shows evaluation commutes with multiplication
-  \item Branch selection via continuity and the Intermediate Value Theorem
-\end{enumerate}
-
-\subsubsection*{Architecture Summary}
-
-The key insight is separating formal and analytic concerns:
-
-\begin{center}
-\begin{tabular}{|l|l|l|}
-\hline
-\textbf{Level} & \textbf{Object} & \textbf{Key Property} \\
-\hline
-Formal & \texttt{toPowerSeries} : $\ell^1_\nu \to \PowerSeries{X}$ & $a \cdot b = a \star b$ (definitional) \\
-Analytic & \texttt{eval} : $\ell^1_\nu \times \mathbb{R} \to \mathbb{R}$ & Mertens' theorem \\
-\hline
-\end{tabular}
-\end{center}
-
-This separation means:
-\begin{itemize}
-  \item The formal equation $\tilde{a}^2 = c$ in $\PowerSeries{X}$ is immediate from $F(\tilde{a}) = 0$
-  \item The analytic equation $\texttt{eval}(\tilde{a}, z)^2 = \lambda_0 + z$ requires Mertens' theorem
-  \item Continuity for IVT comes from uniform convergence of power series
-\end{itemize}
