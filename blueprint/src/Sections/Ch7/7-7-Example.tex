@@ -46,6 +46,43 @@ of a fixed point, then interpret this fixed point as a convergent power series.
   \end{equation*}
 \end{definition}
 
+\begin{lemma}[Commutativity of Cauchy product]\label{lem:cauchy_comm}
+  \lean{CauchyProduct.comm}
+  \leanok
+  \uses{def:cauchy_product}
+  For sequences $a, b : \mathbb{N} \to \mathbb{R}$:
+  \begin{equation*}
+  a \star b = b \star a.
+  \end{equation*}
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Reindex the sum: $\sum_{k=0}^n a_k b_{n-k} = \sum_{j=0}^n a_{n-j} b_j = \sum_{j=0}^n b_j a_{n-j}$.
+\end{proof}
+
+\begin{lemma}[Associativity of Cauchy product]\label{lem:cauchy_assoc}
+  \lean{CauchyProduct.assoc}
+  \leanok
+  \uses{def:cauchy_product}
+  For sequences $a, b, c : \mathbb{N} \to \mathbb{R}$:
+  \begin{equation*}
+  (a \star b) \star c = a \star (b \star c).
+  \end{equation*}
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Both sides equal the triple convolution $\sum_{i+j+k=n} a_i b_j c_k$.
+  Establish a bijection between the nested index sets:
+  \begin{align*}
+  \text{LHS: } & \sum_{p=0}^n \left(\sum_{i=0}^p a_i b_{p-i}\right) c_{n-p} 
+    = \sum_{i+j+k=n} a_i b_j c_k \\
+  \text{RHS: } & \sum_{i=0}^n a_i \left(\sum_{j=0}^{n-i} b_j c_{n-i-j}\right) 
+    = \sum_{i+j+k=n} a_i b_j c_k.
+  \end{align*}
+\end{proof}
+
 \begin{theorem}[Closure under Cauchy product]\label{thm:cauchy_product_mem}
   \lean{l1Weighted.mem}
   \leanok

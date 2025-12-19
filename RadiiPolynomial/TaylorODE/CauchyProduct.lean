@@ -53,6 +53,82 @@ lemma comm (a b : ℕ → ℝ) : (a ⋆ b) = (b ⋆ a) := by
     · simp only [Prod.mk.eta]
   · intro kl _; ring
 
+/-- Associativity of Cauchy product.
+    `((a ⋆ b) ⋆ c)ₙ = (a ⋆ (b ⋆ c))ₙ`
+
+    Both sides reduce to the triple convolution `Σ_{i+j+k=n} aᵢ bⱼ cₖ`.
+    The proof establishes a bijection between the nested index sets:
+    - Map: `(i, j) ↦ (j, i - j)` where `0 ≤ j ≤ i ≤ n`
+    - Inverse: `(j, k) ↦ (j + k, j)` where `0 ≤ j ≤ n`, `0 ≤ k ≤ n - j` -/
+lemma assoc (a b c : ℕ → ℝ) : ((a ⋆ b) ⋆ c) = (a ⋆ (b ⋆ c)) := by
+  rw [funext_iff]
+  unfold CauchyProduct
+  -- Rewrite antidiagonal sums as range sums: Σ_{(i,j) ∈ antidiag n} f(i,j) = Σ_{i=0}^n f(i, n-i)
+  simp (config := { decide := Bool.true }) [Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
+  intro n
+  -- Distribute multiplication through sums: (Σᵢ aᵢ) · c = Σᵢ (aᵢ · c)
+  simp (config := { decide := Bool.true }) only [mul_assoc, Finset.mul_sum _ _ _, Finset.sum_mul]
+  -- Convert nested range sums to sigma types for reindexing
+  rw [Finset.range_eq_Ico, Finset.sum_sigma', Finset.sum_sigma']
+  -- Bijection: (i, j) with 0 ≤ j ≤ i ≤ n  ↔  (j, i-j) with 0 ≤ j ≤ n, 0 ≤ i-j ≤ n-j
+  refine Finset.sum_bij (fun x _ => ⟨x.2, x.1 - x.2⟩)
+      ?h_mem ?h_inj ?h_surj ?h_comp
+  -- h_mem: The map sends indices to valid indices in the target sigma set
+  · intro a ha
+    rcases a with ⟨fst, snd⟩
+    simp [Nat.Ico_zero_eq_range, Finset.mem_sigma, Finset.mem_range] at ha ⊢
+    rcases ha with ⟨left, right⟩
+    refine ⟨?_, ?_⟩
+    · exact lt_of_le_of_lt (Nat.lt_succ_iff.mp right) left
+    · have hfst_le : fst ≤ n := Nat.lt_succ_iff.mp left
+      exact lt_of_le_of_lt (Nat.sub_le_sub_right hfst_le snd) (Nat.lt_succ_self _)
+  -- h_inj: The reindexing map is injective
+  · intro a₁ ha₁ a₂ ha₂ h
+    rcases a₁ with ⟨i1, j1⟩
+    rcases a₂ with ⟨i2, j2⟩
+    simp [Nat.Ico_zero_eq_range, Finset.mem_sigma, Finset.mem_range] at ha₁ ha₂
+    have hfst  : j1 = j2 := by simpa using congrArg Sigma.fst h
+    have hdiff : i1 - j1 = i2 - j2 := by simpa using congrArg Sigma.snd h
+    have hj1 : j1 ≤ i1 := Nat.lt_succ_iff.mp ha₁.2
+    have hj2 : j2 ≤ i2 := Nat.lt_succ_iff.mp ha₂.2
+    have hdiff' : i1 - j1 = i2 - j1 := by simpa [hfst] using hdiff
+    have hi : i1 = i2 := by
+      have hsum := congrArg (fun t => t + j1) hdiff'
+      simpa [Nat.sub_add_cancel hj1, Nat.sub_add_cancel (hfst ▸ hj2)] using hsum
+    subst hi; subst hfst; rfl
+  -- h_surj: The map is surjective; preimage of (j, k) is (j + k, j)
+  · intro b hb
+    rcases b with ⟨fst, snd⟩
+    simp [Nat.Ico_zero_eq_range, Finset.mem_sigma, Finset.mem_range] at hb
+    rcases hb with ⟨left, right⟩
+    have hle : snd ≤ n - fst := Nat.lt_succ_iff.mp right
+    refine ⟨⟨fst + snd, fst⟩, ?_, ?_⟩
+    · simp [Nat.Ico_zero_eq_range, Finset.mem_sigma, Finset.mem_range]
+      constructor
+      · have hfst_le : fst ≤ n := Nat.lt_succ_iff.mp left
+        have : fst + snd ≤ fst + (n - fst) := Nat.add_le_add_left hle _
+        have : fst + snd ≤ n := by
+          have hf : fst + (n - fst) = n := Nat.add_sub_of_le hfst_le
+          simpa [hf] using this
+        exact lt_of_le_of_lt this (Nat.lt_succ_self _)
+      · exact Nat.lt_succ_of_le (Nat.le_add_right _ _)
+    · simp only [add_tsub_cancel_left]
+  -- h_comp: Summands agree after reindexing: a_j · b_{i-j} · c_{n-i} = a_j · b_{i-j} · c_{n-j-(i-j)}
+  · intro a ha
+    rcases a with ⟨fst, snd⟩
+    simp [Nat.Ico_zero_eq_range, Finset.mem_sigma, Finset.mem_range] at ha
+    have hle : snd ≤ fst := Nat.lt_succ_iff.mp ha.2
+    -- Key calculation: n - snd - (fst - snd) = n - fst
+    have hcalc : n - snd - (fst - snd) = n - fst := by
+      calc
+        n - snd - (fst - snd) = n - (snd + (fst - snd)) := Nat.sub_sub _ _ _
+        _ = n - fst := by
+          have : snd + (fst - snd) = fst := by
+            have := Nat.sub_add_cancel hle
+            simpa [Nat.add_comm] using this
+          simp [this]
+    simp [hcalc]
+
 /-- If both sequences vanish beyond M, their Cauchy product vanishes beyond 2M -/
 lemma zero_of_support {a b : ℕ → ℝ} {M : ℕ}
     (ha : ∀ n, M < n → a n = 0) (hb : ∀ n, M < n → b n = 0)
