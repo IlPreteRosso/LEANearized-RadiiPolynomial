@@ -101,12 +101,19 @@ jobs:
             pip install --upgrade pip requests wheel
             pip install pygraphviz --config-settings="--global-option=build_ext" --config-settings="--global-option=-L/usr/lib/graphviz/" --config-settings="--global-option=-R/usr/lib/graphviz/"
             pip install leanblueprint
-            leanblueprint pdf || true
-            grep -E "undefined|Error" blueprint/print/print.log | head -30
+            leanblueprint pdf
             mkdir -p home_page
             cp blueprint/print/print.pdf home_page/blueprint.pdf
             leanblueprint web
             cp -r blueprint/web home_page/blueprint
+            
+      - name: Upload blueprint log for debugging
+        if: always()  # Run even if previous steps fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: blueprint-log
+          path: blueprint/print/print.log
+          retention-days: 5
 
       - name: Check declarations mentioned in the blueprint exist in Lean code
         run: ~/.elan/bin/lake exe checkdecls blueprint/lean_decls
