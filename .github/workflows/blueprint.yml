@@ -118,11 +118,7 @@ jobs:
           run: |
             apk add --no-cache make py3-pip git pkgconfig graphviz graphviz-dev gcc musl-dev python3-dev
 
-            # Use a workspace-local pip cache so actions/cache can persist it
-            mkdir -p .pip-cache
-            export PIP_CACHE_DIR=/github/workspace/.pip-cache
-
-            python3 -m pip install -U pip
+            python3 -m pip install -U pip --break-system-packages
 
             python3 -m pip install --break-system-packages \
               pygraphviz --config-settings="--global-option=build_ext" \
@@ -134,10 +130,8 @@ jobs:
             git config --global --add safe.directory $GITHUB_WORKSPACE
             git config --global --add safe.directory `pwd`
             
-            # Clean stale artifacts
             rm -rf blueprint/print/*.aux blueprint/print/*.toc blueprint/web
             
-            # Build
             leanblueprint pdf
             mkdir -p home_page
             cp blueprint/print/print.pdf home_page/blueprint.pdf
