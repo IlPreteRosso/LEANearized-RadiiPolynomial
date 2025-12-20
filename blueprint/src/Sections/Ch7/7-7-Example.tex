@@ -150,8 +150,9 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
 \end{definition}
 
 \begin{theorem}[Existence condition]\label{thm:existence_condition}
-  % \lean{Example_7_7.existence_of_root}  % TODO: implement
-  \uses{def:radii_poly}
+  \lean{general_radii_polynomial_theorem}
+  \leanok
+  \uses{def:radii_poly,thm:general_radii_poly_theorem}
   If there exists $r_0 > 0$ such that $p(r_0) < 0$, then there exists a unique 
   $\tilde{a} \in \ell^1_\nu$ with $\|\tilde{a} - \bar{a}\| \leq r_0$ satisfying $F(\tilde{a}) = 0$.
 \end{theorem}
@@ -159,7 +160,9 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
 \subsection{Verification}\label{subsec:verification}
 
 \begin{theorem}[Bounds verification]\label{thm:bounds_verified}
-  % \lean{ConcreteExample.bounds_verified}  % TODO: implement concrete numerical verification
+  \lean{Example_7_7.Y₀_bound_valid}
+  \leanok
+  % Also: Z₀_bound_valid, Z₁_bound_valid, Z₂_bound_valid
   \uses{def:concrete_approx,def:Y0_bound,def:Z0_bound,def:Z1_bound,def:Z2_bound}
   For $\lambda_0 = 1/3$, $\nu = 1/4$, $N = 2$, the bounds satisfy:
   \begin{itemize}

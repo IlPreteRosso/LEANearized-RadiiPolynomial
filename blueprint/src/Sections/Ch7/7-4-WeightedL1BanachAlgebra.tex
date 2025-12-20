@@ -1,6 +1,6 @@
 % blueprint/src/Sections/Ch7/7-4-WeightedL1BanachAlgebra.tex
 
-\section{Weighted \texorpdfstring{$\ell^1_\nu$}{ℓ¹ν} Banach Algebra (Section 7.4)}\label{sec:weighted_l1}
+\section{Weighted \texorpdfstring{$\ell^1_\nu$}{l1-nu} Banach Algebra (Section 7.4)}\label{sec:weighted_l1}
 
 This section establishes the weighted $\ell^1_\nu$ space as a commutative Banach algebra
 under the Cauchy product. The algebraic structure is derived by connecting to
@@ -24,7 +24,7 @@ are proven using weight factorization.
   equipped with the scaled norm $\|x\|_n := |x| \cdot \nu^n$.
 \end{definition}
 
-\subsection{Weighted \texorpdfstring{$\ell^p$}{ℓᵖ} Spaces}\label{subsec:weighted_lp}
+\subsection{Weighted \texorpdfstring{$\ell^p$}{lp} Spaces}\label{subsec:weighted_lp}
 
 \begin{definition}[Weighted $\ell^p$ space]\label{def:lpWeighted}
   \lean{lpWeighted}
@@ -328,6 +328,8 @@ $D[\mathrm{sq}](a) h = 2(a \star h)$, where the scalar $2$ must commute with the
 \end{proof}
 
 \begin{corollary}[Commutative Banach algebra]\label{cor:l1Weighted_Banach_algebra}
+  \lean{l1Weighted.instNormedAlgebra}
+  \leanok
   \uses{lem:lpWeighted_complete,thm:l1Weighted_CommRing,thm:l1Weighted_NormedRing,thm:l1Weighted_NormOneClass,thm:l1Weighted_Algebra,thm:l1Weighted_NormedAlgebra}
   $\ell^1_\nu$ is a commutative Banach algebra over $\mathbb{R}$:
   \begin{enumerate}
