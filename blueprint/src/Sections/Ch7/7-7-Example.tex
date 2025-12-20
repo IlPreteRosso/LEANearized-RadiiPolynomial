@@ -174,7 +174,7 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
   These imply $p(r_0) < 0$ for some $r_0 > 0$.
 \end{theorem}
 
-\begin{theorem}[Example 7.7 existence]\label{thm:example_7_7_existence}
+\begin{theorem}[Example 7.7 existence]\label{thm:example_7_7_main_theorem}
   \lean{Example_7_7.example_7_7_main_theorem}
   \leanok
   \uses{thm:general_radii_poly_theorem,thm:bounds_verified,def:radii_poly,thm:contraction_mapping}
@@ -271,7 +271,7 @@ $a \in \ell^1_\nu$ such that $(a \star a)_n = c_n$ where $c$ is the parameter se
 \begin{theorem}[Squaring identity]\label{thm:eval_sq_eq}
   \lean{l1Weighted.eval_sq_eq}
   \leanok
-  \uses{thm:example_7_7_existence,thm:eval_mul,def:param_seq}
+  \uses{thm:example_7_7_main_theorem,thm:eval_mul,def:param_seq}
   If $\tilde{a} \in \ell^1_\nu$ satisfies $F(\tilde{a}) = 0$, then for $|z| \leq \nu$:
   \begin{equation*}
   \texttt{eval}(\tilde{a}, z)^2 = \lambda_0 + z.
@@ -358,10 +358,10 @@ the power series selects the positive branch.
 
 \subsection{Summary}\label{subsec:example_summary}
 
-\begin{theorem}[Main result for Example 7.7]\label{thm:example_7_7_main}
+\begin{theorem}[Main result for Example 7.7]\label{thm:example_7_7_main_theorem_rat}
   \lean{Example_7_7_Final.example_7_7_main_theorem_rat}
   \leanok
-  \uses{thm:example_7_7_existence,thm:analytic_eq_sqrt}
+  \uses{thm:example_7_7_main_theorem,thm:analytic_eq_sqrt}
   For $\lambda_0 = 1/3$, $\nu = 1/4$, and $N = 2$:
   \begin{enumerate}
     \item \textbf{(Existence)} There exists a unique $\tilde{a} \in \ell^1_\nu$ with 
@@ -375,7 +375,7 @@ the power series selects the positive branch.
 \end{theorem}
 
 \begin{proof}
-  Part (1) follows from Theorem~\ref{thm:example_7_7_existence} via the radii polynomial method.
+  Part (1) follows from Theorem~\ref{thm:example_7_7_main_theorem} via the radii polynomial method.
   Part (2) follows from Theorem~\ref{thm:analytic_eq_sqrt}: the fixed-point equation 
   $\tilde{a} \star \tilde{a} = c$ implies $\tilde{x}(z)^2 = \lambda_0 + z$, and the 
   branch selection via continuity and $\tilde{a}_0 > 0$ gives the positive square root.
