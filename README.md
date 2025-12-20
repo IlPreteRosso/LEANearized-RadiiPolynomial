@@ -7,7 +7,7 @@ in Banach spaces, including a complete worked example (Section 7.7: analytic squ
 
 ---
 
-## Project Directory
+## Project Directory 
 
 ```
 RadiiPolynomial/
