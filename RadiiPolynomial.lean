@@ -2,4 +2,3 @@ import RadiiPolynomial.RadiiPolyGeneral
 import RadiiPolynomial.squareRoot
 import RadiiPolynomial.TaylorODE.Example_7_7_Analytic
 import RadiiPolynomial.TaylorODE.Example_7_7_Dyadic
-import Batteries.Tactic.Lint
