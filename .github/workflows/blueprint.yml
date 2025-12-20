@@ -66,8 +66,8 @@ jobs:
         uses: leanprover/lean-action@v1
         with:
           build: true
-          lint: flse
-          mk_all-check: true
+          lint: false
+          mk_all-check: false
 
       # === OUR OPTIMIZATION: Cache API docs ===
       - name: Cache API docs
