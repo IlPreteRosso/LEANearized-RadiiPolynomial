@@ -1,4 +1,4 @@
-name: Compile blueprint
+name: Compile blueprint 
 
 on:
   push:
