@@ -17,3 +17,5 @@ open:
 web:
 	leanblueprint web
 	lake exe checkdecls blueprint/lean_decls
+clean:
+	lake clean
