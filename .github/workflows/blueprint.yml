@@ -118,6 +118,9 @@ jobs:
           run: |
             apk add --no-cache make py3-pip git pkgconfig graphviz graphviz-dev gcc musl-dev python3-dev
 
+            mkdir -p .pip-cache
+            export PIP_CACHE_DIR=/github/workspace/.pip-cache
+            
             python3 -m pip install -U pip --break-system-packages
 
             python3 -m pip install --break-system-packages \
