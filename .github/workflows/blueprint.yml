@@ -19,9 +19,11 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: read          # Read access to repository contents
+  pages: write            # Write access to GitHub Pages
+  id-token: write         # Write access to ID tokens
+  issues: write           # Write access to issues
+  pull-requests: write
 
 jobs:
   build_project:
@@ -37,7 +39,7 @@ jobs:
           df -h
           
       - name: Checkout project
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 1
 
@@ -70,6 +72,12 @@ jobs:
 
       - name: Build project
         run: ~/.elan/bin/lake build RadiiPolynomial
+      
+      - name: Lint project
+        run: ~/.elan/bin/lake lint RadiiPolynomial
+
+      - name: Check all files are imported
+        run: ~/.elan/bin/lake exe mk_all --check
 
       - name: Cache API docs
         uses: actions/cache@v4
