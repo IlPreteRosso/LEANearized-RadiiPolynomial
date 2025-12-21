@@ -36,10 +36,10 @@ class IsRat (x : ℝ) where
 namespace IsRat
 
 instance instRat (r : ℚ) : IsRat (r : ℝ) := ⟨r, rfl⟩
-instance instNat (n : ℕ) : IsRat (n : ℝ) := ⟨n, by simp⟩
-instance instInt (z : ℤ) : IsRat (z : ℝ) := ⟨z, by simp⟩
-instance instOfNat0 : IsRat (0 : ℝ) := ⟨0, by simp⟩
-instance instOfNat1 : IsRat (1 : ℝ) := ⟨1, by simp⟩
+instance instNat (n : ℕ) : IsRat (n : ℝ) := ⟨n, by rfl⟩
+instance instInt (z : ℤ) : IsRat (z : ℝ) := ⟨z, by rfl⟩
+instance instOfNat0 : IsRat (0 : ℝ) := ⟨0, by norm_num⟩
+instance instOfNat1 : IsRat (1 : ℝ) := ⟨1, by norm_num⟩
 
 instance instNeg [hx : IsRat x] : IsRat (-x) :=
   ⟨-hx.q, by simp [hx.eq]⟩
