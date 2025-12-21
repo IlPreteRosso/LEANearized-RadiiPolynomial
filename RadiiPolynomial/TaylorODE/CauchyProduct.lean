@@ -23,6 +23,61 @@ of formal power series `(Σ aₖ Xᵏ) · (Σ bₗ Xˡ)`. This is formalized as:
 Since Mathlib already proves `CommSemiring (PowerSeries R)`, we get all ring
 axioms (associativity, distributivity, identity, commutativity) for free.
 
+### Why This Matters
+
+**Without this approach**, proving associativity requires manipulating triple sums:
+```
+  ((a ⋆ b) ⋆ c)ₙ = Σᵢ₊ⱼ₌ₙ (Σₖ₊ₗ₌ᵢ aₖ bₗ) cⱼ
+                = Σᵢ₊ⱼ₌ₙ Σₖ₊ₗ₌ᵢ aₖ bₗ cⱼ
+                = ... (tedious reindexing) ...
+                = (a ⋆ (b ⋆ c))ₙ
+```
+
+**With this approach**, associativity is a one-liner:
+```lean
+theorem assoc (a b c : ℕ → R) : (a ⋆ b) ⋆ c = a ⋆ (b ⋆ c) := by
+  -- Transport mul_assoc from PowerSeries
+  have h := mul_assoc (toPowerSeries a) (toPowerSeries b) (toPowerSeries c)
+  ...
+```
+
+### Architectural Role
+
+This file is **purely algebraic** — it knows nothing about norms or analysis.
+The separation of concerns is:
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│ CauchyProduct.lean (this file)                                           │
+│ ════════════════════════════════                                         │
+│ Pure algebra: ring axioms for sequences under Cauchy product             │
+│ • Depends only on: PowerSeries.Basic, NatAntidiagonal                    │
+│ • Provides: assoc, comm, left_distrib, right_distrib, one_mul, mul_one   │
+│ • Also: smul_mul, mul_smul (scalar-sequence compatibility)               │
+└──────────────────────────────────────────────────────────────────────────┘
+                                    ↓
+                         Used by (no norm proofs needed)
+                                    ↓
+┌──────────────────────────────────────────────────────────────────────────┐
+│ lpWeighted.lean                                                          │
+│ ═══════════════                                                          │
+│ Analysis: weighted norms, membership, submultiplicativity                │
+│ • Lifts ring axioms to l1Weighted via thin wrappers                      │
+│ • Proves analytic properties: mem, norm_mul_le, norm_one                 │
+│ • Registers typeclass instances: Ring, CommRing, NormedRing              │
+└──────────────────────────────────────────────────────────────────────────┘
+                                    ↓
+                         Enables (ring tactic works)
+                                    ↓
+┌──────────────────────────────────────────────────────────────────────────┐
+│ FrechetCauchyProduct.lean                                                │
+│ ═════════════════════════                                                │
+│ Calculus: Fréchet derivatives using CommRing structure                   │
+│ • Key identity (a+h)² - a² - 2ah = h² proved via `ring` tactic           │
+│ • No sum manipulations needed — algebra is inherited                     │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
 ### Scalar Compatibility
 
 The instances `SMulCommClass` and `IsScalarTower` in `lpWeighted.lean` rely on:
