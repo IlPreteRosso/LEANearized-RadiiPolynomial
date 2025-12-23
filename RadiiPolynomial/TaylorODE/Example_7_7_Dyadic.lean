@@ -137,12 +137,12 @@ def Z₂ : ℚ :=
 
 def radiiPoly : ℚ := Z₂ * r0^2 - (1 - Z₀ - Z₁) * r0 + Y₀
 
-#eval Y₀
-#eval |Y₀-0.017|<1e-3   -- ≈ 0.017
-#eval |Z₀-0.0016|<1e-4  -- ≈ 0.0016
-#eval |Z₁-0.446|<1e-3   -- ≈ 0.446
-#eval |Z₂-2.744|<1e-3   -- ≈ 2.744
-#eval (radiiPoly < 0 : Bool) -- should be true
+-- #eval Y₀
+-- #eval |Y₀-0.017|<1e-3   -- ≈ 0.017
+-- #eval |Z₀-0.0016|<1e-4  -- ≈ 0.0016
+-- #eval |Z₁-0.446|<1e-3   -- ≈ 0.446
+-- #eval |Z₂-2.744|<1e-3   -- ≈ 2.744
+-- #eval (radiiPoly < 0 : Bool) -- should be true
 
 /-- The radii polynomial is negative -/
 theorem radiiPoly_neg : radiiPoly < 0 := by native_decide
@@ -202,10 +202,10 @@ def lam0_val : ℝ := lam0
 /-! ### Padded bound constants (simple rationals, slightly larger than computed) -/
 
 -- Check computed values
-#eval Y₀
-#eval Z₀
-#eval Z₁
-#eval Z₂
+-- #eval Y₀
+-- #eval Z₀
+-- #eval Z₁
+-- #eval Z₂
 
 -- better looking bounds (honestly dyadic doesn't help here)
 def Y₀_pad : ℚ := 18/1000
@@ -213,10 +213,10 @@ def Z₀_pad : ℚ := 2/1000
 def Z₁_pad : ℚ := 446/1000
 def Z₂_pad : ℚ := 275/100
 
-#eval (Y₀ ≤ Y₀_pad : Bool)
-#eval (Z₀ ≤ Z₀_pad : Bool)
-#eval (Z₁ ≤ Z₁_pad : Bool)
-#eval (Z₂ ≤ Z₂_pad : Bool)
+-- #eval (Y₀ ≤ Y₀_pad : Bool)
+-- #eval (Z₀ ≤ Z₀_pad : Bool)
+-- #eval (Z₁ ≤ Z₁_pad : Bool)
+-- #eval (Z₂ ≤ Z₂_pad : Bool)
 
 -- Verify computed values fit under padded bounds
 theorem Y₀_le_pad : Y₀ ≤ Y₀_pad := by native_decide
@@ -227,8 +227,8 @@ theorem Z₂_le_pad : Z₂ ≤ Z₂_pad := by native_decide
 -- Radii polynomial with padded bounds is still negative
 def radiiPoly_pad : ℚ := Z₂_pad * r0^2 - (1 - Z₀_pad - Z₁_pad) * r0 + Y₀_pad
 
-#eval radiiPoly_pad
-#eval (radiiPoly_pad < 0 : Bool)
+-- #eval radiiPoly_pad
+-- #eval (radiiPoly_pad < 0 : Bool)
 
 theorem radiiPoly_pad_neg : radiiPoly_pad < 0 := by native_decide
 

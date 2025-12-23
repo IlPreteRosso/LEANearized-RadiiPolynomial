@@ -1,4 +1,6 @@
-# Radii Polynomial — A Lean 4 Blueprint Project
+<img src="assets/lean_logo-grey.svg" alt="LEAN"> 
+
+# Formalized Radii Polynomial 
 
 **Live blueprint:** https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial
 
