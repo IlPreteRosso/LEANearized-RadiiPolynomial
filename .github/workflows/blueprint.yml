@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build project
     steps:
-      # === OUR OPTIMIZATION: Disk cleanup ===
+      # === OPTIMIZATION: Disk cleanup ===
       - name: Free up disk space
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/boost
@@ -42,7 +42,7 @@ jobs:
         with:
           fetch-depth: 0  # lean-action may need full history for some features
 
-      # === OUR OPTIMIZATION: Granular caching ===
+      # === OPTIMIZATION: Granular caching ===
       - name: Cache Lake packages
         uses: actions/cache@v4
         with:
@@ -96,7 +96,7 @@ jobs:
             echo "HOME_PAGE_EXISTS=false" >> $GITHUB_ENV
           fi
 
-      # === OUR OPTIMIZATION: texlive-small + manual blueprint ===
+      # === OPTIMIZATION: texlive-small + manual blueprint ===
       - name: Build blueprint
         uses: xu-cheng/texlive-action@v2
         with:
