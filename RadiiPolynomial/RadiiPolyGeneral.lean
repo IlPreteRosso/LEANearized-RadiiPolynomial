@@ -392,36 +392,25 @@ lemma newton_operator_derivative_bound_general
   -- I_E - A∘Df(c) = [I_E - A∘A†] + [A∘A† - A∘Df(x̄)] + [A∘Df(x̄) - A∘Df(c)]
   --               = [I_E - A∘A†] + A∘[A† - Df(x̄)] + A∘[Df(x̄) - Df(c)]
 
-  calc ‖I_E - A.comp (fderiv ℝ f c)‖
-      -- Step 1: Insert and subtract A∘A† and A∘Df(x̄)
-      = ‖(I_E - A.comp A_dagger) +
-         A.comp (A_dagger - fderiv ℝ f xBar) +
-         A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ := by
-        congr 1
-        -- Verify the algebraic identity
-        simp only [comp_sub, sub_add_sub_cancel]
+  -- Decompose: I_E - A∘Df(c) = [I_E - A∘A†] + A∘[A† - Df(x̄)] + A∘[Df(x̄) - Df(c)]
+  have h_decomp : I_E - A.comp (fderiv ℝ f c) =
+      (I_E - A.comp A_dagger) +
+      A.comp (A_dagger - fderiv ℝ f xBar) +
+      A.comp (fderiv ℝ f xBar - fderiv ℝ f c) := by
+    simp only [comp_sub, sub_add_sub_cancel]
 
-        -- Step 2: Apply triangle inequality twice
-      _ ≤ ‖I_E - A.comp A_dagger‖ +
-          ‖A.comp (A_dagger - fderiv ℝ f xBar)‖ +
-          ‖A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ := by
-        calc ‖(I_E - A.comp A_dagger) +
-              A.comp (A_dagger - fderiv ℝ f xBar) +
-              A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖
-            ≤ ‖(I_E - A.comp A_dagger) + A.comp (A_dagger - fderiv ℝ f xBar)‖ +
-              ‖A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ := norm_add_le _ _
-          _ ≤ ‖I_E - A.comp A_dagger‖ + ‖A.comp (A_dagger - fderiv ℝ f xBar)‖ +
-              ‖A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ := add_le_add (norm_add_le _ _) le_rfl
+  -- For the third term, flip the order using norm_neg
+  have h_flip : fderiv ℝ f xBar - fderiv ℝ f c = -(fderiv ℝ f c - fderiv ℝ f xBar) := by abel
+  have h_third : ‖A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ ≤ Z₂ r * r := by
+    rw [h_flip, ContinuousLinearMap.comp_neg, norm_neg]
+    exact h_Z₂ c hc
 
-      -- Step 3: Apply the three bounds
-      _ ≤ Z₀ + Z₁ + Z₂ r * r := by
-        apply add_le_add
-        apply add_le_add h_Z₀ h_Z₁
-        -- For the third term, flip the order using norm_neg
-        have : fderiv ℝ f xBar - fderiv ℝ f c = -(fderiv ℝ f c - fderiv ℝ f xBar) := by
-          abel
-        rw [this, ContinuousLinearMap.comp_neg, norm_neg]
-        exact h_Z₂ c hc
+  -- Apply triangle inequality twice and combine bounds
+  rw [h_decomp]
+  have h1 := norm_add_le (I_E - A.comp A_dagger + A.comp (A_dagger - fderiv ℝ f xBar))
+                         (A.comp (fderiv ℝ f xBar - fderiv ℝ f c))
+  have h2 := norm_add_le (I_E - A.comp A_dagger) (A.comp (A_dagger - fderiv ℝ f xBar))
+  linarith [h1, h2, h_Z₀, h_Z₁, h_third]
 
 omit [CompleteSpace E] [CompleteSpace F] in
 /-- Simple derivative bound (when A† = Df(x̄), so Z₁ = 0)
