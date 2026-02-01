@@ -29,40 +29,36 @@ Exact values → Rational approximations:
 - ā₂ = -3√3/8 ≈ -0.6495 → -6495/10000
 - A entries similarly approximated
 
-## LeanCert Pattern: Connecting Abstract to Certified Bounds
+## LeanCert Pattern: `of_point_interval` + `fast_bound`
 
-`certify_bound` requires goals of form: `∀ x ∈ Set.Icc a b, f(x) ≤ c`
+The key pattern for connection lemmas avoids separate `_certify` theorems:
 
-### Pattern for connection lemmas:
-
+```lean
+lemma Bound_le : AbstractBound ≤ concrete := by
+  unfold AbstractBound           -- unfold to raw expression
+  finsum_expand!                 -- expand Finset sums
+  simp only [...]; vec_simp!     -- simplify vectors/dite/abs
+  unfold defs...                 -- unfold to pure numerics
+  apply of_point_interval (q := bound) (by norm_num)
+  fast_bound                     -- interval arithmetic verification
 ```
-Abstract_bound ≤ concrete_bound
-       ↓ unfold definition
-Finset.sum / matrix / abs / dite expressions
-       ↓ finsum_expand, vec_simp!, abs_ā₀, etc.
-Explicit rational arithmetic expression
-       ↓ exact Certified_theorem (1/(a/b)) ⟨le_refl, le_refl⟩
-Done
+
+### Helper lemma (defined once):
+```lean
+private lemma of_point_interval {e c : ℝ} {q : ℚ} (hqc : (q : ℝ) = c)
+    (h : ∀ x ∈ Set.Icc (0:ℝ) 0, e ≤ q) : e ≤ c := ...
 ```
 
 ### Key tactics:
-- **`finsum_expand`**: Expands Finset sums (Icc, Ico, Fin n) to explicit additions
-- **`vec_simp!`**: Simplifies vector indexing AND dite conditions in one step
-  - Replaces verbose: `simp only [show (n : ℕ) ≤ 2 from by omega, dite_true]; vec_simp`
-- **`dite_simp`**: Standalone dite simplification for decidable ℕ comparisons
+- **`finsum_expand!`**: Expands Finset sums + handles dite conditions
+- **`vec_simp!`**: Simplifies vector indexing, dite, and absolute values
+- **`fast_bound`**: Interval arithmetic for goals of form `∀ x ∈ Icc a b, f x ≤ c`
 
-### Key principles:
-1. **Certified theorems** (`_certify`): Written to match EXACTLY what unfolds
-2. **Use `vec_simp!`**: Handles both dite conditions and vector indexing automatically
-3. **Compound fractions work**: `certify_bound` handles `1/(a/b)` directly - no need to rewrite to `b/a`
-4. **No post-processing**: Avoid `convert`/`field_simp` - get form right upfront
-
-### LeanCert style (from examples):
-- Use `(bound : ℚ)` annotation for clarity (though `bound` as ℝ also works)
-- `certify_bound` handles `Real.sqrt`, `Real.exp`, `Real.log`, etc.
-- For constant bounds, wrap in trivial interval: `∀ x ∈ Set.Icc a a, ...`
-
-See: `.lake/packages/LeanCert/examples/` for reference patterns.
+### Why this pattern works:
+1. **No separate theorems**: Expression stays inline, no duplication
+2. **`of_point_interval`**: Wraps `e ≤ c` as `∀ x ∈ Icc 0 0, e ≤ q` for `fast_bound`
+3. **Rational bounds**: Use `(q := 9/500)` - `fast_bound` handles ℚ→ℝ coercion
+4. **Compound fractions**: `fast_bound` handles `1/(a/b)` directly
 -/
 
 open LeanCert.Core
@@ -426,54 +422,9 @@ end MainTheorem
 
 /-! ## Summary
 
-### The LeanCert Tactic Pattern
+See file header for the `of_point_interval` + `fast_bound` pattern documentation.
 
-**Tactics from LeanCert make connection proofs cleaner:**
-
-- **`finsum_expand`** - Automatically expands Finset sums (Icc, Ico, Fin n, etc.) to explicit additions
-- **`vec_simp`** - Simplifies vector indexing `![a, b, c] ⟨n, _⟩` with explicit Fin.mk forms
-- **`vec_simp!`** - Aggressive variant: also simplifies `dite` conditions with decidable ℕ comparisons
-- **`dite_simp`** - Standalone tactic for `dite` with decidable literal conditions
-
-**Key improvement: `vec_simp!` replaces verbose manual patterns:**
-
-```lean
--- OLD (verbose):
-simp only [show (0 : ℕ) ≤ 2 from by omega, show (1 : ℕ) ≤ 2 from by omega, dite_true]
-vec_simp
-
--- NEW (one line):
-vec_simp!
-```
-
-**Structure of a successful connection proof (using `of_point_interval`):**
-
-```lean
--- Helper lemma (defined once in the file):
-private lemma of_point_interval {e c : ℝ} {q : ℚ} (hqc : (q : ℝ) = c)
-    (h : ∀ x ∈ Set.Icc (0:ℝ) 0, e ≤ q) : e ≤ c := by
-  rw [← hqc]; exact h 0 ⟨le_refl _, le_refl _⟩
-
--- Connection lemma: unfold → expand → simplify → apply of_point_interval → fast_bound
-lemma Bound_le : @Abstract.Bound params ≤ upper_bound := by
-  unfold Abstract.Bound
-  simp only [...]              -- unfold inner definitions
-  finsum_expand                -- Finset.Icc / Fin n → explicit sum (automatic!)
-  vec_simp!                    -- dite + vector indexing (automatic!)
-  unfold defs...               -- unfold to pure numerics
-  simp only [param_eq]         -- substitute parameter values
-  -- Wrap in interval form and use fast_bound directly (no separate _certify theorem needed!)
-  apply of_point_interval (q := upper_bound_as_rat) (by norm_num)
-  fast_bound
-```
-
-### Key Principles
-
-1. **Use `of_point_interval`** - Avoids copying expressions into separate `_certify` theorems
-2. **Use `finsum_expand`** - No manual bridge lemmas needed for Finset sums
-3. **Use `vec_simp!`** - Handles both dite conditions AND vector indexing in one step
-4. **Use `fast_bound`/`certify_bound`** - Handles interval arithmetic automatically
-5. **Compound fractions work directly** - `certify_bound` handles `1/(a/b)` without alignment lemmas
+Key tactics: `finsum_expand!`, `vec_simp!`, `fast_bound`
 -/
 
 end Example77Clean
