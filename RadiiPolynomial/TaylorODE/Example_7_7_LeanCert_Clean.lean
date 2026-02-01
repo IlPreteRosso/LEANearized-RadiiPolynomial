@@ -199,7 +199,7 @@ lemma F_fin_0_eq : F_fin (ν := ν_val) lam0 sol 0 = ā₀^2 - lam0 := by
   simp only [l1Weighted.F_sub_const, lpWeighted.sub_toSeq, l1Weighted.sq_toSeq]
   simp only [c, lpWeighted.mk_apply, paramSeq]
   rw [CauchyProduct.apply]
-  simp only [Fin.val_zero, Finset.Nat.antidiagonal_zero, Finset.sum_singleton]
+  simp only [Fin.val_zero, Finset.Nat.antidiagonal_zero]
   simp only [ApproxSolution.toL1, lpWeighted.mk_apply, ApproxSolution.toSeq, sol]
   vec_simp!  -- Replaces: simp only [show (0 : ℕ) ≤ 2 from by omega, dite_true]; vec_simp
   ring
@@ -293,33 +293,6 @@ theorem foo_error : |f a - approx| < ε := by
   constructor <;> linarith
 ```
 -/
-
-section SqrtVerification
-
-/-- √3/3 < 0.5774 (upper bound) -/
-theorem sqrt3_div3_upper :
-    ∀ x ∈ Set.Icc (3 : ℝ) 3,
-    Real.sqrt x / 3 < (5774/10000 : ℚ) := by
-  certify_bound
-
-/-- √3/3 > 0.5773 (lower bound) -/
-theorem sqrt3_div3_lower :
-    ∀ x ∈ Set.Icc (3 : ℝ) 3,
-    Real.sqrt x / 3 > (5773/10000 : ℚ) := by
-  certify_bound
-
-/-- Combining bounds: |√3/3 - 5774/10000| < 0.0001
-    Since 0.5773 < √3/3 < 0.5774, we have:
-    - √3/3 - 0.5774 < 0 (so this direction is < 0.0001)
-    - √3/3 - 0.5773 > 0, and √3/3 < 0.5774 so √3/3 - 0.5773 < 0.0001 -/
-theorem sqrt3_div3_error_bound : |Real.sqrt 3 / 3 - 5774/10000| < 1/10000 := by
-  have hub := sqrt3_div3_upper 3 ⟨le_refl _, le_refl _⟩
-  have hlb := sqrt3_div3_lower 3 ⟨le_refl _, le_refl _⟩
-  rw [abs_sub_lt_iff]
-  constructor <;> linarith
-
-end SqrtVerification
-
 
 /-! ## Radii Polynomial Negativity
 
@@ -452,44 +425,15 @@ private theorem Z₂_tail_certify :
   simp only [Z₂_tail_val_eq]
   certify_bound
 
-/-- Helper: matrixColNorm for column 0 equals |A_diag| + |A_sub1|*ν + |A_sub2|*ν² -/
-private lemma colNorm_0_eq :
-    l1Weighted.matrixColNorm ν_val A_mat 0 = |A_diag| + |A_sub1| * ν_val + |A_sub2| * ν_val^2 := by
-  unfold l1Weighted.matrixColNorm A_mat A_diag A_sub1 A_sub2 ν_val
-  simp only [Fin.val_zero, pow_zero, div_one, one_mul]
-  finsum_expand!
-  simp only [Matrix.of_apply]
-  vec_simp!
-
-/-- Helper: matrixColNorm for column 1 -/
-private lemma colNorm_1_eq :
-    l1Weighted.matrixColNorm ν_val A_mat 1 = (1/ν_val) * (|A_diag| * ν_val + |A_sub1| * ν_val^2) := by
-  unfold l1Weighted.matrixColNorm A_mat A_diag A_sub1
-  simp only [Fin.val_one, pow_one]
-  finsum_expand!
-  simp only [Matrix.of_apply]
-  vec_simp!
-
-/-- Helper: matrixColNorm for column 2 -/
-private lemma colNorm_2_eq :
-    l1Weighted.matrixColNorm ν_val A_mat 2 = (1/ν_val^2) * (|A_diag| * ν_val^2) := by
-  unfold l1Weighted.matrixColNorm A_mat A_diag
-  simp only [Fin.val_two, pow_two]
-  finsum_expand!
-  simp only [Matrix.of_apply]
-  vec_simp!
-  ring
-
 /-- Each column norm is ≤ 14/10 -/
 private lemma colNorm_le (j : Fin 3) :
     l1Weighted.matrixColNorm ν_val A_mat j ≤ 14/10 := by
-  fin_cases j
-  · show l1Weighted.matrixColNorm ν_val A_mat 0 ≤ _; rw [colNorm_0_eq]
-    simp only [abs_A_diag, abs_A_sub1, abs_A_sub2, ν_val_eq, pow_two]; norm_num
-  · show l1Weighted.matrixColNorm ν_val A_mat 1 ≤ _; rw [colNorm_1_eq]
-    simp only [abs_A_diag, abs_A_sub1, ν_val_eq, pow_two]; norm_num
-  · show l1Weighted.matrixColNorm ν_val A_mat 2 ≤ _; rw [colNorm_2_eq]
-    simp only [abs_A_diag, ν_val_eq, pow_two]; norm_num
+  unfold l1Weighted.matrixColNorm A_mat A_diag A_sub1 A_sub2 ν_val
+  fin_cases j <;> (
+    simp only [pow_zero, pow_one, pow_two, div_one, one_mul]
+    finsum_expand!
+    simp only [Matrix.of_apply]
+    vec_simp!)
 
 /-- finWeightedMatrixNorm ≤ 14/10 -/
 private lemma matrixNorm_le :
@@ -523,11 +467,6 @@ For N=2: DF = [[2ā₀, 0, 0], [2ā₁, 2ā₀, 0], [2ā₂, 2ā₁, 2ā₀]]
 The key is that A ≈ (DF)⁻¹, so I - A·DF ≈ 0 for exact coefficients.
 With rational approximations, we get small but nonzero entries.
 -/
-
-/-- DF_fin entry (i,j): 2*ā_{i-j} if j ≤ i, else 0 -/
-private lemma DF_entry (i j : Fin 3) :
-    Example_7_7.DF_fin sol i j =
-    if h : (j : ℕ) ≤ i then 2 * sol.aBar_fin ⟨(i : ℕ) - (j : ℕ), by omega⟩ else 0 := rfl
 
 /-- Explicit DF matrix for our sol -/
 private lemma DF_explicit :
@@ -565,61 +504,6 @@ private lemma one_sub_A_DF_eq : 1 - A_mat * Example_7_7.DF_fin sol = I_sub_A_DF 
   simp only [Matrix.sub_apply, Matrix.one_apply_eq, Matrix.of_apply]
   all_goals vec_simp!
 
-/-- The diagonal entry 1 - 2*A_diag*ā₀ is small -/
-private noncomputable def diag_val : ℝ := 1 - 2*A_diag*ā₀
-
-private lemma diag_abs_le : |diag_val| ≤ 1/1000 := by
-  simp only [diag_val, A_diag, ā₀]
-  norm_num
-
-/-- Off-diagonal entry (1,0) -/
-private noncomputable def off10_val : ℝ := -2*(A_sub1*ā₀ + A_diag*ā₁)
-
-private lemma off10_abs_le : |off10_val| ≤ 1/1000 := by
-  simp only [off10_val, A_sub1, A_diag, ā₀, ā₁]
-  norm_num
-
-/-- Off-diagonal entry (2,0) -/
-private noncomputable def off20_val : ℝ := -2*(A_sub2*ā₀ + A_sub1*ā₁ + A_diag*ā₂)
-
-private lemma off20_abs_le : |off20_val| ≤ 2/1000 := by
-  simp only [off20_val, A_sub2, A_sub1, A_diag, ā₀, ā₁, ā₂]
-  norm_num
-
-/-- Column norms of I - A*DF -/
-private lemma Z₀_colNorm_0 :
-    l1Weighted.matrixColNorm ν_val I_sub_A_DF 0 ≤ 2/1000 := by
-  unfold l1Weighted.matrixColNorm I_sub_A_DF A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂
-  simp only [Fin.val_zero, pow_zero, div_one, one_mul]
-  finsum_expand!
-  simp only [Matrix.of_apply]
-  vec_simp!
-  simp only [ν_val_eq]
-  apply of_point_interval (q := 2/1000) (by norm_num)
-  fast_bound
-
-private lemma Z₀_colNorm_1 :
-    l1Weighted.matrixColNorm ν_val I_sub_A_DF 1 ≤ 2/1000 := by
-  unfold l1Weighted.matrixColNorm I_sub_A_DF A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂
-  simp only [Fin.val_one, pow_one]
-  finsum_expand!
-  simp only [Matrix.of_apply]
-  vec_simp!
-  simp only [ν_val_eq]
-  apply of_point_interval (q := 2/1000) (by norm_num)
-  fast_bound
-
-private lemma Z₀_colNorm_2 :
-    l1Weighted.matrixColNorm ν_val I_sub_A_DF 2 ≤ 2/1000 := by
-  unfold l1Weighted.matrixColNorm I_sub_A_DF A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂
-  simp only [Fin.val_two, pow_two]
-  finsum_expand!
-  simp only [Matrix.of_apply]
-  vec_simp!
-  simp only [ν_val_eq]
-  apply of_point_interval (q := 2/1000) (by norm_num)
-  fast_bound
-
 /-- Z₀ = ‖I - A·DF‖ ≤ 2/1000 -/
 lemma Z₀_le : @Example_7_7.Z₀_bound ν_val 2 sol A_mat ≤ 2/1000 := by
   unfold Example_7_7.Z₀_bound
@@ -627,10 +511,16 @@ lemma Z₀_le : @Example_7_7.Z₀_bound ν_val 2 sol A_mat ≤ 2/1000 := by
   unfold l1Weighted.finWeightedMatrixNorm
   apply Finset.sup'_le
   intro j _
-  fin_cases j
-  · show l1Weighted.matrixColNorm ν_val I_sub_A_DF 0 ≤ _; exact Z₀_colNorm_0
-  · show l1Weighted.matrixColNorm ν_val I_sub_A_DF 1 ≤ _; exact Z₀_colNorm_1
-  · show l1Weighted.matrixColNorm ν_val I_sub_A_DF 2 ≤ _; exact Z₀_colNorm_2
+  -- Each column norm ≤ 2/1000
+  unfold l1Weighted.matrixColNorm I_sub_A_DF A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂
+  fin_cases j <;> (
+    simp only [pow_zero, pow_one, pow_two, div_one, one_mul]
+    finsum_expand!
+    simp only [Matrix.of_apply]
+    vec_simp!
+    simp only [ν_val_eq]
+    apply of_point_interval (q := 2/1000) (by norm_num)
+    fast_bound)
 
 /-! ### Y₀ proof
 
@@ -682,8 +572,6 @@ theorem radiiPoly_7_7_le :
   have hZ0 := Z₀_le
   have hZ1 := Z₁_le
   have hZ2 := Z₂_le
-  have hr : (0:ℝ) ≤ 996/10000 := by positivity
-  have hr2 : (0:ℝ) ≤ (996/10000)^2 := sq_nonneg _
   -- Monotonicity: all bounds increase p
   nlinarith
 
