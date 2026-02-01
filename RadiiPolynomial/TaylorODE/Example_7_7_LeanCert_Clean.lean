@@ -652,22 +652,15 @@ lemma Y₀_le : @Example_7_7.Y₀_bound ν_val 2 lam0 sol A_mat ≤ 9/500 := by
   vec_simp
   -- Step 4: Use F_fin computation lemmas
   simp only [F_fin_0_eq, F_fin_1_eq, F_fin_2_eq]
-  -- Step 5: Expand tail sum over Finset.Icc 3 4
-  have hIcc34 : Finset.Icc 3 (2 * 2) = {3, 4} := by native_decide
-  simp only [hIcc34]
-  finsum_expand
-  -- Step 6: Expand inner sums in tail
-  have hIcc12 : Finset.Icc (3 - 2) 2 = {1, 2} := by native_decide
-  have hIcc22 : Finset.Icc (4 - 2) 2 = {2} := by native_decide
-  simp only [hIcc12, hIcc22]
-  finsum_expand
-  -- Step 7: Unfold toSeq and simplify vector access
+  -- Step 5: Expand tail sums (finsum_expand! handles computed bounds like 2*2, 3-2)
+  finsum_expand!
+  -- Step 6: Unfold toSeq and simplify vector access
   simp only [Example_7_7.ApproxSolution.toSeq, sol]
   vec_simp!
-  -- Step 8: Unfold all symbolic definitions to numerics
+  -- Step 7: Unfold all symbolic definitions to numerics
   unfold A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂ lam0
   simp only [ν_val_eq]
-  -- Step 9: Use of_point_interval to wrap goal in interval form, then fast_bound
+  -- Step 8: Use of_point_interval to wrap goal in interval form, then fast_bound
   apply of_point_interval (q := 9/500) (by norm_num)
   fast_bound
 
