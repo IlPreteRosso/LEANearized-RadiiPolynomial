@@ -411,28 +411,13 @@ private theorem Z₂_col2_certify :
   simp only [abs_A_diag, ν_val_eq, pow_two]
   certify_bound
 
-/-- The tail term value: 1/(2*|ā₀|) -/
-noncomputable def Z₂_tail_val : ℝ := 1/(2*|ā₀|)
-
-lemma Z₂_tail_val_eq : Z₂_tail_val = 5000/5774 := by
-  simp only [Z₂_tail_val, abs_ā₀]
-  norm_num
-
-/-- Tail term bound: 1/(2*|ā₀|) ≤ 14/10 -/
-private theorem Z₂_tail_certify :
-    ∀ x ∈ Set.Icc Z₂_tail_val Z₂_tail_val,
-    x ≤ (14/10 : ℚ) := by
-  simp only [Z₂_tail_val_eq]
-  certify_bound
-
 /-- Each column norm is ≤ 14/10 -/
 private lemma colNorm_le (j : Fin 3) :
     l1Weighted.matrixColNorm ν_val A_mat j ≤ 14/10 := by
   unfold l1Weighted.matrixColNorm A_mat A_diag A_sub1 A_sub2 ν_val
   fin_cases j <;> (
-    simp only [pow_zero, pow_one, pow_two, div_one, one_mul]
     finsum_expand!
-    simp only [Matrix.of_apply]
+    -- simp only [Matrix.of_apply]
     vec_simp!)
 
 /-- finWeightedMatrixNorm ≤ 14/10 -/
@@ -446,16 +431,11 @@ private lemma matrixNorm_le :
 /-- Z₂ = 2 * max(‖A‖, 1/(2|ā₀|)) ≤ 28/10 -/
 lemma Z₂_le : @Example_7_7.Z₂_bound ν_val 2 sol A_mat ≤ 28/10 := by
   unfold Example_7_7.Z₂_bound
-  simp only [sol, Matrix.cons_val_zero]
-  -- 2 * max(matrixNorm, tailTerm) ≤ 28/10
-  have h_norm := matrixNorm_le
-  have h_tail : 1 / (2 * |ā₀|) ≤ 14/10 := by
-    have h := Z₂_tail_certify Z₂_tail_val ⟨le_refl _, le_refl _⟩
-    simp only [Z₂_tail_val] at h
-    linarith
-  have hmax : max (l1Weighted.finWeightedMatrixNorm ν_val A_mat) (1 / (2 * |ā₀|)) ≤ 14/10 :=
-    max_le h_norm h_tail
-  linarith
+  simp only [sol, Matrix.cons_val_zero, abs_ā₀]
+  -- 2 * max(matrixNorm, tailTerm) ≤ 2 * 14/10 = 28/10
+  refine le_trans (mul_le_mul_of_nonneg_left (max_le matrixNorm_le ?_) (by norm_num)) (by norm_num)
+  apply of_point_interval (q := 14/10) (by norm_num)
+  fast_bound
 
 /-! ### Z₀ proof
 
@@ -487,7 +467,7 @@ private lemma A_mul_DF_eq : A_mat * Example_7_7.DF_fin sol = A_DF := by
   ext i j
   fin_cases i <;> fin_cases j <;>
   simp only [Matrix.mul_apply, A_mat, A_DF, A_diag, A_sub1, A_sub2]
-  all_goals (vec_simp!; finsum_expand!; ring)
+  all_goals (vec_simp!; finsum_expand!; try ring)
 
 /-- I - A*DF explicitly -/
 private noncomputable def I_sub_A_DF : Matrix (Fin 3) (Fin 3) ℝ :=
@@ -514,13 +494,9 @@ lemma Z₀_le : @Example_7_7.Z₀_bound ν_val 2 sol A_mat ≤ 2/1000 := by
   -- Each column norm ≤ 2/1000
   unfold l1Weighted.matrixColNorm I_sub_A_DF A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂
   fin_cases j <;> (
-    simp only [pow_zero, pow_one, pow_two, div_one, one_mul]
+    simp only [pow_zero, pow_one, pow_two, div_one, one_mul, ν_val_eq]
     finsum_expand!
-    simp only [Matrix.of_apply]
-    vec_simp!
-    simp only [ν_val_eq]
-    apply of_point_interval (q := 2/1000) (by norm_num)
-    fast_bound)
+    vec_simp!)
 
 /-! ### Y₀ proof
 
