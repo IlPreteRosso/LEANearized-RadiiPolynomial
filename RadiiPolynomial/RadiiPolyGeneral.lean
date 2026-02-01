@@ -14,13 +14,6 @@ open Metric Set Filter ContinuousLinearMap
 This file generalizes the radii polynomial approach to maps between potentially different
 Banach spaces (E, F). This corresponds to Theorem 7.6.2 in the informal proof.
 
-## Main differences from the E to E case:
-- Maps f : E → F between potentially different Banach spaces
-- Approximate inverse A : F →L[ℝ] E (goes in reverse direction)
-- Approximate derivative A† : E →L[ℝ] F (approximates Df)
-- The composition AA† : E →L[ℝ] E must be close to identity on E
-- Additional bound Z₁ for ‖A[Df(x̄) - A†]‖
-
 ## Banach Space Setup
 
 We work with two Banach spaces E and F over ℝ:
