@@ -168,38 +168,24 @@ private lemma antidiag_2 : Finset.antidiagonal (2 : ℕ) = {(0, 2), (1, 1), (2, 
 
 open Example_7_7 in
 lemma F_fin_0_eq : F_fin (ν := ν_val) lam0 sol 0 = ā₀^2 - lam0 := by
-  unfold F_fin F
-  simp only [l1Weighted.F_sub_const, lpWeighted.sub_toSeq, l1Weighted.sq_toSeq]
-  simp only [c, lpWeighted.mk_apply, paramSeq]
-  rw [CauchyProduct.apply]
-  simp only [Fin.val_zero, Finset.Nat.antidiagonal_zero]
-  simp only [ApproxSolution.toL1, lpWeighted.mk_apply, ApproxSolution.toSeq, sol]
-  vec_simp!  -- Replaces: simp only [show (0 : ℕ) ≤ 2 from by omega, dite_true]; vec_simp
-  ring
+  unfold F_fin F; simp only [l1Weighted.F_sub_const, lpWeighted.sub_toSeq, l1Weighted.sq_toSeq,
+    c, lpWeighted.mk_apply, paramSeq, CauchyProduct.apply, Fin.val_zero,
+    Finset.Nat.antidiagonal_zero, ApproxSolution.toL1, ApproxSolution.toSeq, sol]
+  vec_simp!; ring
 
 open Example_7_7 in
 lemma F_fin_1_eq : F_fin (ν := ν_val) lam0 sol 1 = 2 * ā₀ * ā₁ - 1 := by
-  unfold F_fin F
-  simp only [l1Weighted.F_sub_const, lpWeighted.sub_toSeq, l1Weighted.sq_toSeq]
-  simp only [c, lpWeighted.mk_apply, paramSeq]
-  rw [CauchyProduct.apply]
-  simp only [Fin.val_one, antidiag_1]
-  finsum_expand  -- Replaces manual Finset.sum_insert calls
-  simp only [ApproxSolution.toL1, lpWeighted.mk_apply, ApproxSolution.toSeq, sol]
-  vec_simp!
-  ring
+  unfold F_fin F; simp only [l1Weighted.F_sub_const, lpWeighted.sub_toSeq, l1Weighted.sq_toSeq,
+    c, lpWeighted.mk_apply, paramSeq, CauchyProduct.apply, Fin.val_one, antidiag_1,
+    ApproxSolution.toL1, ApproxSolution.toSeq, sol]
+  finsum_expand; vec_simp!; ring
 
 open Example_7_7 in
 lemma F_fin_2_eq : F_fin (ν := ν_val) lam0 sol 2 = 2 * ā₀ * ā₂ + ā₁^2 := by
-  unfold F_fin F
-  simp only [l1Weighted.F_sub_const, lpWeighted.sub_toSeq, l1Weighted.sq_toSeq]
-  simp only [c, lpWeighted.mk_apply, paramSeq]
-  rw [CauchyProduct.apply]
-  simp only [Fin.val_two, antidiag_2]
-  finsum_expand  -- Replaces manual Finset.sum_insert calls
-  simp only [ApproxSolution.toL1, lpWeighted.mk_apply, ApproxSolution.toSeq, sol]
-  vec_simp!  -- Replaces manual dite + vec_simp
-  ring
+  unfold F_fin F; simp only [l1Weighted.F_sub_const, lpWeighted.sub_toSeq, l1Weighted.sq_toSeq,
+    c, lpWeighted.mk_apply, paramSeq, CauchyProduct.apply, Fin.val_two, antidiag_2,
+    ApproxSolution.toL1, ApproxSolution.toSeq, sol]
+  finsum_expand; vec_simp!; ring
 
 end Coefficients
 
@@ -482,26 +468,13 @@ then use fast_bound certified theorems (like Z₀ pattern).
 -/
 
 lemma Y₀_le : @Example_7_7.Y₀_bound ν_val 2 lam0 sol A_mat ≤ 9/500 := by
-  -- Step 1: Unfold Y₀_bound definition
   unfold Example_7_7.Y₀_bound
-  -- Step 2: Expand outer Fin 3 sum
   finsum_expand!
-  -- Step 3: Expand inner Fin 3 sums (matrix-vector products) and simplify
-  simp only [A_mat, Matrix.of_apply]
-  vec_simp
-  -- Step 4: Use F_fin computation lemmas
-  simp only [F_fin_0_eq, F_fin_1_eq, F_fin_2_eq]
-  -- Step 5: Expand tail sums (finsum_expand! handles computed bounds like 2*2, 3-2)
+  simp only [A_mat, F_fin_0_eq, F_fin_1_eq, F_fin_2_eq]; vec_simp!
   finsum_expand!
-  -- Step 6: Unfold toSeq and simplify vector access
-  simp only [Example_7_7.ApproxSolution.toSeq, sol]
-  vec_simp!
-  -- Step 7: Unfold all symbolic definitions to numerics
-  unfold A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂ lam0
-  simp only [ν_val_eq]
-  -- Step 8: Use of_point_interval to wrap goal in interval form, then fast_bound
-  apply of_point_interval (q := 9/500) (by norm_num)
-  fast_bound
+  simp only [Example_7_7.ApproxSolution.toSeq, sol]; vec_simp!
+  unfold A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂ lam0; simp only [ν_val_eq]
+  apply of_point_interval (q := 9/500) (by norm_num); fast_bound
 
 end Connection
 
