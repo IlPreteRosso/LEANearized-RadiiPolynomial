@@ -108,18 +108,14 @@ With rational coefficients, we can state explicit equalities. -/
 section Coefficients
 
 lemma ā₀_eq : ā₀ = 5774/10000 := rfl
-lemma ā₁_eq : ā₁ = 8660/10000 := rfl
-lemma ā₂_eq : ā₂ = -6495/10000 := rfl
 lemma ν_val_eq : (ν_val : ℝ) = 1/4 := rfl
 
 -- A_mat entry equalities
 lemma A_diag_eq : A_diag = 8660/10000 := rfl
-lemma A_sub1_eq : A_sub1 = -12990/10000 := rfl
 lemma A_sub2_eq : A_sub2 = 29240/10000 := rfl
 
 -- A_mat entry positivity/negativity
 lemma A_diag_pos : 0 < A_diag := by unfold A_diag; norm_num
-lemma A_sub1_neg : A_sub1 < 0 := by unfold A_sub1; norm_num
 lemma A_sub2_pos : 0 < A_sub2 := by unfold A_sub2; norm_num
 
 -- Absolute values of A_mat entries
@@ -130,11 +126,6 @@ lemma abs_A_sub2 : |A_sub2| = 29240/10000 := by rw [abs_of_pos A_sub2_pos, A_sub
 
 -- Matrix entry access: unfold A_mat to explicit values
 -- The key is to unfold through the !![...] notation
-lemma A_mat_unfold : A_mat = !![A_diag, 0, 0; A_sub1, A_diag, 0; A_sub2, A_sub1, A_diag] := rfl
-
--- For matrix access, we need to unfold Matrix.of and use vec_simp! to evaluate
--- The indices come as ⟨n, proof⟩ form after fin_cases, so we use the dsimproc approach
-
 /-- |ā₀| = ā₀ (positive) -/
 lemma abs_ā₀ : |ā₀| = 5774/10000 := by
   rw [abs_of_pos ā₀_pos, ā₀_eq]
@@ -157,28 +148,10 @@ lemma inv_abs_ā₀ : 1 / |ā₀| = 10000/5774 := by
 
 -- Note: inv_ā₀_frac not needed! certify_bound handles 1/(a/b) directly.
 
-/-- sol.toSeq accessors -/
-lemma sol_toSeq_0 : sol.toSeq 0 = ā₀ := by simp [Example_7_7.ApproxSolution.toSeq, sol]
-lemma sol_toSeq_1 : sol.toSeq 1 = ā₁ := by simp [Example_7_7.ApproxSolution.toSeq, sol]
-lemma sol_toSeq_2 : sol.toSeq 2 = ā₂ := by simp [Example_7_7.ApproxSolution.toSeq, sol]
-lemma sol_toSeq_ge_3 (k : ℕ) (hk : 3 ≤ k) : sol.toSeq k = 0 := by
-  simp only [Example_7_7.ApproxSolution.toSeq, sol]
-  have : ¬(k ≤ 2) := by omega
-  simp [this]
-
 /-! ### F_fin explicit values (ODE residual)
 
 F(ā) = ā⋆ā - c where c = (lam0, 1, 0, ...).
 For rational approximations, F(ā) ≠ 0 but is small. -/
-
-/-- F_fin 0 = ā₀² - lam0 -/
-noncomputable def F₀_val : ℝ := (5774/10000)^2 - 1/3
-
-/-- F_fin 1 = 2ā₀ā₁ - 1 -/
-noncomputable def F₁_val : ℝ := 2 * (5774/10000) * (8660/10000) - 1
-
-/-- F_fin 2 = 2ā₀ā₂ + ā₁² (note: for n≥2, convolution has no constant term) -/
-noncomputable def F₂_val : ℝ := 2 * (5774/10000) * (-6495/10000) + (8660/10000)^2
 
 /-! ### F_fin computation lemmas
 
