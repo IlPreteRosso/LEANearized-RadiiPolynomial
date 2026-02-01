@@ -307,165 +307,12 @@ section Connection
 
 open Example_7_7
 
-/-- Helper: Transform `e ≤ c` goal into interval form `∀ x ∈ Set.Icc 0 0, e ≤ c` for fast_bound.
-    This avoids copying large expressions into separate certified theorems.
-    Uses rational bound with cast conversion for fast_bound compatibility. -/
+/-- Helper: Transform `e ≤ c` goal into interval form for fast_bound. -/
 private lemma of_point_interval {e c : ℝ} {q : ℚ} (hqc : (q : ℝ) = c)
     (h : ∀ x ∈ Set.Icc (0:ℝ) 0, e ≤ q) : e ≤ c := by
   rw [← hqc]; exact h 0 ⟨le_refl _, le_refl _⟩
 
-/-- Z₁ certified bound using symbolic names
-    Z₁ = (1/|ā₀|) * (|ā₁|*ν + |ā₂|*ν²) -/
-theorem Z₁_certify :
-    ∀ x ∈ Set.Icc (1/|ā₀| : ℝ) (1/|ā₀|),
-    x * (|ā₁| * ν_val + |ā₂| * ν_val^2) ≤ (46/100 : ℚ) := by
-  simp only [abs_ā₀, abs_ā₁, abs_ā₂, ν_val_eq, pow_two]
-  certify_bound
-
-/-- Z₁ connection: unfold to rational expression -/
-lemma Z₁_le : @Example_7_7.Z₁_bound ν_val 2 sol ≤ 46/100 := by
-  -- Unfold to raw numerical expression
-  unfold Example_7_7.Z₁_bound
-  simp only [Example_7_7.ApproxSolution.toSeq, sol]
-  -- Expand Finset.Icc sum using finsum_expand
-  finsum_expand
-  -- Simplify dite and vector indexing using vec_simp!
-  vec_simp!
-  -- Simplify absolute values and parameters
-  rw [abs_ā₀, abs_ā₁, abs_ā₂, ν_val_eq]
-  -- Simplify powers and convert inv to 1/
-  simp only [pow_two, inv_eq_one_div]
-  -- Apply certified bound
-  have h := Z₁_certify (1/|ā₀|) ⟨le_refl _, le_refl _⟩
-  simp only [abs_ā₀] at h
-  linarith
-
-/-! ### Z₂ proof
-
-Strategy: Z₂ = 2 * max(matrix_norm, 1/(2|ā₀|))
-- Column norms: col0 ≈ 1.37, col1 ≈ 1.19, col2 ≈ 0.87
-- Tail term 1/(2|ā₀|) ≈ 0.866
-- Matrix norm (col0) dominates
-- Bound both by 14/10, so Z₂ ≤ 2 * 14/10 = 28/10
--/
-
-/-- Column 0 norm bound: |A_diag| + |A_sub1|*ν + |A_sub2|*ν² ≤ 14/10 -/
-private theorem Z₂_col0_certify :
-    ∀ x ∈ Set.Icc (1:ℝ) 1,
-    |A_diag| + |A_sub1| * ν_val + |A_sub2| * ν_val^2 ≤ (14/10 : ℚ) := by
-  simp only [abs_A_diag, abs_A_sub1, abs_A_sub2, ν_val_eq, pow_two]
-  certify_bound
-
-/-- Column 1 norm bound: (1/ν) * (|A_diag|*ν + |A_sub1|*ν²) ≤ 14/10 -/
-private theorem Z₂_col1_certify :
-    ∀ x ∈ Set.Icc (1:ℝ) 1,
-    (1/ν_val) * (|A_diag| * ν_val + |A_sub1| * ν_val^2) ≤ (14/10 : ℚ) := by
-  simp only [abs_A_diag, abs_A_sub1, ν_val_eq, pow_two]
-  certify_bound
-
-/-- Column 2 norm bound: (1/ν²) * (|A_diag|*ν²) ≤ 14/10 -/
-private theorem Z₂_col2_certify :
-    ∀ x ∈ Set.Icc (1:ℝ) 1,
-    (1/ν_val^2) * (|A_diag| * ν_val^2) ≤ (14/10 : ℚ) := by
-  simp only [abs_A_diag, ν_val_eq, pow_two]
-  certify_bound
-
-/-- Each column norm is ≤ 14/10 -/
-private lemma colNorm_le (j : Fin 3) :
-    l1Weighted.matrixColNorm ν_val A_mat j ≤ 14/10 := by
-  unfold l1Weighted.matrixColNorm A_mat A_diag A_sub1 A_sub2 ν_val
-  fin_cases j <;> (
-    finsum_expand!
-    -- simp only [Matrix.of_apply]
-    vec_simp!)
-
-/-- finWeightedMatrixNorm ≤ 14/10 -/
-private lemma matrixNorm_le :
-    l1Weighted.finWeightedMatrixNorm ν_val A_mat ≤ 14/10 := by
-  unfold l1Weighted.finWeightedMatrixNorm
-  apply Finset.sup'_le
-  intro j _
-  exact colNorm_le j
-
-/-- Z₂ = 2 * max(‖A‖, 1/(2|ā₀|)) ≤ 28/10 -/
-lemma Z₂_le : @Example_7_7.Z₂_bound ν_val 2 sol A_mat ≤ 28/10 := by
-  unfold Example_7_7.Z₂_bound
-  simp only [sol, Matrix.cons_val_zero, abs_ā₀]
-  -- 2 * max(matrixNorm, tailTerm) ≤ 2 * 14/10 = 28/10
-  refine le_trans (mul_le_mul_of_nonneg_left (max_le matrixNorm_le ?_) (by norm_num)) (by norm_num)
-  apply of_point_interval (q := 14/10) (by norm_num)
-  fast_bound
-
-/-! ### Z₀ proof
-
-Z₀ = ‖I - A·DF‖ where DF is the Jacobian matrix.
-
-DF_fin(i,j) = 2*ā_{i-j} if j ≤ i, else 0
-For N=2: DF = [[2ā₀, 0, 0], [2ā₁, 2ā₀, 0], [2ā₂, 2ā₁, 2ā₀]]
-
-The key is that A ≈ (DF)⁻¹, so I - A·DF ≈ 0 for exact coefficients.
-With rational approximations, we get small but nonzero entries.
--/
-
-/-- Explicit DF matrix for our sol -/
-private lemma DF_explicit :
-    Example_7_7.DF_fin sol = !![2*ā₀, 0, 0; 2*ā₁, 2*ā₀, 0; 2*ā₂, 2*ā₁, 2*ā₀] := by
-  ext i j
-  fin_cases i <;> fin_cases j <;>
-  simp only [Example_7_7.DF_fin, Matrix.of_apply, sol]
-  all_goals (first | rfl)
-
-/-- Product A * DF explicitly computed -/
-private noncomputable def A_DF : Matrix (Fin 3) (Fin 3) ℝ :=
-  !![2*A_diag*ā₀, 0, 0;
-     2*(A_sub1*ā₀ + A_diag*ā₁), 2*A_diag*ā₀, 0;
-     2*(A_sub2*ā₀ + A_sub1*ā₁ + A_diag*ā₂), 2*(A_sub1*ā₀ + A_diag*ā₁), 2*A_diag*ā₀]
-
-private lemma A_mul_DF_eq : A_mat * Example_7_7.DF_fin sol = A_DF := by
-  rw [DF_explicit]
-  ext i j
-  fin_cases i <;> fin_cases j <;>
-  simp only [Matrix.mul_apply, A_mat, A_DF, A_diag, A_sub1, A_sub2]
-  all_goals (vec_simp!; finsum_expand!; try ring)
-
-/-- I - A*DF explicitly -/
-private noncomputable def I_sub_A_DF : Matrix (Fin 3) (Fin 3) ℝ :=
-  !![1 - 2*A_diag*ā₀, 0, 0;
-     -2*(A_sub1*ā₀ + A_diag*ā₁), 1 - 2*A_diag*ā₀, 0;
-     -2*(A_sub2*ā₀ + A_sub1*ā₁ + A_diag*ā₂), -2*(A_sub1*ā₀ + A_diag*ā₁), 1 - 2*A_diag*ā₀]
-
-private lemma one_sub_A_DF_eq : 1 - A_mat * Example_7_7.DF_fin sol = I_sub_A_DF := by
-  rw [A_mul_DF_eq]
-  -- Unfold all definitions to numeric values
-  unfold A_DF I_sub_A_DF A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂
-  ext i j
-  fin_cases i <;> fin_cases j <;>
-  simp only [Matrix.sub_apply, Matrix.one_apply_eq, Matrix.of_apply]
-  all_goals vec_simp!
-
-/-- Z₀ = ‖I - A·DF‖ ≤ 2/1000 -/
-lemma Z₀_le : @Example_7_7.Z₀_bound ν_val 2 sol A_mat ≤ 2/1000 := by
-  unfold Example_7_7.Z₀_bound
-  rw [one_sub_A_DF_eq]
-  unfold l1Weighted.finWeightedMatrixNorm
-  apply Finset.sup'_le
-  intro j _
-  -- Each column norm ≤ 2/1000
-  unfold l1Weighted.matrixColNorm I_sub_A_DF A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂
-  fin_cases j <;> (
-    simp only [pow_zero, pow_one, pow_two, div_one, one_mul, ν_val_eq]
-    finsum_expand!
-    vec_simp!)
-
-/-! ### Y₀ proof
-
-Y₀ = finite_part + tail_part where:
-- Finite part: ∑_{n=0}^2 |∑_j A_{nj} * F_j| * ν^n
-- Tail part: (1/(2|ā₀|)) * ∑_{n=3}^4 (∑_k |ā_k||ā_{n-k}|) * ν^n
-
-Strategy: Unfold Y₀_bound step by step, expand sums to explicit expressions,
-then use fast_bound certified theorems (like Z₀ pattern).
--/
+/-! ### Y₀ bound -/
 
 lemma Y₀_le : @Example_7_7.Y₀_bound ν_val 2 lam0 sol A_mat ≤ 9/500 := by
   unfold Example_7_7.Y₀_bound
@@ -475,6 +322,69 @@ lemma Y₀_le : @Example_7_7.Y₀_bound ν_val 2 lam0 sol A_mat ≤ 9/500 := by
   simp only [Example_7_7.ApproxSolution.toSeq, sol]; vec_simp!
   unfold A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂ lam0; simp only [ν_val_eq]
   apply of_point_interval (q := 9/500) (by norm_num); fast_bound
+
+/-! ### Z₀ bound (operator defect ‖I - A·DF‖) -/
+
+private lemma DF_explicit :
+    Example_7_7.DF_fin sol = !![2*ā₀, 0, 0; 2*ā₁, 2*ā₀, 0; 2*ā₂, 2*ā₁, 2*ā₀] := by
+  ext i j; fin_cases i <;> fin_cases j <;>
+  simp only [Example_7_7.DF_fin, Matrix.of_apply, sol]
+  all_goals (first | rfl)
+
+private noncomputable def A_DF : Matrix (Fin 3) (Fin 3) ℝ :=
+  !![2*A_diag*ā₀, 0, 0;
+     2*(A_sub1*ā₀ + A_diag*ā₁), 2*A_diag*ā₀, 0;
+     2*(A_sub2*ā₀ + A_sub1*ā₁ + A_diag*ā₂), 2*(A_sub1*ā₀ + A_diag*ā₁), 2*A_diag*ā₀]
+
+private lemma A_mul_DF_eq : A_mat * Example_7_7.DF_fin sol = A_DF := by
+  rw [DF_explicit]; ext i j
+  fin_cases i <;> fin_cases j <;>
+  simp only [Matrix.mul_apply, A_mat, A_DF, A_diag, A_sub1, A_sub2]
+  all_goals (vec_simp!; finsum_expand!; try ring)
+
+private noncomputable def I_sub_A_DF : Matrix (Fin 3) (Fin 3) ℝ :=
+  !![1 - 2*A_diag*ā₀, 0, 0;
+     -2*(A_sub1*ā₀ + A_diag*ā₁), 1 - 2*A_diag*ā₀, 0;
+     -2*(A_sub2*ā₀ + A_sub1*ā₁ + A_diag*ā₂), -2*(A_sub1*ā₀ + A_diag*ā₁), 1 - 2*A_diag*ā₀]
+
+private lemma one_sub_A_DF_eq : 1 - A_mat * Example_7_7.DF_fin sol = I_sub_A_DF := by
+  rw [A_mul_DF_eq]; unfold A_DF I_sub_A_DF A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂
+  ext i j; fin_cases i <;> fin_cases j <;>
+  simp only [Matrix.sub_apply, Matrix.one_apply_eq, Matrix.of_apply]
+  all_goals vec_simp!
+
+lemma Z₀_le : @Example_7_7.Z₀_bound ν_val 2 sol A_mat ≤ 2/1000 := by
+  unfold Example_7_7.Z₀_bound; rw [one_sub_A_DF_eq]
+  unfold l1Weighted.finWeightedMatrixNorm; apply Finset.sup'_le; intro j _
+  unfold l1Weighted.matrixColNorm I_sub_A_DF A_diag A_sub1 A_sub2 ā₀ ā₁ ā₂
+  fin_cases j <;> (simp only [pow_zero, pow_one, pow_two, div_one, one_mul, ν_val_eq]
+                   finsum_expand!; vec_simp!)
+
+/-! ### Z₁ bound (tail contribution) -/
+
+lemma Z₁_le : @Example_7_7.Z₁_bound ν_val 2 sol ≤ 46/100 := by
+  unfold Example_7_7.Z₁_bound
+  simp only [Example_7_7.ApproxSolution.toSeq, sol]
+  finsum_expand; vec_simp!
+  unfold ā₀ ā₁ ā₂; simp only [ν_val_eq, pow_two, inv_eq_one_div]
+  apply of_point_interval (q := 46/100) (by norm_num); fast_bound
+
+/-! ### Z₂ bound (nonlinear term coefficient) -/
+
+private lemma colNorm_le (j : Fin 3) :
+    l1Weighted.matrixColNorm ν_val A_mat j ≤ 14/10 := by
+  unfold l1Weighted.matrixColNorm A_mat A_diag A_sub1 A_sub2 ν_val
+  fin_cases j <;> (finsum_expand!; vec_simp!)
+
+private lemma matrixNorm_le : l1Weighted.finWeightedMatrixNorm ν_val A_mat ≤ 14/10 := by
+  unfold l1Weighted.finWeightedMatrixNorm
+  apply Finset.sup'_le; intro j _; exact colNorm_le j
+
+lemma Z₂_le : @Example_7_7.Z₂_bound ν_val 2 sol A_mat ≤ 28/10 := by
+  unfold Example_7_7.Z₂_bound
+  simp only [sol, Matrix.cons_val_zero, abs_ā₀]
+  refine le_trans (mul_le_mul_of_nonneg_left (max_le matrixNorm_le ?_) (by norm_num)) (by norm_num)
+  apply of_point_interval (q := 14/10) (by norm_num); fast_bound
 
 end Connection
 
