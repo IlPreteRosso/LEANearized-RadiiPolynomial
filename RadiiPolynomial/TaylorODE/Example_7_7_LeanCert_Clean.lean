@@ -283,14 +283,14 @@ theorem radiiPoly_upper_neg :
     ∀ r ∈ Set.Icc r₀ r₀, radiiPoly_upper r < 0 := by
   unfold radiiPoly_upper generalRadiiPolynomial r₀ Y₀_bnd Z₀_bnd Z₁_bnd Z₂_bnd
   simp only [Rat.cast_div, Rat.cast_ofNat]
-  certify_bound
+  fast_bound
 
 /-- More margin: check at r = 0.1 -/
 theorem radiiPoly_upper_neg_margin :
     ∀ r ∈ Set.Icc (1/10 : ℝ) (1/10), radiiPoly_upper r < 0 := by
   unfold radiiPoly_upper generalRadiiPolynomial Y₀_bnd Z₀_bnd Z₁_bnd Z₂_bnd
   simp only [Rat.cast_div, Rat.cast_ofNat]
-  certify_bound
+  fast_bound
 
 end RadiiPolynomial
 

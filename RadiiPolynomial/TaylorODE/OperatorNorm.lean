@@ -1,4 +1,4 @@
-import RadiiPolynomial.TaylorODE.lpWeighted
+import RadiiPolynomial.TaylorODE.BlockDiag
 import RadiiPolynomial.RadiiPolyGeneral
 import Mathlib.Analysis.Normed.Lp.PiLp
 import Mathlib.Analysis.Normed.Operator.Basic
@@ -386,314 +386,15 @@ where A_N is an (N+1)×(N+1) finite matrix and c is a scalar acting
 diagonally on the infinite tail.
 
 Proposition 7.3.14 gives: ‖A‖ ≤ max(‖A_N‖_{1,ν}, |c|)
+
+The block-diagonal operator infrastructure is in `BlockDiag.lean`.
 -/
-
-namespace BlockDiag
-
-variable {N : ℕ}
-
-/-- A block-diagonal operator on ℓ¹_ν.
-
-    The operator acts as:
-    - A finite matrix `finBlock` on coordinates 0, 1, ..., N
-    - A scalar `tailScalar` times identity on coordinates N+1, N+2, ...
-
-    See equations (7.47) and (7.48) for the operators A† and A in Chapter 7.7. -/
-structure BlockDiagOp (ν : PosReal) (N : ℕ) where
-  /-- The (N+1)×(N+1) matrix acting on the finite part -/
-  finBlock : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ
-  /-- The scalar multiplying the identity on the tail -/
-  tailScalar : ℝ
-
-/-- The action of a block-diagonal operator on a sequence.
-
-    (A·a)ₙ = (finBlock · a_{[0,N]})ₙ  for n ≤ N
-    (A·a)ₙ = tailScalar · aₙ          for n > N -/
-def BlockDiagOp.action {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) (a : ℕ → ℝ) : ℕ → ℝ := fun n =>
-  if h : n ≤ N then
-    ∑ j : Fin (N + 1), A.finBlock ⟨n, Nat.lt_succ_of_le h⟩ j * a j
-  else
-    A.tailScalar * a n
-
-/-- The projection of a sequence onto its first N+1 coordinates -/
-def projFin {ν : PosReal} {N : ℕ} (a : l1Weighted ν) : Fin (N + 1) → ℝ :=
-  fun n => lpWeighted.toSeq a n
-
-/-- Embedding a finite vector as a sequence with zero tail -/
-def embedFin {N : ℕ} (x : Fin (N + 1) → ℝ) : ℕ → ℝ :=
-  fun n => if h : n ≤ N then x ⟨n, Nat.lt_succ_of_le h⟩ else 0
-
-/-- The tail projection: coordinates N+1, N+2, ... -/
-def projTail {ν : PosReal} {N : ℕ} (a : l1Weighted ν) : ℕ → ℝ :=
-  fun n => if n ≤ N then 0 else lpWeighted.toSeq a n
-
-/-- Direct sum decomposition: a = embedFin(projFin a) + projTail a -/
-lemma direct_sum_decomp {ν : PosReal} {N : ℕ} (a : l1Weighted ν) (n : ℕ) :
-    lpWeighted.toSeq a n = embedFin (N := N) (projFin (N := N) a) n + projTail (N := N) a n := by
-  simp only [embedFin, projFin, projTail]
-  split_ifs with h
-  · simp only [lpWeighted.toSeq_apply, add_zero]
-  · simp only [lpWeighted.toSeq_apply, zero_add]
-
-/-- Bound on the finite block contribution.
-
-    For the finite part, we use the weighted matrix norm. -/
-lemma finBlock_norm_bound {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) (a : l1Weighted ν) :
-    ∑ n : Fin (N + 1), |∑ j : Fin (N + 1), A.finBlock n j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ) ≤
-    l1Weighted.finWeightedMatrixNorm ν A.finBlock *
-    ∑ j : Fin (N + 1), |lpWeighted.toSeq a j| * (ν : ℝ) ^ (j : ℕ) := by
-  -- This follows the same pattern as FinWeightedMatrix.mulVecWeightedLinear_norm_le
-  calc ∑ n : Fin (N + 1), |∑ j, A.finBlock n j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ)
-      ≤ ∑ n : Fin (N + 1), (∑ j, |A.finBlock n j| * |lpWeighted.toSeq a j|) * (ν : ℝ) ^ (n : ℕ) := by
-        apply Finset.sum_le_sum
-        intro n _
-        apply mul_le_mul_of_nonneg_right _ (pow_nonneg (PosReal.coe_nonneg ν) _)
-        calc |∑ j, A.finBlock n j * lpWeighted.toSeq a j|
-            ≤ ∑ j, |A.finBlock n j * lpWeighted.toSeq a j| := Finset.abs_sum_le_sum_abs _ _
-          _ = ∑ j, |A.finBlock n j| * |lpWeighted.toSeq a j| := by simp_rw [abs_mul]
-    _ = ∑ n, ∑ j, |A.finBlock n j| * |lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ) := by
-        congr 1; ext n; rw [Finset.sum_mul]
-    _ = ∑ j, ∑ n, |A.finBlock n j| * |lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ) := Finset.sum_comm
-    _ = ∑ j : Fin (N + 1), |lpWeighted.toSeq a j| * ∑ n, |A.finBlock n j| * (ν : ℝ) ^ (n : ℕ) := by
-        congr 1; ext j; rw [Finset.mul_sum]; congr 1; ext n; ring
-    _ = ∑ j : Fin (N + 1), |lpWeighted.toSeq a j| * (l1Weighted.matrixColNorm ν A.finBlock j * (ν : ℝ) ^ (j : ℕ)) := by
-        congr 1; ext j; rw [l1Weighted.matrixColNorm]
-        simp only [lpWeighted.toSeq_apply, one_div, mul_eq_mul_left_iff, abs_eq_zero]
-        field_simp [PosReal.coe_ne_zero ν]
-        simp only [true_or]
-    _ ≤ ∑ j : Fin (N + 1), |lpWeighted.toSeq a j| * (l1Weighted.finWeightedMatrixNorm ν A.finBlock * (ν : ℝ) ^ (j : ℕ)) := by
-        apply Finset.sum_le_sum
-        intro j _
-        apply mul_le_mul_of_nonneg_left _ (abs_nonneg _)
-        apply mul_le_mul_of_nonneg_right _ (pow_nonneg (PosReal.coe_nonneg ν) _)
-        exact Finset.le_sup' _ (Finset.mem_univ j)
-    _ = l1Weighted.finWeightedMatrixNorm ν A.finBlock * ∑ j : Fin (N + 1), |lpWeighted.toSeq a j| * (ν : ℝ) ^ (j : ℕ) := by
-        rw [Finset.mul_sum]; congr 1; ext j; ring
-
-/-- Equality version: factoring out the scalar from tail -/
-lemma tailScalar_norm_eq {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) (a : l1Weighted ν) :
-    ∑' n : {n : ℕ // N < n}, |A.tailScalar * lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) =
-    |A.tailScalar| * ∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) := by
-  calc ∑' n : {n : ℕ // N < n}, |A.tailScalar * lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ)
-      = ∑' n : {n : ℕ // N < n}, |A.tailScalar| * |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) := by
-        congr 1; ext n; rw [abs_mul]
-    _ = |A.tailScalar| * ∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) := by
-        rw [← tsum_mul_left]; congr 1; ext n; ring
-
-/-- Split the ℓ¹ norm into finite and tail parts -/
-lemma norm_split {ν : PosReal} {N : ℕ} (a : l1Weighted ν) :
-    ‖a‖ = (∑ n : Fin (N + 1), |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ)) +
-          (∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ)) := by
-  rw [l1Weighted.norm_eq_tsum]
-  -- Split ∑' n : ℕ into ∑ n ≤ N + ∑' n > N
-  rw [← Summable.sum_add_tsum_compl (s := Finset.range (N + 1))]
-  · congr 1
-    · -- Finite part: reindex from Finset.range to Fin
-      rw [← Fin.sum_univ_eq_sum_range]
-    · -- Tail part: reindex complement
-      have h_eq : (↑(Finset.range (N + 1)) : Set ℕ)ᶜ = {n : ℕ | N < n} := by
-        ext n; simp only [Set.mem_compl_iff, Finset.coe_range, Set.mem_Iio, not_lt, Set.mem_setOf_eq]; omega
-      rw [h_eq]
-      simp only [lpWeighted.toSeq_apply]
-      rfl
-  · -- Summability
-    simp only [lpWeighted.toSeq_apply]
-    exact (l1Weighted.mem_iff _).mp a.2
-
-/-- The action of a block-diagonal operator preserves membership in ℓ¹_ν.
-
-    **Motivation**: This lemma is a prerequisite for Proposition 7.3.14, which is
-    used in Theorem 7.7.1 (Taylor series ODE). The operators appearing in Theorem
-    7.7.1 (such as I - A·DF(ā)) have block-diagonal structure. Before we can apply
-    Proposition 7.3.14's bound ‖A‖_{op} ≤ max(K, |c|), we must first establish that
-    the block-diagonal operator maps ℓ¹_ν → ℓ¹_ν.
-
-    **Structure**: For A = [A_N, 0; 0, c·I], the output (Aa)_n is:
-    - n ≤ N: Σⱼ A_{nj} aⱼ  (finite matrix-vector product)
-    - n > N: c · aₙ        (scalar multiplication on tail)
-
-    **Summability proof**: We show Σₙ |(Aa)ₙ| νⁿ < ∞ using comparison.
-
-    Define bounding function g(n) := (𝟙_{n≤N} · M) + |c| · |aₙ| · νⁿ
-
-    where M := max_{0≤n≤N} |Σⱼ A_{nj} aⱼ| · νⁿ (finite maximum).
-
-    Then:
-    - For n ≤ N: |(Aa)ₙ| νⁿ ≤ M ≤ g(n)
-    - For n > N: |(Aa)ₙ| νⁿ = |c| |aₙ| νⁿ ≤ g(n)
-
-    The function g is summable since:
-    - 𝟙_{n≤N} · M has finite support
-    - |c| · |aₙ| · νⁿ is summable (a ∈ ℓ¹_ν) -/
-lemma BlockDiagOp.action_mem {ν : PosReal} {N : ℕ}(A : BlockDiagOp ν N) (a : l1Weighted ν) :
-    lpWeighted.Mem ν 1 (A.action (lpWeighted.toSeq a)) := by
-  rw [l1Weighted.mem_iff]
-  have ha := (l1Weighted.mem_iff _).mp a.2
-  -- The finite part (n ≤ N) has finite support, the tail is |c| * |a_n| * ν^n
-  let finBound := (Finset.univ.sup' Finset.univ_nonempty fun n : Fin (N + 1) =>
-      |∑ j : Fin (N + 1), A.finBlock n j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ))
-  -- Bounding function: indicator · finBound + |c| · |a_n| · ν^n
-  let g := fun n => (if n ≤ N then finBound else 0) + |A.tailScalar| * (|lpWeighted.toSeq a n| * (ν : ℝ) ^ n)
-  apply Summable.of_nonneg_of_le
-  · intro n
-    simp only [BlockDiagOp.action]
-    split_ifs <;> exact mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) n)
-  · intro n
-    simp only [BlockDiagOp.action]
-    split_ifs with h
-    · -- n ≤ N: bounded by finBound
-      have hn' : n < N + 1 := Nat.lt_succ_of_le h
-      have hle : |∑ j, A.finBlock ⟨n, hn'⟩ j * lpWeighted.toSeq a j| * (ν : ℝ) ^ n ≤ finBound :=
-        Finset.le_sup' (fun m : Fin (N + 1) => |∑ j, A.finBlock m j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (m : ℕ))
-          (Finset.mem_univ ⟨n, hn'⟩)
-      calc |∑ j, A.finBlock ⟨n, hn'⟩ j * lpWeighted.toSeq a j| * (ν : ℝ) ^ n
-          ≤ finBound := hle
-        _ ≤ finBound + |A.tailScalar| * (|lpWeighted.toSeq a n| * (ν : ℝ) ^ n) :=
-            le_add_of_nonneg_right (mul_nonneg (abs_nonneg _) (mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) n)))
-        _ = g n := by simp only [g, h, ↓reduceIte]
-    · -- n > N: |c * a_n| * ν^n
-      rw [abs_mul, mul_assoc]
-      have finBound_nonneg : 0 ≤ finBound :=
-        Finset.le_sup'_of_le (fun m : Fin (N + 1) => |∑ j, A.finBlock m j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (m : ℕ))
-          (Finset.mem_univ ⟨0, Nat.zero_lt_succ N⟩)
-          (mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) 0))
-      calc |A.tailScalar| * (|lpWeighted.toSeq a n| * (ν : ℝ) ^ n)
-          ≤ 0 + |A.tailScalar| * (|lpWeighted.toSeq a n| * (ν : ℝ) ^ n) := by linarith
-        _ = g n := by simp only [g, not_le.mpr (Nat.lt_of_succ_le (Nat.not_le.mp h)), ↓reduceIte]
-  · -- Bounding function g is summable
-    show Summable g
-    apply Summable.add
-    · apply summable_of_ne_finset_zero (s := Finset.range (N + 1))
-      intro n hn
-      simp only [Finset.mem_range, not_lt] at hn
-      simp only [not_le.mpr (Nat.lt_of_succ_le hn), ↓reduceIte]
-    · exact ha.mul_left |A.tailScalar|
-
-/-- The action as a linear map -/
-def BlockDiagOp.toLinearMap {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) : l1Weighted ν →ₗ[ℝ] l1Weighted ν where
-  toFun a := lpWeighted.mk (A.action (lpWeighted.toSeq a)) (A.action_mem a)
-  map_add' a b := by
-    apply lpWeighted.ext; intro n
-    simp only [lpWeighted.mk_apply, lpWeighted.add_toSeq, BlockDiagOp.action]
-    split_ifs with h
-    · rw [← Finset.sum_add_distrib]
-      congr 1; ext j; ring
-    · ring
-  map_smul' c a := by
-    apply lpWeighted.ext; intro n
-    simp only [lpWeighted.mk_apply, lpWeighted.smul_toSeq, RingHom.id_apply, BlockDiagOp.action]
-    split_ifs with h
-    · rw [Finset.mul_sum]
-      congr 1; ext j; ring
-    · ring
-
-/-- The block-diagonal operator as a continuous linear map -/
-def BlockDiagOp.toCLM {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) : l1Weighted ν →L[ℝ] l1Weighted ν :=
-  LinearMap.mkContinuous A.toLinearMap
-    (max (l1Weighted.finWeightedMatrixNorm ν A.finBlock) |A.tailScalar|)
-    (fun a => by
-      -- The bound follows from Proposition 7.3.14's proof pattern
-      simp only [BlockDiagOp.toLinearMap]
-      rw [BlockDiag.norm_split (N := N)]
-      have h_fin : ∑ n : Fin (N + 1), |lpWeighted.toSeq (lpWeighted.mk (A.action (lpWeighted.toSeq a)) (A.action_mem a)) n| * (ν : ℝ) ^ (n : ℕ) =
-          ∑ n : Fin (N + 1), |∑ j : Fin (N + 1), A.finBlock n j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ) := by
-        congr 1; ext n; congr 1
-        simp only [lpWeighted.mk_apply, BlockDiagOp.action, Fin.is_le, ↓reduceDIte]
-      have h_tail : ∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq (lpWeighted.mk (A.action (lpWeighted.toSeq a)) (A.action_mem a)) n| * (ν : ℝ) ^ (n : ℕ) =
-          ∑' n : {n : ℕ // N < n}, |A.tailScalar * lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) := by
-        congr 1; ext ⟨n, hn⟩; congr 1
-        simp only [lpWeighted.mk_apply, BlockDiagOp.action, not_le.mpr hn, ↓reduceDIte]
-      have h_eq : A.toLinearMap a = lpWeighted.mk (A.action (lpWeighted.toSeq a)) (A.action_mem a) := rfl
-      have hK := BlockDiag.finBlock_norm_bound A a
-      have ha_split := BlockDiag.norm_split (N := N) a
-      let K := l1Weighted.finWeightedMatrixNorm ν A.finBlock
-      let c := A.tailScalar
-      simp only [LinearMap.coe_mk, AddHom.coe_mk] at ⊢
-      rw [h_fin, h_tail, BlockDiag.tailScalar_norm_eq]
-      calc (∑ n : Fin (N + 1), |∑ j, A.finBlock n j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ)) +
-           |c| * ∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ)
-          ≤ K * (∑ j : Fin (N + 1), |lpWeighted.toSeq a j| * (ν : ℝ) ^ (j : ℕ)) +
-            |c| * ∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) := add_le_add_left hK _
-        _ ≤ max K |c| * (∑ j : Fin (N + 1), |lpWeighted.toSeq a j| * (ν : ℝ) ^ (j : ℕ)) +
-            max K |c| * ∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) := by
-              apply add_le_add
-              · exact mul_le_mul_of_nonneg_right (le_max_left _ _)
-                  (Finset.sum_nonneg (fun j _ => mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) _)))
-              · exact mul_le_mul_of_nonneg_right (le_max_right _ _)
-                  (tsum_nonneg (fun n => mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) _)))
-        _ = max K |c| * ‖a‖ := by rw [← mul_add, ← ha_split])
-
-/-- The CLM action matches the BlockDiagOp action -/
-@[simp]
-lemma BlockDiagOp.toCLM_apply {ν : PosReal} {N : ℕ} (A : BlockDiagOp ν N) (a : l1Weighted ν) (n : ℕ) :
-    lpWeighted.toSeq (A.toCLM a) n = A.action (lpWeighted.toSeq a) n := by
-  simp only [toCLM, toLinearMap, LinearMap.mkContinuous_apply, LinearMap.coe_mk, AddHom.coe_mk,
-             lpWeighted.mk_apply]
-
-/-- Operator norm of the CLM is bounded by max of finite block norm and tail scalar -/
-lemma BlockDiagOp.norm_toCLM_le (A : BlockDiagOp ν N) :
-    ‖A.toCLM‖ ≤ max (l1Weighted.finWeightedMatrixNorm ν A.finBlock) |A.tailScalar| :=
-  LinearMap.mkContinuous_norm_le _ (le_max_of_le_left (l1Weighted.finWeightedMatrixNorm_nonneg _)) _
-
-/-- Block-diagonal operator is injective if finite block matrix is invertible and tail scalar ≠ 0.
-
-    The proof shows that if A x = A y, then both the finite and tail parts match,
-    which forces x = y when the finite block is invertible and the tail scalar is nonzero. -/
-lemma BlockDiagOp.injective_of_parts {ν : PosReal} {N : ℕ}
-    (A : BlockDiagOp ν N)
-    (h_fin : IsUnit A.finBlock)
-    (h_tail : A.tailScalar ≠ 0) :
-    Function.Injective A.toCLM := by
-  intro x y h_eq
-  -- A x = A y means action matches for all n
-  have h_diff : A.toCLM (x - y) = 0 := by
-    simp only [map_sub, sub_eq_zero]
-    exact h_eq
-  -- For n > N, the action is tailScalar * (x - y)_n = 0
-  -- Since tailScalar ≠ 0, we get (x - y)_n = 0 for n > N
-  have h_tail_zero : ∀ n : ℕ, N < n → lpWeighted.toSeq (x - y) n = 0 := by
-    intro n hn
-    have h_action_n : lpWeighted.toSeq (A.toCLM (x - y)) n = 0 := by
-      rw [h_diff]; rfl
-    simp only [BlockDiagOp.toCLM_apply, BlockDiagOp.action, not_le.mpr hn, ↓reduceDIte] at h_action_n
-    exact (mul_eq_zero.mp h_action_n).resolve_left h_tail
-  -- For the finite part, we get A.finBlock * (x - y)_fin = 0
-  have h_mat_action : ∀ i : Fin (N + 1), ∑ j, A.finBlock i j * lpWeighted.toSeq (x - y) j = 0 := by
-    intro i
-    have h_action_i : lpWeighted.toSeq (A.toCLM (x - y)) i = 0 := by
-      rw [h_diff]; rfl
-    simp only [BlockDiagOp.toCLM_apply, BlockDiagOp.action, Fin.is_le, ↓reduceDIte] at h_action_i
-    exact h_action_i
-  -- Convert to matrix multiplication form
-  have h_mulVec : A.finBlock.mulVec (fun j => lpWeighted.toSeq (x - y) j) = 0 := by
-    ext i
-    simp only [Matrix.mulVec, dotProduct, Pi.zero_apply]
-    exact h_mat_action i
-  -- Since A.finBlock is invertible, the vector must be zero
-  obtain ⟨u, hu⟩ := h_fin
-  have h_vec_zero := congrArg (u⁻¹.val.mulVec) h_mulVec
-  simp only [Matrix.mulVec_zero] at h_vec_zero
-  rw [Matrix.mulVec_mulVec, ← hu, Units.inv_mul, Matrix.one_mulVec] at h_vec_zero
-  -- The finite indices are zero
-  have h_fin_zero : ∀ n : Fin (N + 1), lpWeighted.toSeq (x - y) n = 0 := by
-    intro n
-    exact congrFun h_vec_zero n
-  -- Combine: x - y = 0 at all indices
-  have h_all_zero : x - y = 0 := by
-    ext n
-    by_cases hn : n ≤ N
-    · exact h_fin_zero ⟨n, Nat.lt_succ_of_le hn⟩
-    · push_neg at hn
-      exact h_tail_zero n hn
-  exact sub_eq_zero.mp h_all_zero
-
-end BlockDiag
 
 
 /-! ## Proposition 7.3.14: Block-Diagonal Operator Norm Bound
 
-For a block-diagonal operator A with finite block A_N and tail scalar c,
-we have: ‖A‖ ≤ max(‖A_N‖_{1,ν}, |c|)
+For a block-diagonal operator A with finite block A_N and bounded tail diagonal,
+we have: ‖A‖ ≤ max(‖A_N‖_{1,ν}, C) where C bounds |tailDiag|.
 
 This is the key result connecting the computable matrix norm to the abstract
 operator norm for the Chapter 7.7 formalization.
@@ -705,60 +406,35 @@ variable {N : ℕ}
 
 /-- **Proposition 7.3.14**: Operator norm bound for block-diagonal operators.
 
-    Given a block-diagonal operator A = [A_N, 0; 0, c·I] on ℓ¹_ν, we have:
-
-      ‖A‖ ≤ max(K, |c|)
-
+    Given a block-diagonal operator A with finite block A_N and tail diagonal
+    bounded by C, we have: ‖A‖ ≤ max(K, C)
     where K = ‖A_N‖_{1,ν} is the weighted matrix norm of the finite block.
 
-    **Proof outline** (following the textbook):
-    1. Split ‖Aa‖ into finite and tail contributions
-    2. Bound finite part using matrix norm: ≤ K · ‖a_{fin}‖
-    3. Bound tail part using scalar: ≤ |c| · ‖a_{tail}‖
-    4. Combine using ‖a‖ = ‖a_{fin}‖ + ‖a_{tail}‖ and max bound -/
+    Note: This is now subsumed by `BlockDiagOp.norm_toCLM_le`, but kept for
+    the case where A_CLM is constructed independently from `toCLM`. -/
 theorem opNorm_blockDiag_le (A : BlockDiag.BlockDiagOp ν N)
     (A_CLM : l1Weighted ν →L[ℝ] l1Weighted ν)
     (h_action : ∀ a n, lpWeighted.toSeq (A_CLM a) n = BlockDiag.BlockDiagOp.action A (lpWeighted.toSeq a) n) :
-    ‖A_CLM‖ ≤ max (l1Weighted.finWeightedMatrixNorm ν A.finBlock) |A.tailScalar| := by
-  let K := l1Weighted.finWeightedMatrixNorm ν A.finBlock
-  let c := A.tailScalar
+    ‖A_CLM‖ ≤ max (l1Weighted.finWeightedMatrixNorm ν A.finBlock) A.tailBound := by
   apply ContinuousLinearMap.opNorm_le_bound _ (le_max_of_le_left (l1Weighted.finWeightedMatrixNorm_nonneg A.finBlock))
   intro a
-  -- Split ‖A_CLM a‖ using norm_split
   rw [BlockDiag.norm_split (N := N) (A_CLM a)]
-  -- Rewrite finite part using h_action
   have h_fin : ∑ n : Fin (N + 1), |lpWeighted.toSeq (A_CLM a) n| * (ν : ℝ) ^ (n : ℕ) =
       ∑ n : Fin (N + 1), |∑ j : Fin (N + 1), A.finBlock n j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ) := by
-    congr 1; ext n
-    congr 1
-    rw [h_action]
-    simp only [BlockDiag.BlockDiagOp.action, Fin.is_le, ↓reduceDIte]
-  -- Rewrite tail part using h_action
+    congr 1; ext n; congr 1
+    rw [h_action]; simp only [BlockDiag.BlockDiagOp.action, Fin.is_le, ↓reduceDIte]
   have h_tail : ∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq (A_CLM a) n| * (ν : ℝ) ^ (n : ℕ) =
-      ∑' n : {n : ℕ // N < n}, |A.tailScalar * lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) := by
-    congr 1; ext ⟨n, hn⟩
-    congr 1
-    rw [h_action]
-    simp only [BlockDiag.BlockDiagOp.action, not_le.mpr hn, ↓reduceDIte]
-  rw [h_fin, h_tail, BlockDiag.tailScalar_norm_eq]
-  -- Apply bounds and combine
-  have hK := BlockDiag.finBlock_norm_bound A a
-  have ha_split := BlockDiag.norm_split (N := N) a
-  calc (∑ n : Fin (N + 1), |∑ j, A.finBlock n j * lpWeighted.toSeq a j| * (ν : ℝ) ^ (n : ℕ)) +
-       |c| * ∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ)
-      ≤ K * (∑ j : Fin (N + 1), |lpWeighted.toSeq a j| * (ν : ℝ) ^ (j : ℕ)) +
-        |c| * ∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) := by
-          apply add_le_add_left hK
-    _ ≤ max K |c| * (∑ j : Fin (N + 1), |lpWeighted.toSeq a j| * (ν : ℝ) ^ (j : ℕ)) +
-        max K |c| * ∑' n : {n : ℕ // N < n}, |lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) := by
-          apply add_le_add
-          · apply mul_le_mul_of_nonneg_right (le_max_left _ _)
-            apply Finset.sum_nonneg; intro j _
-            apply mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) _)
-          · apply mul_le_mul_of_nonneg_right (le_max_right _ _)
-            apply tsum_nonneg; intro n
-            apply mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) _)
-    _ = max K |c| * ‖a‖ := by rw [← mul_add, ← ha_split]
+      ∑' n : {n : ℕ // N < n}, |A.tailDiag n * lpWeighted.toSeq a n| * (ν : ℝ) ^ (n : ℕ) := by
+    congr 1; ext ⟨n, hn⟩; congr 1
+    rw [h_action]; simp only [BlockDiag.BlockDiagOp.action, not_le.mpr hn, ↓reduceDIte]
+  rw [h_fin, h_tail]
+  exact (add_le_add (BlockDiag.finBlock_norm_bound A a) (BlockDiag.tailDiag_norm_bound A a)).trans
+    ((add_le_add
+      (mul_le_mul_of_nonneg_right (le_max_left _ _)
+        (Finset.sum_nonneg fun j _ => mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) _)))
+      (mul_le_mul_of_nonneg_right (le_max_right _ _)
+        (tsum_nonneg fun n => mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) _))))
+    |>.trans_eq (by rw [← mul_add, ← BlockDiag.norm_split (N := N) a]))
 
 end Proposition_7_3_14
 

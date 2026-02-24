@@ -237,7 +237,9 @@ def DF_fin {N : ℕ} (sol : ApproxSolution N) : Matrix (Fin (N + 1)) (Fin (N + 1
 def approxInverse {N : ℕ} (sol : ApproxSolution N) (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
     BlockDiag.BlockDiagOp ν N where
   finBlock := A_fin
-  tailScalar := 1 / (2 * sol.aBar_fin 0)
+  tailDiag := fun _ => 1 / (2 * sol.aBar_fin 0)
+  tailBound := |1 / (2 * sol.aBar_fin 0)|
+  tailBound_spec := fun _ _ => le_refl _
 
 /-- The approximate derivative A† as a block-diagonal operator (equation 7.47).
     - Finite block: DF⁽ᴺ⁾(ā) = lower triangular with (DF)_{i,j} = 2ā_{i-j} for j ≤ i, 0 otherwise
@@ -245,8 +247,9 @@ def approxInverse {N : ℕ} (sol : ApproxSolution N) (A_fin : Matrix (Fin (N + 1
 def approxDeriv {N : ℕ} (sol : ApproxSolution N) : BlockDiag.BlockDiagOp ν N where
   finBlock := Matrix.of fun i j =>
     if (j : ℕ) ≤ i then 2 * sol.aBar_fin ⟨(i : ℕ) - (j : ℕ), by omega⟩ else 0
-  tailScalar := 2 * sol.aBar_fin 0
-
+  tailDiag := fun _ => 2 * sol.aBar_fin 0
+  tailBound := |2 * sol.aBar_fin 0|
+  tailBound_spec := fun _ _ => le_refl _
 
 /-! ## The Radii Polynomial Bounds (Theorem 7.7.1)
 
@@ -402,48 +405,23 @@ lemma tail_tsum_eq_Icc_sum {N : ℕ} (lam0 : ℝ) (sol : ApproxSolution N)
     ∑ n ∈ Finset.Icc (N + 1) (2 * N),
       |(@approxInverse ν N sol A_fin).action
         (fun k => (sol.toSeq ⋆ sol.toSeq) k - paramSeq lam0 k) n| * (ν : ℝ) ^ n := by
-  -- WTS: The function is zero outside [N+1, 2N]
-  -- f: {n : ℕ // N < n} → ℝ
-  --                  n  ↦ |A.action (ā ⋆ ā - c) n| * ν^n ≃ |[A(F(ā))]ₙ| * νⁿ
-  let f := fun n : {n : ℕ // N < n} =>
-    |(@approxInverse ν N sol A_fin).action
-      (fun k => (sol.toSeq ⋆ sol.toSeq) k - paramSeq lam0 k) n| * (ν : ℝ) ^ (n : ℕ)
-  have hf_zero : ∀ n : {n : ℕ // N < n}, 2 * N < n → f n = 0 := by
-    intro ⟨n, hn⟩ h2N
-    simp only [f]
-    rw [approxInverse_F_action_zero_of_gt_two_N lam0 sol A_fin n hN h2N]
-    simp only [abs_zero, zero_mul]
-  -- Convert subtype tsum to a sum over the finite set
-  have hsummable : Summable f := by
-    apply summable_of_ne_finset_zero (s := (Finset.Icc (N + 1) (2 * N)).subtype (fun n => N < n))
-    intro ⟨n, hn⟩ hn_notin
-    simp only [Finset.mem_subtype, Finset.mem_Icc, not_and, not_le] at hn_notin
-    exact hf_zero ⟨n, hn⟩ (hn_notin (Nat.succ_le_of_lt hn))
-  have h_icc_lt : ∀ n, n ∈ Finset.Icc (N + 1) (2 * N) → N < n := by
-    intro n hn; simp only [Finset.mem_Icc] at hn; omega
-  rw [tsum_eq_sum (s := (Finset.Icc (N + 1) (2 * N)).subtype (fun n => N < n))]
-  · -- Reindex from subtype to Icc
-    conv_lhs =>
-      rw [show (Finset.Icc (N + 1) (2 * N)).subtype (fun n => N < n) =
-            (Finset.Icc (N + 1) (2 * N)).attach.map
-              ⟨fun x => ⟨x.1, h_icc_lt x.1 x.2⟩,
-              fun a b h => by simp only [Subtype.mk.injEq] at h; ext; exact h⟩ from by
-          ext ⟨n, hn⟩; simp [Finset.mem_subtype, Finset.mem_Icc]]
-    simpa only [Finset.sum_map, Function.Embedding.coeFn_mk] using
-    (Finset.sum_attach
-      (s := Finset.Icc (N + 1) (2 * N))
-      (f :=
-        fun x =>
-          |(approxInverse sol A_fin).action
-            (fun k =>
-              (sol.toSeq ⋆ sol.toSeq) k -
-              paramSeq lam0 k
-            ) ↑x| * (↑ν : ℝ) ^ (↑x : ℕ)
-      )
-    )
-  · intro ⟨n, hn⟩ hn_notin
-    simp only [Finset.mem_subtype, Finset.mem_Icc, not_and, not_le] at hn_notin
-    exact hf_zero ⟨n, hn⟩ (hn_notin (Nat.succ_le_of_lt hn))
+  let g := fun n => |(@approxInverse ν N sol A_fin).action
+      (fun k => (sol.toSeq ⋆ sol.toSeq) k - paramSeq lam0 k) n| * (ν : ℝ) ^ n
+  have hg_zero : ∀ n, 2 * N < n → g n = 0 := by
+    intro n h2N
+    simp only [g, approxInverse_F_action_zero_of_gt_two_N lam0 sol A_fin n hN h2N, abs_zero,
+      zero_mul]
+  change ∑' n : {n : ℕ // N < n}, g n = ∑ n ∈ Finset.Icc (N + 1) (2 * N), g n
+  have h1 : ∑' (n : {n : ℕ // N < n}), g n = ∑' n, (Set.Ioi N).indicator g n :=
+    tsum_subtype (Set.Ioi N) g
+  rw [h1, tsum_eq_sum (s := Finset.Icc (N + 1) (2 * N))]
+  · exact Finset.sum_congr rfl fun n hn => by
+      simp only [Finset.mem_Icc] at hn
+      exact Set.indicator_of_mem (Set.mem_Ioi.mpr (by omega)) g
+  · intro n hn
+    simp only [Finset.mem_Icc, not_and_or, not_le] at hn
+    simp only [Set.indicator_apply, Set.mem_Ioi]
+    split_ifs with h <;> [exact hg_zero n (by omega); rfl]
 
 /-- Range of nonzero terms in Cauchy product for N < n ≤ 2N -/
 lemma cauchyProduct_middle_range {N : ℕ} (sol : ApproxSolution N) (n : ℕ)
@@ -451,25 +429,16 @@ lemma cauchyProduct_middle_range {N : ℕ} (sol : ApproxSolution N) (n : ℕ)
     (sol.toSeq ⋆ sol.toSeq) n =
     ∑ k ∈ Finset.Icc (n - N) N, (sol.toSeq) k * (sol.toSeq) (n - k) := by
   rw [CauchyProduct.apply_range]
-  -- Convert ∑ j, a(n-j)*a(j) to ∑ k, a(k)*a(n-k) using mul_comm
   conv_lhs => arg 2; ext j; rw [mul_comm]
-  -- Now restrict sum to Icc (n-N) N
   symm
   apply Finset.sum_subset_zero_on_sdiff
-  · intro k hk
-    simp only [Finset.mem_Icc] at hk
-    simp only [Finset.mem_range]
-    omega
+  · intro k hk; simp only [Finset.mem_Icc] at hk; simp only [Finset.mem_range]; omega
   · intro k hk
     simp only [Finset.mem_sdiff, Finset.mem_range, Finset.mem_Icc, not_and, not_le] at hk
     by_cases hk_small : k < n - N
-    · have hl : N < n - k := by omega
-      simp [toSeq_zero_of_gt sol (n - k) hl]
-    · push_neg at hk_small
-      have hk' : N < k := hk.2 hk_small
-      simp [toSeq_zero_of_gt sol k hk']
-  · intro k hk
-    rfl
+    · simp [toSeq_zero_of_gt sol (n - k) (by omega)]
+    · simp [toSeq_zero_of_gt sol k (hk.2 (by omega))]
+  · intros; rfl
 
 /-- Bound on middle Cauchy product using absolute values -/
 lemma cauchyProduct_middle_abs_bound {N : ℕ} (sol : ApproxSolution N) (n : ℕ)
@@ -477,11 +446,7 @@ lemma cauchyProduct_middle_abs_bound {N : ℕ} (sol : ApproxSolution N) (n : ℕ
     |(sol.toSeq ⋆ sol.toSeq) n| ≤
     ∑ k ∈ Finset.Icc (n - N) N, |(sol.toSeq) k| * |(sol.toSeq) (n - k)| := by
   rw [cauchyProduct_middle_range sol n hn_lower]
-  calc |∑ k ∈ Finset.Icc (n - N) N, (sol.toSeq) k * (sol.toSeq) (n - k)|
-      ≤ ∑ k ∈ Finset.Icc (n - N) N, |(sol.toSeq) k * (sol.toSeq) (n - k)| :=
-        Finset.abs_sum_le_sum_abs _ _
-    _ = ∑ k ∈ Finset.Icc (n - N) N, |(sol.toSeq) k| * |(sol.toSeq) (n - k)| := by
-        simp_rw [abs_mul]
+  exact (Finset.abs_sum_le_sum_abs _ _).trans_eq (by simp_rw [abs_mul])
 
 end Y0BoundLemmas
 
@@ -505,9 +470,8 @@ lemma approxDeriv_finBlock_eq_DF_fin {N : ℕ} (sol : ApproxSolution N) :
 /-- Tail scalars of A and A† multiply to 1 -/
 lemma tail_scalars_mul_eq_one {N : ℕ} (sol : ApproxSolution N)
     (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) (h : sol.aBar_fin 0 ≠ 0) :
-    (@approxInverse ν N sol A_fin).tailScalar * (@approxDeriv ν N sol).tailScalar = 1 := by
-  simp only [approxInverse, approxDeriv]
-  field_simp
+    (@approxInverse ν N sol A_fin).tailDiag * (@approxDeriv ν N sol).tailDiag = 1 := by
+  ext; simp only [approxInverse, approxDeriv, Pi.mul_apply, Pi.one_apply]; field_simp
 
 /-- The composition AA† has tail scalar 1 -/
 lemma comp_tail_scalar_eq_one {N : ℕ} (sol : ApproxSolution N) (h : sol.aBar_fin 0 ≠ 0) :
@@ -758,10 +722,7 @@ lemma tail_cauchy_bound {N : ℕ} (sol : ApproxSolution N) (h : l1Weighted ν) :
     apply Finset.sum_nonneg; intro n _
     exact mul_nonneg (abs_nonneg _) (pow_nonneg (le_of_lt ν.property) _)
   -- Apply submultiplicativity
-  calc ∑' n : {n : ℕ // N < n}, |(lpWeighted.toSeq h ⋆ shiftedSeq sol) n| * (ν : ℝ) ^ (n : ℕ)
-    ≤ ‖l1Weighted.mul h (@shiftedL1 ν N sol)‖ := h_tail_le
-    _ ≤ ‖h‖ * ‖@shiftedL1 ν N sol‖ := l1Weighted.norm_mul_le h _
-    _ = ‖h‖ * ∑ n ∈ Finset.Icc 1 N, |sol.toSeq n| * (ν : ℝ) ^ n := by rw [shiftedL1_norm]
+  exact h_tail_le.trans ((l1Weighted.norm_mul_le h _).trans_eq (by rw [shiftedL1_norm]))
 
 end Z1BoundLemmas
 
@@ -797,12 +758,8 @@ lemma fderiv_F_diff_eq_leftMul_diff {ν : PosReal} {N : ℕ} (lam0 : ℝ) (sol :
     Uses: ‖2·leftMul(c-ā)‖ ≤ 2·‖leftMul(c-ā)‖ ≤ 2·‖c-ā‖ -/
 lemma norm_fderiv_F_diff_le {ν : PosReal} {N : ℕ} (lam0 : ℝ) (sol : ApproxSolution N) (c : l1Weighted ν) :
     ‖fderiv ℝ (F lam0) c - fderiv ℝ (F lam0) sol.toL1‖ ≤ 2 * ‖c - sol.toL1‖ := by
-  rw [fderiv_F_diff_eq_leftMul_diff lam0 sol c]
-  calc ‖(2 : ℝ) • l1Weighted.leftMul (c - sol.toL1)‖
-      = |2| * ‖l1Weighted.leftMul (c - sol.toL1)‖ := norm_smul 2 _
-    _ = 2 * ‖l1Weighted.leftMul (c - sol.toL1)‖ := by norm_num
-    _ ≤ 2 * ‖c - sol.toL1‖ := by
-        apply mul_le_mul_of_nonneg_left (l1Weighted.norm_leftMul_le _) (by norm_num)
+  rw [fderiv_F_diff_eq_leftMul_diff lam0 sol c, norm_smul, Real.norm_ofNat]
+  gcongr; exact l1Weighted.norm_leftMul_le _
 
 /-- Operator norm bound for approxInverse A: ‖A‖ ≤ max(‖A_fin‖_{1,ν}, 1/(2|ā₀|))
     This is Proposition 7.3.14 applied to the specific block-diagonal structure of A. -/
@@ -860,13 +817,9 @@ lemma Y₀_bound_valid (lam0 : ℝ) (sol : ApproxSolution N)
     have h_inv : |(2 * sol.aBar_fin 0)⁻¹| = 1 / (2 * |sol.aBar_fin 0|) := by
       rw [abs_inv, abs_mul, abs_of_pos (by norm_num : (0:ℝ) < 2), inv_eq_one_div]
     rw [h_inv]
-    calc (1 / (2 * |sol.aBar_fin 0|)) * |(sol.toSeq ⋆ sol.toSeq) n| * (ν : ℝ) ^ n
-        ≤ (1 / (2 * |sol.aBar_fin 0|)) *
-            (∑ k ∈ Finset.Icc (n - N) N, |(sol.toSeq) k| * |(sol.toSeq) (n - k)|) * (ν : ℝ) ^ n := by
-          gcongr
-          · exact pow_nonneg (ν.coe_nonneg) n
-          · exact cauchyProduct_middle_abs_bound sol n hn.1
-      _ = _ := by ring
+    exact (mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left
+      (cauchyProduct_middle_abs_bound sol n hn.1) (by positivity))
+      (pow_nonneg ν.coe_nonneg n)).trans_eq (by ring)
 
 /-- Z₀ bound verification: ‖I - AA†‖ ≤ Z₀
 
@@ -891,14 +844,13 @@ lemma Z₀_bound_valid (sol : ApproxSolution N)
   -- Finite part: convert to matrix form
   simp_rw [I_sub_comp_finite_toSeq_eq sol A_fin h]
   -- Apply weighted matrix norm bound
-  let B : BlockDiag.BlockDiagOp ν N := ⟨1 - A_fin * (@approxDeriv ν N sol).finBlock, 0⟩
-  calc ∑ n : Fin (N + 1), |∑ j, (1 - A_fin * (@approxDeriv ν N sol).finBlock) n j * lpWeighted.toSeq h ↑j| * ↑ν ^ ↑n
-      ≤ l1Weighted.finWeightedMatrixNorm ν (1 - A_fin * (@approxDeriv ν N sol).finBlock) *
-        ∑ j : Fin (N + 1), |lpWeighted.toSeq h ↑j| * ↑ν ^ ↑j := BlockDiag.finBlock_norm_bound B h
-    _ ≤ l1Weighted.finWeightedMatrixNorm ν (1 - A_fin * (@approxDeriv ν N sol).finBlock) * ‖h‖ := by
-        apply mul_le_mul_of_nonneg_left _ (l1Weighted.finWeightedMatrixNorm_nonneg _)
-        rw [BlockDiag.norm_split (N := N)]
-        exact le_add_of_nonneg_right (tsum_nonneg (fun _ => mul_nonneg (abs_nonneg _) (pow_nonneg ν.coe_nonneg _)))
+  exact (BlockDiag.finBlock_norm_bound
+    (⟨1 - A_fin * (@approxDeriv ν N sol).finBlock, 0, 0, fun _ _ => by simp⟩) h).trans (by
+      gcongr
+      · exact l1Weighted.finWeightedMatrixNorm_nonneg _
+      · rw [BlockDiag.norm_split (N := N)]
+        exact le_add_of_nonneg_right (tsum_nonneg fun _ =>
+          mul_nonneg (abs_nonneg _) (pow_nonneg ν.coe_nonneg _)))
 
 /-- Z₁ bound verification: ‖A(A† - DF(ā))‖ ≤ Z₁
 
@@ -944,11 +896,8 @@ lemma Z₁_bound_valid (lam0 : ℝ) (sol : ApproxSolution N)
     congr 1; ext ⟨n, hn⟩
     rw [A_DF_sub_approxDeriv_tail lam0 sol A_fin h n hn, abs_mul, abs_one_div]; ring
   rw [h_tail]
-  calc (1 / |sol.aBar_fin 0|) * ∑' n : {n : ℕ // N < n},
-        |∑ j ∈ Finset.Icc 1 N, lpWeighted.toSeq h (n - j) * sol.toSeq j| * (ν : ℝ) ^ (n : ℕ)
-    ≤ (1 / |sol.aBar_fin 0|) * (‖h‖ * ∑ n ∈ Finset.Icc 1 N, |sol.toSeq n| * (ν : ℝ) ^ n) :=
-        mul_le_mul_of_nonneg_left (tail_cauchy_bound sol h) (one_div_nonneg.mpr (abs_nonneg _))
-    _ = 1 / |sol.aBar_fin 0| * (∑ n ∈ Finset.Icc 1 N, |sol.toSeq n| * (ν : ℝ) ^ n) * ‖h‖ := by ring
+  exact (mul_le_mul_of_nonneg_left (tail_cauchy_bound sol h)
+    (by positivity)).trans_eq (by ring)
 
 /-- Z₂ bound verification: ‖A(DF(c) - DF(ā))‖ ≤ Z₂·r for c ∈ B̄ᵣ(ā)
 
@@ -965,26 +914,13 @@ lemma Z₂_bound_valid (lam0 : ℝ) (sol : ApproxSolution N)
       (fderiv ℝ (F lam0) c - fderiv ℝ (F lam0) sol.toL1)‖ ≤ @Z₂_bound ν N sol A_fin * r := by
   -- Extract ‖c - ā‖ ≤ r from the closed ball condition
   rw [Metric.mem_closedBall, dist_eq_norm] at hc
-  -- Use submultiplicativity: ‖A ∘ B‖ ≤ ‖A‖ · ‖B‖
-  calc ‖(@approxInverse ν N sol A_fin).toCLM.comp
-        (fderiv ℝ (F lam0) c - fderiv ℝ (F lam0) sol.toL1)‖
-      ≤ ‖(@approxInverse ν N sol A_fin).toCLM‖ *
-        ‖fderiv ℝ (F lam0) c - fderiv ℝ (F lam0) sol.toL1‖ :=
-          ContinuousLinearMap.opNorm_comp_le _ _
-    _ ≤ ‖(@approxInverse ν N sol A_fin).toCLM‖ * (2 * ‖c - sol.toL1‖) := by
-          apply mul_le_mul_of_nonneg_left (norm_fderiv_F_diff_le lam0 sol c)
-          exact norm_nonneg _
-    _ ≤ max (l1Weighted.finWeightedMatrixNorm ν A_fin) (1 / (2 * |sol.aBar_fin 0|)) *
-        (2 * ‖c - sol.toL1‖) := by
-          apply mul_le_mul_of_nonneg_right (approxInverse_norm_le sol A_fin)
-          apply mul_nonneg (by norm_num) (norm_nonneg _)
-    _ = 2 * max (l1Weighted.finWeightedMatrixNorm ν A_fin) (1 / (2 * |sol.aBar_fin 0|)) *
-        ‖c - sol.toL1‖ := by ring
-    _ ≤ 2 * max (l1Weighted.finWeightedMatrixNorm ν A_fin) (1 / (2 * |sol.aBar_fin 0|)) * r := by
-          apply mul_le_mul_of_nonneg_left hc
-          apply mul_nonneg (by norm_num)
-          exact le_max_of_le_left (l1Weighted.finWeightedMatrixNorm_nonneg _)
-    _ = @Z₂_bound ν N sol A_fin * r := by rw [Z₂_bound_eq_two_mul_max]
+  -- ‖A∘B‖ ≤ ‖A‖·‖B‖ ≤ max(…)·(2·r) = Z₂·r
+  rw [Z₂_bound_eq_two_mul_max]
+  have h_B : ‖fderiv ℝ (F lam0) c - fderiv ℝ (F lam0) sol.toL1‖ ≤ 2 * r :=
+    (norm_fderiv_F_diff_le lam0 sol c).trans (by gcongr)
+  exact (ContinuousLinearMap.opNorm_comp_le _ _).trans
+    ((mul_le_mul (approxInverse_norm_le sol A_fin) h_B
+      (by positivity) (by positivity)).trans_eq (by ring))
 
 /-! ### Injectivity Helper Lemmas
 
@@ -994,7 +930,7 @@ From the textbook (page 168), Proposition 7.6.5:
 3. Since Z₁ ≥ 0, we have Z₀ < 1
 4. Z₀ < 1 implies ‖I - A_fin · DF_fin‖ < 1, so A_fin · DF_fin is invertible
 5. For square matrices, if AB is invertible then A is invertible
-6. Block-diagonal operator is injective if A_fin is invertible and tailScalar ≠ 0
+6. Block-diagonal operator is injective if A_fin is invertible and tailDiag ≠ 0
 -/
 
 section InjectivityLemmas
@@ -1052,9 +988,10 @@ lemma Z₀_lt_one_of_sum_lt_one {ν : PosReal} {N : ℕ} (sol : ApproxSolution N
   linarith
 
 /-- The tail scalar of approxInverse is nonzero -/
-lemma approxInverse_tailScalar_ne_zero {ν : PosReal} {N : ℕ} (sol : ApproxSolution N)
+lemma approxInverse_tailDiag_ne_zero {ν : PosReal} {N : ℕ} (sol : ApproxSolution N)
     (A_fin : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
-    (@approxInverse ν N sol A_fin).tailScalar ≠ 0 := by
+    ∀ n, N < n → (@approxInverse ν N sol A_fin).tailDiag n ≠ 0 := by
+  intro n _
   simp only [approxInverse, ne_eq, one_div, inv_eq_zero, mul_eq_zero, OfNat.ofNat_ne_zero,
              sol.aBar_zero_ne, or_self, not_false_eq_true]
 
@@ -1090,8 +1027,8 @@ lemma approxInverse_injective (lam0 : ℝ) (sol : ApproxSolution N)
   · -- finBlock = A_fin is invertible
     simp only [approxInverse]
     exact h_A_fin_unit
-  · -- tailScalar ≠ 0
-    exact approxInverse_tailScalar_ne_zero sol A_fin
+  · -- tailDiag ≠ 0
+    exact approxInverse_tailDiag_ne_zero sol A_fin
 
 /-- **Main Theorem**: Existence and uniqueness of Taylor series solution.
 

@@ -421,19 +421,12 @@ lemma newton_operator_derivative_bound_simple
   (c : E) (hc : c ∈ Metric.closedBall xBar r) :
   ‖fderiv ℝ (NewtonLikeMap A f) c‖ ≤ Z_bound Z₀ Z₂ r := by
   unfold Z_bound
-
-  rw [newton_operator_fderiv hf_diff]
-
-  calc ‖I_E - A.comp (fderiv ℝ f c)‖
-      = ‖I_E - A.comp (fderiv ℝ f xBar) + A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ := by
-        simp only [comp_sub, sub_add_sub_cancel]
-    _ ≤ ‖I_E - A.comp (fderiv ℝ f xBar)‖ + ‖A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ :=
-        norm_add_le _ _
-    _ ≤ Z₀ + Z₂ r * r := by
-        apply add_le_add h_Z₀
-        have : fderiv ℝ f xBar - fderiv ℝ f c = -(fderiv ℝ f c - fderiv ℝ f xBar) := by abel
-        rw [this, ContinuousLinearMap.comp_neg, norm_neg]
-        exact h_Z₂ c hc
+  rw [newton_operator_fderiv hf_diff,
+    show I_E - A.comp (fderiv ℝ f c) = (I_E - A.comp (fderiv ℝ f xBar)) +
+      A.comp (fderiv ℝ f xBar - fderiv ℝ f c) from by simp only [comp_sub, sub_add_sub_cancel]]
+  have : ‖A.comp (fderiv ℝ f xBar - fderiv ℝ f c)‖ ≤ Z₂ r * r := by
+    rw [← neg_sub, comp_neg, norm_neg]; exact h_Z₂ c hc
+  linarith [norm_add_le (I_E - A.comp (fderiv ℝ f xBar)) (A.comp (fderiv ℝ f xBar - fderiv ℝ f c))]
 
 end OperatorBounds
 
@@ -533,48 +526,17 @@ lemma simple_maps_closedBall_to_itself
   (h_Z_nonneg : 0 ≤ Z r₀)                   -- Z(r₀) ≥ 0 (needed for monotonicity)
   (h_radii : simpleRadiiPolynomial Y₀ Z r₀ < 0) :  -- p(r₀) < 0
   MapsTo T (closedBall xBar r₀) (closedBall xBar r₀) := by
-  intro x hx  -- Let x ∈ B̄ᵣ₀(x̄), show T(x) ∈ B̄ᵣ₀(x̄)
-
-  -- From p(r₀) < 0, extract the key inequality: Z(r₀)·r₀ + Y₀ < r₀
-  -- p(r₀) = (Z(r₀) - 1)·r₀ + Y₀ < 0 implies Z(r₀)·r₀ + Y₀ < r₀
-  have h_sum_bound : Z r₀ * r₀ + Y₀ < r₀ := by
-    unfold simpleRadiiPolynomial at h_radii
-    linarith [h_radii]
-
-  -- The line segment [x̄, x] lies entirely in B̄ᵣ₀(x̄) by convexity
-  -- This allows us to apply the Mean Value Theorem
-  have h_segment : segment ℝ xBar x ⊆ closedBall xBar r₀ := by
-    apply (convex_closedBall xBar r₀).segment_subset
-    · exact mem_closedBall_self (le_of_lt hr₀)  -- x̄ ∈ B̄ᵣ₀(x̄)
-    · exact hx                                   -- x ∈ B̄ᵣ₀(x̄)
-
-  -- Mean Value Theorem: ‖T(x) - T(x̄)‖ ≤ sup_{c ∈ [x̄,x]} ‖DT(c)‖ · ‖x - x̄‖
-  -- Since ‖DT(c)‖ ≤ Z(r₀) for all c ∈ B̄ᵣ₀(x̄) ⊇ [x̄, x]:
-  -- ‖T(x) - T(x̄)‖ ≤ Z(r₀) · ‖x - x̄‖
-  have h_mvt : ‖T x - T xBar‖ ≤ Z r₀ * ‖x - xBar‖ := by
-    apply Convex.norm_image_sub_le_of_norm_fderiv_le (𝕜 := ℝ)
-    · intros c hc
-      exact hT_diff c                   -- T is differentiable
-    · intros c hc
-      exact h_bound_Z c (h_segment hc)  -- ‖DT(c)‖ ≤ Z(r₀) on segment
-    · apply convex_segment              -- [x̄, x] is convex
-    · apply left_mem_segment            -- x̄ ∈ [x̄, x]
-    · apply right_mem_segment           -- x ∈ [x̄, x]
-
-  -- Now show ‖T(x) - x̄‖ ≤ r₀ using triangle inequality and the bounds
+  intro x hx
+  have h_mvt : ‖T x - T xBar‖ ≤ Z r₀ * ‖x - xBar‖ :=
+    Convex.norm_image_sub_le_of_norm_fderiv_le (𝕜 := ℝ) (fun c _ => hT_diff c)
+      (fun c hc => h_bound_Z c (((convex_closedBall xBar r₀).segment_subset
+        (mem_closedBall_self hr₀.le) hx) hc))
+      (convex_segment xBar x) (left_mem_segment ℝ xBar x) (right_mem_segment ℝ xBar x)
   rw [mem_closedBall, dist_eq_norm] at hx ⊢
-  calc ‖T x - xBar‖
-      -- Decompose: T(x) - x̄ = (T(x) - T(x̄)) + (T(x̄) - x̄)
-      = ‖(T x - T xBar) + (T xBar - xBar)‖ := by simp only [sub_add_sub_cancel]
-    -- Triangle inequality: ‖a + b‖ ≤ ‖a‖ + ‖b‖
-    _ ≤ ‖T x - T xBar‖ + ‖T xBar - xBar‖ := norm_add_le _ _
-    -- Apply MVT bound and Y₀ bound
-    _ ≤ Z r₀ * ‖x - xBar‖ + Y₀ := add_le_add h_mvt h_bound_Y
-    -- Since ‖x - x̄‖ ≤ r₀ and Z(r₀) ≥ 0: Z(r₀)·‖x - x̄‖ ≤ Z(r₀)·r₀
-    _ ≤ Z r₀ * r₀ + Y₀ := by
-        exact add_le_add (mul_le_mul_of_nonneg_left (hx) h_Z_nonneg) le_rfl
-    -- Apply the key inequality from p(r₀) < 0
-    _ ≤ r₀ := le_of_lt h_sum_bound
+  have h_tri : ‖T x - xBar‖ ≤ ‖T x - T xBar‖ + ‖T xBar - xBar‖ := by
+    rw [← sub_add_sub_cancel (T x) (T xBar) xBar]; exact norm_add_le _ _
+  linarith [mul_le_mul_of_nonneg_left hx h_Z_nonneg,
+    show Z r₀ * r₀ + Y₀ < r₀ from by unfold simpleRadiiPolynomial at h_radii; linarith]
 
 end HelperLemmas
 
