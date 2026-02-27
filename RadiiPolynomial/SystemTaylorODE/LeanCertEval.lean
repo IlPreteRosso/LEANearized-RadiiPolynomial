@@ -167,49 +167,63 @@ Bridges `|toSeq(A.toScalarCLM v)[n]| * ν^n` to a witness evaluator.
 The ℚ computation is internal to the evaluator; the certificate provides
 ℚ-valued data (column arrays, vector, tail coefficient) and ℝ-to-ℚ bridges. -/
 
-/-- Block-diagonal action computed in ℚ from column arrays + vector + tail coefficient.
-Internal to the evaluator pipeline — certificates don't reference this directly. -/
-def scalarBlockDiagAction {N : ℕ} (matCols : Fin (N + 1) → Array ℚ) (vec : ℕ → ℚ)
-    (tailCoeff : ℚ) (n : ℕ) : ℚ :=
+/-- Block-diagonal action in ℝ: finite modes use matrix-vector product,
+tail modes use diagonal multiplication. Certificate-facing API. -/
+noncomputable def scalarBlockDiagAction {N : ℕ} (matCols : Fin (N + 1) → Array ℝ)
+    (vec : ℕ → ℝ) (tailCoeff : ℝ) (n : ℕ) : ℝ :=
   if n ≤ N then ∑ j : Fin (N + 1), (matCols j).getD n 0 * vec j
   else tailCoeff * vec n
 
-/-- Bridge: `toSeq(A.toScalarCLM v)[n] = ↑(scalarBlockDiagAction ...)`.
-Encodes the norm-level unfolding (fin/tail split, matrix product, diagonal)
-into a single ℚ-cast equality that `finsum_bound using` can consume. -/
+/-- Bridge: `toSeq(A.toScalarCLM v)[n] = scalarBlockDiagAction ...`.
+Pure ℝ signature — no ℚ types in parameters or hypotheses. -/
 lemma ScalarBlockDiagData.toScalarCLM_toSeq_eq_action {N : ℕ} {ν : PosReal}
     (A : ScalarBlockDiagData N) (v : l1Weighted ν)
-    (matCols : Fin (N + 1) → Array ℚ) (vec : ℕ → ℚ) (tailCoeff : ℚ)
-    (hmat : ∀ j i : Fin (N + 1), A.finBlock0 i j = ((matCols j).getD (i : ℕ) 0 : ℝ))
-    (hvec : ∀ n, lpWeighted.toSeq v n = (vec n : ℝ))
-    (htail : ∀ n, N < n → A.tailDiag0 n = (tailCoeff : ℝ))
+    (matCols : Fin (N + 1) → Array ℝ) (vec : ℕ → ℝ) (tailCoeff : ℝ)
+    (hmat : ∀ j i : Fin (N + 1), A.finBlock0 i j = (matCols j).getD (i : ℕ) 0)
+    (hvec : ∀ n, lpWeighted.toSeq v n = vec n)
+    (htail : ∀ n, N < n → A.tailDiag0 n = tailCoeff)
     (n : ℕ) :
     lpWeighted.toSeq (A.toScalarCLM (ν := ν) v) n =
-      (scalarBlockDiagAction matCols vec tailCoeff n : ℝ) := by
+      scalarBlockDiagAction matCols vec tailCoeff n := by
   simp only [scalarBlockDiagAction]
   by_cases hn : n ≤ N
   · rw [if_pos hn, A.toScalarCLM_toSeq_fin (ν := ν) v ⟨n, Nat.lt_succ_of_le hn⟩]
-    simp_rw [hmat, hvec]; push_cast; ring
+    simp_rw [hmat, hvec]
   · push_neg at hn
     rw [if_neg (not_le.mpr hn), A.toScalarCLM_toSeq_tail v n hn, htail n hn, hvec]
-    push_cast; ring
 
-/-- Per-term evaluator for `‖A · v‖` norm sums. -/
+/-- Per-term evaluator for `‖A · v‖` norm sums.
+ℚ parameters for computable interval arithmetic. -/
 def scalarBlockDiagActionEval {N : ℕ} (matCols : Fin (N + 1) → Array ℚ) (vec : ℕ → ℚ)
     (tailCoeff : ℚ) (ν : ℚ) (n : Nat) (cfg : DyadicConfig) : IntervalDyadic :=
-  IntervalDyadic.ofIntervalRat
-    (IntervalRat.singleton (|scalarBlockDiagAction matCols vec tailCoeff n| * ν ^ n))
-    cfg.precision
+  let action : ℚ :=
+    if n ≤ N then ∑ j : Fin (N + 1), (matCols j).getD n 0 * vec j
+    else tailCoeff * vec n
+  IntervalDyadic.ofIntervalRat (IntervalRat.singleton (|action| * ν ^ n)) cfg.precision
 
-/-- Correctness: the real action-norm term lies in the evaluator's interval. -/
+/-- Correctness: the ℝ action-norm term lies in the evaluator's interval.
+Certificate-facing: pure ℝ signature. ℚ bridge is internal. -/
 theorem scalarBlockDiagActionEval_correct {N : ℕ}
-    (matCols : Fin (N + 1) → Array ℚ) (vec : ℕ → ℚ)
-    (tailCoeff : ℚ) (ν : ℚ) (n : Nat) (cfg : DyadicConfig)
+    (matCols : Fin (N + 1) → Array ℝ) (vec : ℕ → ℝ) (tailCoeff : ℝ) (ν : ℝ)
+    (matCols_q : Fin (N + 1) → Array ℚ) (vec_q : ℕ → ℚ) (tailCoeff_q : ℚ) (ν_q : ℚ)
+    (hmat : ∀ j i : Fin (N + 1), (matCols j).getD (i : ℕ) 0 = ((matCols_q j).getD (i : ℕ) 0 : ℝ))
+    (hvec : ∀ n, vec n = (vec_q n : ℝ))
+    (htail : tailCoeff = (tailCoeff_q : ℝ))
+    (hν : ν = (ν_q : ℝ))
+    (n : Nat) (cfg : DyadicConfig)
     (hprec : cfg.precision ≤ 0 := by norm_num) :
-    (|(scalarBlockDiagAction matCols vec tailCoeff n : ℝ)| * (ν : ℝ) ^ n : ℝ) ∈
-      scalarBlockDiagActionEval matCols vec tailCoeff ν n cfg := by
-  simp only [scalarBlockDiagActionEval]
-  exact_mod_cast IntervalDyadic.mem_ofIntervalRat
-    (IntervalRat.mem_singleton _) cfg.precision hprec
+    (|scalarBlockDiagAction matCols vec tailCoeff n| * ν ^ n : ℝ) ∈
+      scalarBlockDiagActionEval matCols_q vec_q tailCoeff_q ν_q n cfg := by
+  simp only [scalarBlockDiagAction, scalarBlockDiagActionEval, hν]
+  split
+  · next hn =>
+    simp_rw [show ∀ j : Fin (N + 1), (matCols j).getD n 0 =
+        ((matCols_q j).getD n 0 : ℝ) from
+      fun j => hmat j ⟨n, Nat.lt_succ_of_le hn⟩, hvec]
+    exact_mod_cast IntervalDyadic.mem_ofIntervalRat
+      (IntervalRat.mem_singleton _) cfg.precision hprec
+  · rw [htail, hvec]
+    exact_mod_cast IntervalDyadic.mem_ofIntervalRat
+      (IntervalRat.mem_singleton _) cfg.precision hprec
 
 end SystemTaylorODE

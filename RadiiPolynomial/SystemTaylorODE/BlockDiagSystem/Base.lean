@@ -11,7 +11,7 @@ Core structural layer for Section 8.2 operators:
 - component-coupled CLM matrices
 - componentwise diagonal CLMs
 - finite `L×L` block norm aggregation
-- coefficient-level block-diagonal data and composition
+- coefficient-level block-diagonal data and composition (incl. `actionFinite_eq_zero_of_coeff_fin_zero`)
 -/
 
 open scoped Topology

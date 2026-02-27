@@ -8,7 +8,7 @@ import Mathlib.Analysis.Normed.Lp.lpSpace
 This file provides the concrete weighted spaces used by the system-level API:
 - `lpWeighted ν p`
 - `l1Weighted ν`
-- norm/membership bridge lemmas
+- norm/membership bridge lemmas (`norm_eq_tailTsum_of_fin_zero`, `tailTsum_le_norm_of_eq`, `norm_mk_le_of_pointwise`)
 - finite weighted matrix norms and array-backed column formulas
 - coefficient truncation for the `Setup82.SeqModel` backend
 -/

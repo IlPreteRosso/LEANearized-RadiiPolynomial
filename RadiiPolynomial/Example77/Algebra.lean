@@ -76,10 +76,7 @@ private lemma sq_expansion_comm (a h : l1Weighted ν) :
 
 private lemma sq_remainder_norm (a h : l1Weighted ν) :
     ‖sq (a + h) - sq a - (2 : ℝ) • leftMul a h‖ ≤ ‖h‖ ^ 2 := by
-  rw [sq_expansion_comm]
-  calc ‖sq h‖ = ‖h * h‖ := rfl
-    _ ≤ ‖h‖ * ‖h‖ := norm_mul_le h h
-    _ = ‖h‖ ^ 2 := by ring
+  rw [sq_expansion_comm]; exact (norm_mul_le h h).trans_eq (by ring)
 
 theorem hasFDerivAt_sq (a : l1Weighted ν) :
     HasFDerivAt sq ((2 : ℝ) • leftMul a) a := by
@@ -88,11 +85,8 @@ theorem hasFDerivAt_sq (a : l1Weighted ν) :
   intro ε hε
   filter_upwards [Metric.ball_mem_nhds (0 : l1Weighted ν) hε] with h hh
   rw [Metric.mem_ball, dist_zero_right] at hh
-  calc ‖sq (a + h) - sq a - ((2 : ℝ) • leftMul a) h‖
-      = ‖sq (a + h) - sq a - (2 : ℝ) • leftMul a h‖ := rfl
-    _ ≤ ‖h‖ ^ 2 := sq_remainder_norm a h
-    _ = ‖h‖ * ‖h‖ := by ring
-    _ ≤ ε * ‖h‖ := mul_le_mul_of_nonneg_right (le_of_lt hh) (norm_nonneg h)
+  exact ((sq_remainder_norm a h).trans_eq (by ring)).trans
+    (mul_le_mul_of_nonneg_right (le_of_lt hh) (norm_nonneg h))
 
 theorem differentiable_sq : Differentiable ℝ (sq : l1Weighted ν → l1Weighted ν) :=
   fun a => (hasFDerivAt_sq a).differentiableAt
@@ -243,9 +237,8 @@ lemma approxInverse_tailDiag_ne_zero {N : ℕ} (sol : ApproxSolution N)
 /-- Z₀ bound via tail cancellation. -/
 lemma Z₀_structural {N : ℕ} (sol : ApproxSolution N)
     (A_mat : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
-    ‖ContinuousLinearMap.id ℝ (l1Weighted ν) -
-      ((approxInverse sol A_mat).toScalarCLM (ν := ν)).comp
-        ((approxDeriv sol).toScalarCLM (ν := ν))‖ ≤
+    Z₀_norm ((approxInverse sol A_mat).toScalarCLM (ν := ν))
+      ((approxDeriv sol).toScalarCLM (ν := ν)) ≤
     l1Weighted.finWeightedMatrixNorm ν
       (1 - (approxInverse sol A_mat).finBlock0 * (approxDeriv sol).finBlock0) :=
   ScalarBlockDiagData.Z₀_le_finWeightedMatrixNorm_of_tailCancel
@@ -380,27 +373,18 @@ lemma Z₁_le_via_eval {N : ℕ} {ν : PosReal}
 lemma Z₂_structural {N : ℕ} (sol : ApproxSolution N)
     (A_mat : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
     (lam0 : ℝ) (c_val : l1Weighted ν) :
-    ‖((approxInverse sol A_mat).toScalarCLM (ν := ν)).comp
-      (fderiv ℝ (F lam0) c_val - fderiv ℝ (F lam0) (sol.toL1 : l1Weighted ν))‖ ≤
+    Z₂_norm (F lam0) sol.toL1
+      ((approxInverse sol A_mat).toScalarCLM (ν := ν)) c_val ≤
     2 * ‖(approxInverse sol A_mat).toScalarCLM (ν := ν)‖ *
       ‖c_val - (sol.toL1 : l1Weighted ν)‖ := by
-  have h_diff : fderiv ℝ (F lam0) c_val - fderiv ℝ (F lam0) (sol.toL1 : l1Weighted ν) =
-      (2 : ℝ) • leftMul (c_val - sol.toL1) :=
-    fderiv_F_diff_eq _ _ _
-  rw [h_diff]
-  calc ‖((approxInverse sol A_mat).toScalarCLM (ν := ν)).comp
-          ((2 : ℝ) • leftMul (c_val - sol.toL1))‖
-      ≤ ‖(approxInverse sol A_mat).toScalarCLM (ν := ν)‖ *
-          ‖(2 : ℝ) • leftMul (c_val - (sol.toL1 : l1Weighted ν))‖ :=
-        ContinuousLinearMap.opNorm_comp_le _ _
-    _ = ‖(approxInverse sol A_mat).toScalarCLM (ν := ν)‖ *
-          (2 * ‖leftMul (c_val - (sol.toL1 : l1Weighted ν))‖) := by
-        rw [norm_smul, Real.norm_ofNat]
-    _ ≤ ‖(approxInverse sol A_mat).toScalarCLM (ν := ν)‖ *
-          (2 * ‖c_val - (sol.toL1 : l1Weighted ν)‖) := by
-        gcongr; exact norm_leftMul_le _
-    _ = 2 * ‖(approxInverse sol A_mat).toScalarCLM (ν := ν)‖ *
-          ‖c_val - (sol.toL1 : l1Weighted ν)‖ := by ring
+  show ‖_‖ ≤ _
+  rw [show fderiv ℝ (F lam0) c_val - fderiv ℝ (F lam0) (sol.toL1 : l1Weighted ν) =
+      (2 : ℝ) • leftMul (c_val - sol.toL1) from fderiv_F_diff_eq _ _ _]
+  refine (ContinuousLinearMap.opNorm_comp_le _ _).trans ?_
+  rw [norm_smul, Real.norm_ofNat]
+  have := norm_leftMul_le (ν := ν) (c_val - sol.toL1)
+  have := norm_nonneg ((approxInverse sol A_mat).toScalarCLM (ν := ν))
+  nlinarith
 
 /-! ### Z₂ corollary: for c ∈ closedBall(ā, r₀) -/
 
@@ -410,18 +394,13 @@ lemma Z₂_ball_bound {N : ℕ} (sol : ApproxSolution N)
     (hA : 2 * ‖(approxInverse sol A_mat).toScalarCLM (ν := ν)‖ ≤ Z₂_val)
     (c_val : l1Weighted ν)
     (hc : c_val ∈ Metric.closedBall (sol.toL1 : l1Weighted ν) r₀) :
-    ‖((approxInverse sol A_mat).toScalarCLM (ν := ν)).comp
-      (fderiv ℝ (F lam0) c_val - fderiv ℝ (F lam0) (sol.toL1 : l1Weighted ν))‖ ≤
+    Z₂_norm (F lam0) sol.toL1
+      ((approxInverse sol A_mat).toScalarCLM (ν := ν)) c_val ≤
     Z₂_val * r₀ := by
   rw [Metric.mem_closedBall, dist_eq_norm] at hc
-  have h1 := Z₂_structural sol A_mat lam0 c_val
-  exact h1.trans (by
-    calc 2 * ‖(approxInverse sol A_mat).toScalarCLM (ν := ν)‖ * ‖c_val - sol.toL1‖
-        ≤ Z₂_val * ‖c_val - (sol.toL1 : l1Weighted ν)‖ := by
-          exact mul_le_mul_of_nonneg_right hA (norm_nonneg _)
-      _ ≤ Z₂_val * r₀ := by
-          have : 0 ≤ Z₂_val := le_trans (by positivity) hA
-          exact mul_le_mul_of_nonneg_left hc this)
+  exact (Z₂_structural sol A_mat lam0 c_val).trans
+    ((mul_le_mul_of_nonneg_right hA (norm_nonneg _)).trans
+      (mul_le_mul_of_nonneg_left hc (le_trans (by positivity) hA)))
 
 /-! ### Main theorem skeleton -/
 
@@ -430,18 +409,16 @@ theorem existsUnique {N : ℕ} (sol : ApproxSolution N)
     (A_mat : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
     (lam0 : ℝ) {Y₀ Z₀ Z₁ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
     (hr₀ : 0 < r₀)
-    (hY₀ : ‖(approxInverse sol A_mat).toScalarCLM (ν := ν)
-      (F lam0 (sol.toL1 : l1Weighted ν))‖ ≤ Y₀)
-    (hZ₀ : ‖ContinuousLinearMap.id ℝ (l1Weighted ν) -
-      ((approxInverse sol A_mat).toScalarCLM (ν := ν)).comp
-        ((approxDeriv sol).toScalarCLM (ν := ν))‖ ≤ Z₀)
-    (hZ₁ : ‖((approxInverse sol A_mat).toScalarCLM (ν := ν)).comp
-      ((approxDeriv sol).toScalarCLM (ν := ν) -
-        fderiv ℝ (F lam0) (sol.toL1 : l1Weighted ν))‖ ≤ Z₁)
+    (hY₀ : Y₀_norm (F lam0) sol.toL1
+      ((approxInverse sol A_mat).toScalarCLM (ν := ν)) ≤ Y₀)
+    (hZ₀ : Z₀_norm ((approxInverse sol A_mat).toScalarCLM (ν := ν))
+      ((approxDeriv sol).toScalarCLM (ν := ν)) ≤ Z₀)
+    (hZ₁ : Z₁_norm (F lam0) sol.toL1
+      ((approxInverse sol A_mat).toScalarCLM (ν := ν))
+      ((approxDeriv sol).toScalarCLM (ν := ν)) ≤ Z₁)
     (hZ₂ : ∀ c_val ∈ Metric.closedBall (sol.toL1 : l1Weighted ν) r₀,
-      ‖((approxInverse sol A_mat).toScalarCLM (ν := ν)).comp
-        (fderiv ℝ (F lam0) c_val -
-          fderiv ℝ (F lam0) (sol.toL1 : l1Weighted ν))‖ ≤ Z₂ r₀ * r₀)
+      Z₂_norm (F lam0) sol.toL1
+        ((approxInverse sol A_mat).toScalarCLM (ν := ν)) c_val ≤ Z₂ r₀ * r₀)
     (h_radii : generalRadiiPolynomial Y₀ Z₀ Z₁ Z₂ r₀ < 0)
     (h_inj : Function.Injective
       ((approxInverse sol A_mat).toScalarCLM (ν := ν))) :

@@ -434,3 +434,47 @@ a per-component analogue operating on `(ℓ¹_ν)^L`, with system-level aggregat
 
 **Remaining**: Fill `norm_approxDeriv_sub_fderiv_le` sorry in Algebra.lean (Young bound for ‖A†-DF‖).
 Approach: `opNorm_le_bound` → finite part=0 (via `fin_kill`) → tail = shifted convolution → define `shiftedSeq`/`shiftedL1` → Young/submultiplicativity bound. Port from DirectCore.lean:471-543.
+
+### Z₁ general-L porting + API cleanup (2026-02-27)
+
+**Ported 3 scalar Z₁ APIs to general L in Concrete.lean:**
+- `SystemBlockDiagData.norm_comp_of_fin_kill` — ‖A.toCLM.comp T‖ ≤ tailBound * ‖T‖ when T kills finite modes
+- `XL1.opNorm_le_of_fin_kill_tail_eq` — ‖D‖ ≤ ‖E‖ when D kills finite and matches E on tail
+- `SystemBlockDiagData.Z₁_le_of_fin_kill_tail_dom` — full Z₁ pipeline
+
+**API improvements in Concrete.lean:**
+- `toCLM_apply` now unfolds to `applyX` (not `toLinearMap`) — `toLinearMap` is internal
+- Removed `applyX_toCoeff` (pointwise), replaced by `toCoeff_applyX` (function-level) — enables `simp` chaining through compositions
+- `toCoeff_comp_toCLM`, `applyX_add`, `applyX_smul` proofs simplified
+
+**Extracted 3 helpers to lpWeighted.lean:**
+- `l1Weighted.norm_eq_tailTsum_of_fin_zero` — if fin modes zero, norm = tail tsum
+- `l1Weighted.tailTsum_le_norm_of_eq` — if tail coefficients match, tail_tsum(a) ≤ ‖b‖
+- `l1Weighted.norm_mk_le_of_pointwise` — pointwise |f n| ≤ C|toSeq a n| → ‖mk f‖ ≤ C‖a‖
+
+**Extracted helper to Base.lean:**
+- `SystemBlockDiagData.actionFinite_eq_zero_of_coeff_fin_zero` — if all finite-mode input coefficients zero, actionFinite = 0
+
+**Proof reductions using new helpers:**
+- `actionTail_component_norm_le`: 42 → 10 lines
+- `XL1.opNorm_le_of_fin_kill_tail_eq`: 34 → 11 lines
+- `l1Weighted.opNorm_le_of_fin_kill_tail_eq` (Scalar.lean): 25 → 6 lines (now delegates to general-L)
+
+### Canonical names generalized to Banach spaces (2026-02-27)
+
+**What:** `Y₀_norm`, `Z₀_norm`, `Z₁_norm`, `Z₂_norm` in `Core.lean` changed from
+`X Seq ν L`-typed to general Banach space (`E F : Type*` with `NormedAddCommGroup`).
+
+**Why:** Both `l1Weighted ν` (scalar, L=1) and `XL1 ν L` (system) now unify under
+the same canonical definitions without type bridging or `(Seq := Seq)` annotations.
+
+**Downstream wiring:**
+- `existsUnique_of_scalar_bounds` (Scalar.lean) uses canonical names
+- `existsUnique` (Algebra.lean) uses canonical names
+- Certificate.lean bound lemmas (`Y₀_le`, `Z₀_le`, `Z₁_le`, `Z₂_le`) state results using canonical names
+- `Z₀_norm_le_of_eq_defect` in Concrete.lean and Scalar.lean simplified (no `(Seq := SeqL1)`)
+
+**Also in this session (Concrete.lean API improvements):**
+- `toCLM_apply` now unfolds to `applyX` (not `toLinearMap`)
+- `applyX_toCoeff` replaced by function-level `toCoeff_applyX`
+- `toCoeff_comp_toCLM` simplified to `simp`

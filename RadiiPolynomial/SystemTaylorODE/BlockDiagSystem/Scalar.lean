@@ -86,12 +86,10 @@ lemma ScalarBlockDiagData.Z₀_norm_le_of_eq_defect
     (A B D : ScalarBlockDiagData N)
     (hD : ContinuousLinearMap.id ℝ (XL1 ν 1) -
         (A.toCLM (ν := ν)).comp (B.toCLM (ν := ν)) = D.toCLM (ν := ν)) :
-    Z₀_norm (Seq := SeqL1) (ν := ν) (ν' := ν)
-      (A := A.toCLM (ν := ν)) (A_dagger := B.toCLM (ν := ν)) ≤
+    Z₀_norm (A.toCLM (ν := ν)) (B.toCLM (ν := ν)) ≤
       l1Weighted.finWeightedMatrixNorm ν D.finBlock0 + D.tailBound := by
   have hsys :
-      Z₀_norm (Seq := SeqL1) (ν := ν) (ν' := ν)
-          (A := A.toCLM (ν := ν)) (A_dagger := B.toCLM (ν := ν)) ≤
+      Z₀_norm (A.toCLM (ν := ν)) (B.toCLM (ν := ν)) ≤
         finiteBlockMatrixNorm ν D.finBlock + D.tailBound := by
     exact SystemBlockDiagData.Z₀_norm_le_of_eq_defect
       (ν := ν) (L := 1) (N := N) (A := A) (B := B) (D := D) hD
@@ -319,10 +317,9 @@ lemma ScalarBlockDiagData.id_sub_comp_toScalarCLM_apply_eq
 /-- Scalar-to-system norm transfer for the residual `id - A ∘ B`. -/
 lemma ScalarBlockDiagData.norm_id_sub_comp_toScalarCLM_le
     (A B : ScalarBlockDiagData N) :
-    ‖ContinuousLinearMap.id ℝ (l1Weighted ν) -
-      (A.toScalarCLM (ν := ν)).comp (B.toScalarCLM (ν := ν))‖ ≤
-    ‖ContinuousLinearMap.id ℝ (XL1 ν 1) -
-      (A.toCLM (ν := ν)).comp (B.toCLM (ν := ν))‖ := by
+    Z₀_norm (A.toScalarCLM (ν := ν)) (B.toScalarCLM (ν := ν)) ≤
+    Z₀_norm (A.toCLM (ν := ν)) (B.toCLM (ν := ν)) := by
+  show ‖_‖ ≤ ‖_‖
   apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _)
   intro x
   rw [id_sub_comp_toScalarCLM_apply_eq]
@@ -345,14 +342,11 @@ theorem ScalarBlockDiagData.existsUnique_of_scalar_bounds
     {xBar : l1Weighted ν}
     {Y₀ Z₀ Z₁ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
     (hr₀ : 0 < r₀)
-    (hY₀ : ‖A.toScalarCLM (ν := ν) (f xBar)‖ ≤ Y₀)
-    (hZ₀ : ‖ContinuousLinearMap.id ℝ (l1Weighted ν) -
-      (A.toScalarCLM (ν := ν)).comp (A_dagger.toScalarCLM (ν := ν))‖ ≤ Z₀)
-    (hZ₁ : ‖(A.toScalarCLM (ν := ν)).comp
-      ((A_dagger.toScalarCLM (ν := ν)) - fderiv ℝ f xBar)‖ ≤ Z₁)
+    (hY₀ : Y₀_norm f xBar (A.toScalarCLM (ν := ν)) ≤ Y₀)
+    (hZ₀ : Z₀_norm (A.toScalarCLM (ν := ν)) (A_dagger.toScalarCLM (ν := ν)) ≤ Z₀)
+    (hZ₁ : Z₁_norm f xBar (A.toScalarCLM (ν := ν)) (A_dagger.toScalarCLM (ν := ν)) ≤ Z₁)
     (hZ₂ : ∀ c ∈ Metric.closedBall xBar r₀,
-      ‖(A.toScalarCLM (ν := ν)).comp
-        (fderiv ℝ f c - fderiv ℝ f xBar)‖ ≤ Z₂ r₀ * r₀)
+      Z₂_norm f xBar (A.toScalarCLM (ν := ν)) c ≤ Z₂ r₀ * r₀)
     (hf_diff : Differentiable ℝ f)
     (h_radii : generalRadiiPolynomial Y₀ Z₀ Z₁ Z₂ r₀ < 0)
     (h_inj : Function.Injective (A.toScalarCLM (ν := ν))) :
@@ -501,8 +495,7 @@ Wrapper around `SystemBlockDiagData.Z₀_le_of_tailCancel`. -/
 lemma ScalarBlockDiagData.Z₀_le_finWeightedMatrixNorm_of_tailCancel
     (A B : ScalarBlockDiagData N)
     (htail : ∀ n, N < n → A.tailDiag0 n * B.tailDiag0 n = 1) :
-    ‖ContinuousLinearMap.id ℝ (l1Weighted ν) -
-      (A.toScalarCLM (ν := ν)).comp (B.toScalarCLM (ν := ν))‖ ≤
+    Z₀_norm (A.toScalarCLM (ν := ν)) (B.toScalarCLM (ν := ν)) ≤
     l1Weighted.finWeightedMatrixNorm ν (1 - A.finBlock0 * B.finBlock0) := by
   have htail_L : ∀ l : Fin 1, ∀ n, N < n → A.tailDiag l n * B.tailDiag l n = 1 := by
     intro l; rw [show l = 0 from Fin.eq_zero l]

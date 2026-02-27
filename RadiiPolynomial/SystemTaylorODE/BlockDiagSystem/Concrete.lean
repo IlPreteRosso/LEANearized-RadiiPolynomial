@@ -8,6 +8,7 @@ Concrete `l1Weighted` realization of `SystemBlockDiagData`:
 - linearity and summability helpers
 - `toLinearMap` / `toCLM` with explicit norm bound
 - residual and `Z₀` bridge lemmas
+- Section 9: Z₁ infrastructure for general L (composition norm bounds when the inner operator kills finite modes)
 -/
 
 open scoped Topology
@@ -557,10 +558,9 @@ lemma SystemBlockDiagData.norm_id_sub_comp_le_of_eq_defect [NeZero L]
     (A B D : SystemBlockDiagData L N)
     (hD : ContinuousLinearMap.id ℝ (XL1 ν L) -
         (A.toCLM (ν := ν)).comp (B.toCLM (ν := ν)) = D.toCLM (ν := ν)) :
-    ‖ContinuousLinearMap.id ℝ (XL1 ν L) -
-        (A.toCLM (ν := ν)).comp (B.toCLM (ν := ν))‖ ≤
+    Z₀_norm (A.toCLM (ν := ν)) (B.toCLM (ν := ν)) ≤
       finiteBlockMatrixNorm ν D.finBlock + D.tailBound := by
-  rw [hD]
+  show ‖_‖ ≤ _; rw [hD]
   exact D.norm_toCLM_le (ν := ν)
 
 /-- `Z₀` bound transfer to the canonical Core API from a defect CLM identity. -/
@@ -568,12 +568,10 @@ lemma SystemBlockDiagData.Z₀_norm_le_of_eq_defect [NeZero L]
     (A B D : SystemBlockDiagData L N)
     (hD : ContinuousLinearMap.id ℝ (XL1 ν L) -
         (A.toCLM (ν := ν)).comp (B.toCLM (ν := ν)) = D.toCLM (ν := ν)) :
-    Z₀_norm (Seq := SeqL1) (ν := ν) (ν' := ν)
-        (A := A.toCLM (ν := ν)) (A_dagger := B.toCLM (ν := ν)) ≤
+    Z₀_norm (A.toCLM (ν := ν)) (B.toCLM (ν := ν)) ≤
       finiteBlockMatrixNorm ν D.finBlock + D.tailBound := by
-  simpa [Z₀_norm] using
-    (SystemBlockDiagData.norm_id_sub_comp_le_of_eq_defect
-      (ν := ν) (A := A) (B := B) (D := D) hD)
+  exact SystemBlockDiagData.norm_id_sub_comp_le_of_eq_defect
+    (ν := ν) (A := A) (B := B) (D := D) hD
 
 /-- General injectivity transfer from coefficient-level finite/tail hypotheses.
 
@@ -691,11 +689,10 @@ lemma SystemBlockDiagData.id_sub_comp_eq_defect_toCLM [NeZero L]
 lemma SystemBlockDiagData.Z₀_le_of_tailCancel [NeZero L]
     (A B : SystemBlockDiagData L N)
     (htail : ∀ l, ∀ n, N < n → A.tailDiag l n * B.tailDiag l n = 1) :
-    ‖ContinuousLinearMap.id ℝ (XL1 ν L) -
-      (A.toCLM (ν := ν)).comp (B.toCLM (ν := ν))‖ ≤
+    Z₀_norm (A.toCLM (ν := ν)) (B.toCLM (ν := ν)) ≤
     finiteBlockMatrixNorm ν (A.defectOfTailCancel B htail).finBlock := by
   have hD := A.id_sub_comp_eq_defect_toCLM (ν := ν) B htail
-  rw [hD]
+  show ‖_‖ ≤ _; rw [hD]
   have h := (A.defectOfTailCancel B htail).norm_toCLM_le (ν := ν)
   have htb : (A.defectOfTailCancel B htail).tailBound = 0 := rfl
   rwa [htb, add_zero] at h
