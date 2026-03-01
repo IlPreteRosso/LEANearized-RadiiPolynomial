@@ -1,4 +1,5 @@
 import RadiiPolynomial.SystemTaylorODE.BlockDiagSystem.Scalar
+import RadiiPolynomial.Tactic.AutoPolyFDeriv
 
 /-!
 # Example 7.7 — Algebraic Infrastructure
@@ -21,79 +22,54 @@ Uses the `SystemTaylorODE/BlockDiagSystem` API exclusively (no `TaylorODE_Direct
 
 open scoped BigOperators Topology
 open Metric Set Filter ContinuousLinearMap SystemTaylorODE
+open SystemTaylorODE.l1Weighted (leftMul leftMul_apply norm_leftMul_le
+  leftMul_add leftMul_sub leftMul_smul smul_id_eq_leftMul)
 
 noncomputable section
 
 variable {ν : PosReal}
 
-/-! ## 1. Fréchet Derivative for F(a) = a*a - c -/
+/-! ## 1. Fréchet Derivative for F(a) = a*a - c
+
+`leftMul`, `smul_id_eq_leftMul`, and related lemmas are in
+`SystemTaylorODE.l1Weighted` (LpOneBanachAlgebra.lean). -/
 
 namespace Example77
-
-/-! ### Left multiplication as CLM -/
-
-def leftMul (a : l1Weighted ν) : l1Weighted ν →L[ℝ] l1Weighted ν :=
-  LinearMap.mkContinuous
-    { toFun := fun h => a * h
-      map_add' := fun h₁ h₂ => mul_add a h₁ h₂
-      map_smul' := fun c h => by
-        simp only [RingHom.id_apply, ← smul_eq_mul, ← smul_eq_mul]
-        exact (smul_comm c a h).symm }
-    ‖a‖
-    (fun h => norm_mul_le a h)
-
-lemma norm_leftMul_le (a : l1Weighted ν) : ‖leftMul a‖ ≤ ‖a‖ :=
-  ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg a) (fun h => norm_mul_le a h)
-
-@[simp]
-lemma leftMul_apply (a h : l1Weighted ν) : leftMul a h = a * h := rfl
-
-lemma leftMul_smul (c : ℝ) (a : l1Weighted ν) :
-    leftMul (c • a) = c • leftMul a := by
-  ext1 h; simp only [leftMul_apply, coe_smul', Pi.smul_apply, ← smul_eq_mul]
-  exact smul_mul_assoc c a h
-
-lemma leftMul_add (a b : l1Weighted ν) :
-    leftMul (a + b) = leftMul a + leftMul b := by
-  ext1 h; simp only [leftMul_apply, add_apply]; exact add_mul a b h
-
-lemma leftMul_sub (a b : l1Weighted ν) :
-    leftMul (a - b) = leftMul a - leftMul b := by
-  rw [sub_eq_add_neg, leftMul_add, ← neg_one_smul ℝ b, leftMul_smul]
-  simp only [neg_one_smul]; abel
 
 /-! ### Squaring map and F = sq - c -/
 
 def sq (a : l1Weighted ν) : l1Weighted ν := a * a
 
+lemma sq_eq_pow (a : l1Weighted ν) : sq a = a ^ 2 := by
+  simp [sq, _root_.sq]
+
+lemma sq_eq_fun : (sq : l1Weighted ν → l1Weighted ν) = fun x => x ^ 2 := funext sq_eq_pow
+
 def F_sub_const (c : l1Weighted ν) (a : l1Weighted ν) : l1Weighted ν := sq a - c
 
-/-! ### Fréchet derivative -/
+lemma F_sub_const_eq_fun (c : l1Weighted ν) :
+    (F_sub_const c : l1Weighted ν → l1Weighted ν) = fun x => x ^ 2 - c :=
+  funext (fun a => by simp [F_sub_const, sq_eq_pow])
 
-private lemma sq_expansion_comm (a h : l1Weighted ν) :
-    sq (a + h) - sq a - (2 : ℝ) • leftMul a h = sq h := by
-  simp only [sq, leftMul_apply, two_smul]; ring
+/-! ### Fréchet derivative (via `auto_poly_fderiv`)
 
-private lemma sq_remainder_norm (a h : l1Weighted ν) :
-    ‖sq (a + h) - sq a - (2 : ℝ) • leftMul a h‖ ≤ ‖h‖ ^ 2 := by
-  rw [sq_expansion_comm]; exact (norm_mul_le h h).trans_eq (by ring)
-
-theorem hasFDerivAt_sq (a : l1Weighted ν) :
-    HasFDerivAt sq ((2 : ℝ) • leftMul a) a := by
-  rw [hasFDerivAt_iff_isLittleO_nhds_zero]
-  apply Asymptotics.IsLittleO.of_bound
-  intro ε hε
-  filter_upwards [Metric.ball_mem_nhds (0 : l1Weighted ν) hε] with h hh
-  rw [Metric.mem_ball, dist_zero_right] at hh
-  exact ((sq_remainder_norm a h).trans_eq (by ring)).trans
-    (mul_le_mul_of_nonneg_right (le_of_lt hh) (norm_nonneg h))
-
-theorem differentiable_sq : Differentiable ℝ (sq : l1Weighted ν → l1Weighted ν) :=
-  fun a => (hasFDerivAt_sq a).differentiableAt
+Pattern: `rw` unfolds the named def, then `auto_poly_fderiv` computes + normalizes
+(Banach algebra bridge lemmas are built into the main simp phase). -/
 
 theorem fderiv_sq (a : l1Weighted ν) :
-    fderiv ℝ sq a = (2 : ℝ) • leftMul a :=
-  (hasFDerivAt_sq a).fderiv
+    fderiv ℝ sq a = (2 : ℝ) • leftMul a := by
+  rw [sq_eq_fun]; auto_poly_fderiv
+
+theorem differentiable_sq : Differentiable ℝ (sq : l1Weighted ν → l1Weighted ν) := by
+  rw [sq_eq_fun]; fun_prop
+
+theorem hasFDerivAt_sq (a : l1Weighted ν) :
+    HasFDerivAt sq ((2 : ℝ) • leftMul a) a :=
+  (differentiable_sq a).hasFDerivAt.congr_fderiv (fderiv_sq a)
+
+theorem fderiv_F_sub_const (c a : l1Weighted ν) :
+    fderiv ℝ (F_sub_const c) a = (2 : ℝ) • leftMul a := by
+  rw [F_sub_const_eq_fun]; auto_poly_fderiv
 
 theorem hasFDerivAt_F_sub_const (c a : l1Weighted ν) :
     HasFDerivAt (F_sub_const c) ((2 : ℝ) • leftMul a) a :=
@@ -102,10 +78,6 @@ theorem hasFDerivAt_F_sub_const (c a : l1Weighted ν) :
 theorem differentiable_F_sub_const (c : l1Weighted ν) :
     Differentiable ℝ (F_sub_const c) :=
   fun a => (hasFDerivAt_F_sub_const c a).differentiableAt
-
-theorem fderiv_F_sub_const (c a : l1Weighted ν) :
-    fderiv ℝ (F_sub_const c) a = (2 : ℝ) • leftMul a :=
-  (hasFDerivAt_F_sub_const c a).fderiv
 
 /-- DF(c) - DF(ā) = 2 • leftMul(c - ā). Used for Z₂. -/
 lemma fderiv_F_diff_eq (c_seq : l1Weighted ν) (a b : l1Weighted ν) :
@@ -276,7 +248,8 @@ lemma approxDeriv_sub_fderiv_fin_kill {N : ℕ}
       CauchyProduct (fun k => 2 * sol.toSeq k) (lpWeighted.toSeq h) n := by
     have : lpWeighted.toSeq ((sol.toL1 : l1Weighted ν) * h) n =
       CauchyProduct sol.toSeq (lpWeighted.toSeq h) n := rfl
-    rw [this, CauchyProduct.apply, CauchyProduct.apply]; simp [Finset.mul_sum, mul_assoc]
+    rw [this, CauchyProduct.apply, CauchyProduct.apply, Finset.mul_sum]
+    exact Finset.sum_congr rfl (fun i _ => by ring)
   rw [hmul, sub_self]
 
 /-! ### Shifted coefficient sequence for Z₁ norm bound -/
@@ -337,9 +310,10 @@ lemma approxDeriv_sub_fderiv_tail_eq {N : ℕ}
       shiftedSeq sol 0 * lpWeighted.toSeq h n +
       ∑ k ∈ Finset.Icc 1 N, shiftedSeq sol k * lpWeighted.toSeq h (n - k) =
       ∑ k ∈ Finset.Icc 1 N, sol.toSeq k * lpWeighted.toSeq h (n - k) := by
-    simp only [shiftedSeq, show (0 : ℕ) ∉ Finset.Icc 1 N from by simp [Finset.mem_Icc],
-      ite_false, zero_mul, zero_add]
-    exact Finset.sum_congr rfl (fun k hk => by simp [hk])
+    rw [show shiftedSeq sol 0 = 0 from if_neg (by simp [Finset.mem_Icc]),
+      zero_mul, zero_add]
+    exact Finset.sum_congr rfl fun k hk =>
+      show (if k ∈ Finset.Icc 1 N then sol.toSeq k else 0) * _ = _ by rw [if_pos hk]
   rw [h_shifted_sum, show sol.aBar_fin (0 : Fin (N + 1)) = sol.toSeq 0 from
     (sol.toSeq_eq_fin 0).symm]
   ring
@@ -359,7 +333,7 @@ lemma Z₁_le_via_eval {N : ℕ} {ν : PosReal}
     _ ((-2 : ℝ) • leftMul (shiftedL1 sol))
     (fun h n hn => approxDeriv_sub_fderiv_fin_kill sol lam0 h n hn)
     (fun h n hn => by
-      rw [approxDeriv_sub_fderiv_tail_eq sol lam0 h n hn]; simp [leftMul_apply])
+      rw [approxDeriv_sub_fderiv_tail_eq sol lam0 h n hn]; simp)
     C (hbound.trans' (mul_le_mul_of_nonneg_left
       ((norm_smul (-2 : ℝ) (leftMul (shiftedL1 sol : l1Weighted ν)) ▸ by
         rw [norm_neg, Real.norm_ofNat]
@@ -404,7 +378,7 @@ lemma Z₂_ball_bound {N : ℕ} (sol : ApproxSolution N)
 
 /-! ### Main theorem skeleton -/
 
-/-- Generic existence/uniqueness for Example 7.7 via `existsUnique_of_scalar_bounds`. -/
+/-- Generic existence/uniqueness for Example 7.7 via `general_radii_polynomial_theorem`. -/
 theorem existsUnique {N : ℕ} (sol : ApproxSolution N)
     (A_mat : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
     (lam0 : ℝ) {Y₀ Z₀ Z₁ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
@@ -424,8 +398,7 @@ theorem existsUnique {N : ℕ} (sol : ApproxSolution N)
       ((approxInverse sol A_mat).toScalarCLM (ν := ν))) :
     ∃! xTilde ∈ Metric.closedBall (sol.toL1 : l1Weighted ν) r₀,
       F lam0 xTilde = 0 :=
-  ScalarBlockDiagData.existsUnique_of_scalar_bounds
-    (approxInverse sol A_mat) (approxDeriv sol)
+  general_radii_polynomial_theorem
     hr₀ hY₀ hZ₀ hZ₁ hZ₂ (differentiable_F lam0) h_radii h_inj
 
 end Example77

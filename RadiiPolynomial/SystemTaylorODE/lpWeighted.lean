@@ -1,5 +1,6 @@
 import RadiiPolynomial.SystemTaylorODE.ScaledReal
 import RadiiPolynomial.SystemTaylorODE.CauchyProduct
+import RadiiPolynomial.SystemTaylorODE.NormHelpers
 import Mathlib.Analysis.Normed.Lp.lpSpace
 
 /-!
@@ -10,7 +11,7 @@ This file provides the concrete weighted spaces used by the system-level API:
 - `l1Weighted ν`
 - norm/membership bridge lemmas (`norm_eq_tailTsum_of_fin_zero`, `tailTsum_le_norm_of_eq`, `norm_mk_le_of_pointwise`)
 - finite weighted matrix norms and array-backed column formulas
-- coefficient truncation for the `Setup82.SeqModel` backend
+- coefficient truncation
 -/
 
 open scoped BigOperators Topology NNReal ENNReal Matrix
@@ -202,11 +203,11 @@ variable {N : ℕ}
 def finl1WeightedNorm (ν : ℝ≥0) (x : Fin (N + 1) → ℝ) : ℝ :=
   ∑ n : Fin (N + 1), |x n| * (ν : ℝ) ^ (n : ℕ)
 
-/-- Weighted matrix column norm. -/
+/-- Weighted matrix column norm: `‖col_j(A)‖_{1,ν} / ν^j`. -/
 def matrixColNorm (ν : PosReal)
     (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
     (j : Fin (N + 1)) : ℝ :=
-  (1 / (ν : ℝ) ^ (j : ℕ)) * ∑ i : Fin (N + 1), |A i j| * (ν : ℝ) ^ (i : ℕ)
+  finl1WeightedNorm (ν : ℝ≥0) (fun i => A i j) / (ν : ℝ) ^ (j : ℕ)
 
 /-- Finite weighted matrix norm: max of weighted column norms. -/
 def finWeightedMatrixNorm (ν : PosReal)
@@ -220,9 +221,8 @@ lemma matrixColNorm_nonneg (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
     (j : Fin (N + 1)) :
     0 ≤ matrixColNorm ν A j := by
   unfold matrixColNorm
-  apply mul_nonneg
-  · exact div_nonneg zero_le_one (pow_nonneg ν.coe_nonneg _)
-  · exact Finset.sum_nonneg (fun _ _ => weighted_term_nonneg _ _)
+  exact div_nonneg (Finset.sum_nonneg (fun _ _ => weighted_term_nonneg _ _))
+    (pow_nonneg ν.coe_nonneg _)
 
 lemma finWeightedMatrixNorm_nonneg (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) :
     0 ≤ finWeightedMatrixNorm ν A := by
@@ -234,63 +234,38 @@ lemma matrixColNorm_mul_pow (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
     (j : Fin (N + 1)) :
     matrixColNorm ν A j * (ν : ℝ) ^ (j : ℕ) =
       ∑ i : Fin (N + 1), |A i j| * (ν : ℝ) ^ (i : ℕ) := by
-  rw [matrixColNorm]
-  field_simp [pow_ne_zero _ (PosReal.coe_ne_zero ν)]
+  simp [matrixColNorm, finl1WeightedNorm, div_mul_cancel₀ _
+    (pow_ne_zero _ (PosReal.coe_ne_zero ν))]
 
-/-- Weighted matrix/mulVec estimate in finite dimensions:
-`‖Mv‖_{1,ν} ≤ ‖M‖_{1,ν} ‖v‖_{1,ν}` in expanded finite-sum form. -/
+/-- Weighted matrix/mulVec submultiplicativity:
+`‖Mv‖_{1,ν} ≤ ‖M‖_{1,ν} · ‖v‖_{1,ν}`, stated symbolically via
+`finl1WeightedNorm` and `Matrix.mulVec`.
+
+Proof: `show` reduces to expanded sums (definitional), then
+`weighted_sum_abs_sum_le` (triangle + sum swap) →
+`simp_rw` (factor `|v k|`, recognize `matrixColNorm_mul_pow`) →
+`Finset.le_sup'` (column norm ≤ matrix norm). -/
 lemma finWeightedMatrixNorm_mulVec_le
     (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
     (v : Fin (N + 1) → ℝ) :
-    ∑ n : Fin (N + 1), |∑ k : Fin (N + 1), A n k * v k| * (ν : ℝ) ^ (n : ℕ) ≤
-      finWeightedMatrixNorm ν A * ∑ k : Fin (N + 1), |v k| * (ν : ℝ) ^ (k : ℕ) := by
-  have h₁ :
-      ∑ n : Fin (N + 1), |∑ k : Fin (N + 1), A n k * v k| * (ν : ℝ) ^ (n : ℕ) ≤
-        ∑ n : Fin (N + 1), (∑ k : Fin (N + 1), |A n k| * |v k|) * (ν : ℝ) ^ (n : ℕ) := by
-    refine Finset.sum_le_sum ?_
-    intro n _
-    refine mul_le_mul_of_nonneg_right ?_ (pow_nonneg ν.coe_nonneg _)
-    exact (Finset.abs_sum_le_sum_abs _ _).trans_eq (by simp_rw [abs_mul])
-  have h₂ :
-      ∑ n : Fin (N + 1), (∑ k : Fin (N + 1), |A n k| * |v k|) * (ν : ℝ) ^ (n : ℕ) =
-        ∑ k : Fin (N + 1), ∑ n : Fin (N + 1), |A n k| * |v k| * (ν : ℝ) ^ (n : ℕ) := by
-    simp_rw [Finset.sum_mul]
-    exact Finset.sum_comm
-  have h₃ :
-      ∑ k : Fin (N + 1), ∑ n : Fin (N + 1), |A n k| * |v k| * (ν : ℝ) ^ (n : ℕ) =
-        ∑ k : Fin (N + 1), |v k| * ∑ n : Fin (N + 1), |A n k| * (ν : ℝ) ^ (n : ℕ) := by
-    refine Finset.sum_congr rfl ?_
-    intro k _
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl ?_
-    intro n _
-    ring
-  have h₄ :
-      ∑ k : Fin (N + 1), |v k| * ∑ n : Fin (N + 1), |A n k| * (ν : ℝ) ^ (n : ℕ) =
-        ∑ k : Fin (N + 1), |v k| * (matrixColNorm ν A k * (ν : ℝ) ^ (k : ℕ)) := by
-    simp only [matrixColNorm_mul_pow]
-  have h₅ :
-      ∑ k : Fin (N + 1), |v k| * (matrixColNorm ν A k * (ν : ℝ) ^ (k : ℕ)) ≤
-        finWeightedMatrixNorm ν A * ∑ k : Fin (N + 1), |v k| * (ν : ℝ) ^ (k : ℕ) := by
-    rw [Finset.mul_sum]
-    refine Finset.sum_le_sum ?_
-    intro k _
-    have hcol :
-        matrixColNorm ν A k * (ν : ℝ) ^ (k : ℕ) ≤
-          finWeightedMatrixNorm ν A * (ν : ℝ) ^ (k : ℕ) := by
-      exact mul_le_mul_of_nonneg_right
-        (Finset.le_sup' (f := fun j : Fin (N + 1) => matrixColNorm ν A j) (Finset.mem_univ k))
-        (pow_nonneg ν.coe_nonneg _)
-    exact (mul_le_mul_of_nonneg_left hcol (abs_nonneg _)).trans_eq (mul_left_comm _ _ _)
-  have h₃₄ :
-      ∑ k : Fin (N + 1), ∑ n : Fin (N + 1), |A n k| * |v k| * (ν : ℝ) ^ (n : ℕ) =
-        ∑ k : Fin (N + 1), |v k| * (matrixColNorm ν A k * (ν : ℝ) ^ (k : ℕ)) := by
-    exact h₃.trans h₄
-  have h₂₃₄ :
-      ∑ n : Fin (N + 1), (∑ k : Fin (N + 1), |A n k| * |v k|) * (ν : ℝ) ^ (n : ℕ) =
-        ∑ k : Fin (N + 1), |v k| * (matrixColNorm ν A k * (ν : ℝ) ^ (k : ℕ)) := by
-    exact h₂.trans h₃₄
-  exact h₁.trans (h₂₃₄.trans_le h₅)
+    finl1WeightedNorm (ν : ℝ≥0) (A *ᵥ v) ≤
+      finWeightedMatrixNorm ν A * finl1WeightedNorm (ν : ℝ≥0) v := by
+  show ∑ n : Fin (N + 1), |∑ k : Fin (N + 1), A n k * v k| * (ν : ℝ) ^ (n : ℕ) ≤
+      finWeightedMatrixNorm ν A * ∑ k : Fin (N + 1), |v k| * (ν : ℝ) ^ (k : ℕ)
+  -- Triangle + sum swap
+  refine (SystemTaylorODE.weighted_sum_abs_sum_le (fun n => (ν : ℝ) ^ (n : ℕ))
+    (fun _ => pow_nonneg ν.coe_nonneg _) (fun k n => A n k * v k)).trans ?_
+  -- Factor |v k|, recognize matrixColNorm
+  simp_rw [abs_mul, show ∀ (k n : Fin (N + 1)),
+    |A n k| * |v k| * (ν : ℝ) ^ (n : ℕ) =
+      |v k| * (|A n k| * (ν : ℝ) ^ (n : ℕ)) from fun _ _ => by ring,
+    ← Finset.mul_sum, ← matrixColNorm_mul_pow]
+  -- Bound matrixColNorm ≤ finWeightedMatrixNorm
+  rw [Finset.mul_sum]
+  exact Finset.sum_le_sum fun k _ =>
+    (mul_le_mul_of_nonneg_left
+      (mul_le_mul_of_nonneg_right (Finset.le_sup' _ (Finset.mem_univ k))
+        (pow_nonneg ν.coe_nonneg _)) (abs_nonneg _)).trans_eq (mul_left_comm _ _ _)
 
 lemma finWeightedMatrixNorm_le_of_matrixColNorm_le
     (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) (C : ℝ)
@@ -305,8 +280,7 @@ lemma matrixColNorm_eq (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
     (j : Fin (N + 1)) :
     matrixColNorm ν A j =
       (∑ i : Fin (N + 1), |A i j| * (ν : ℝ) ^ (i : ℕ)) / (ν : ℝ) ^ (j : ℕ) := by
-  unfold matrixColNorm
-  ring
+  simp [matrixColNorm, finl1WeightedNorm]
 
 lemma matrixColNorm_eq_sum_div (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
     (j : Fin (N + 1)) :

@@ -332,28 +332,6 @@ lemma ScalarBlockDiagData.norm_id_sub_comp_toScalarCLM_le
     (fun _ : Fin 1 => x)).trans ?_
   simp
 
-/-! ### Scalar theorem entry point -/
-
-/-- Scalar `existsUnique` theorem: direct application of the radii polynomial method
-to a scalar problem via `toScalarCLM`. -/
-theorem ScalarBlockDiagData.existsUnique_of_scalar_bounds
-    (A A_dagger : ScalarBlockDiagData N)
-    {f : l1Weighted ν → l1Weighted ν}
-    {xBar : l1Weighted ν}
-    {Y₀ Z₀ Z₁ : ℝ} {Z₂ : ℝ → ℝ} {r₀ : ℝ}
-    (hr₀ : 0 < r₀)
-    (hY₀ : Y₀_norm f xBar (A.toScalarCLM (ν := ν)) ≤ Y₀)
-    (hZ₀ : Z₀_norm (A.toScalarCLM (ν := ν)) (A_dagger.toScalarCLM (ν := ν)) ≤ Z₀)
-    (hZ₁ : Z₁_norm f xBar (A.toScalarCLM (ν := ν)) (A_dagger.toScalarCLM (ν := ν)) ≤ Z₁)
-    (hZ₂ : ∀ c ∈ Metric.closedBall xBar r₀,
-      Z₂_norm f xBar (A.toScalarCLM (ν := ν)) c ≤ Z₂ r₀ * r₀)
-    (hf_diff : Differentiable ℝ f)
-    (h_radii : generalRadiiPolynomial Y₀ Z₀ Z₁ Z₂ r₀ < 0)
-    (h_inj : Function.Injective (A.toScalarCLM (ν := ν))) :
-    ∃! xTilde ∈ Metric.closedBall xBar r₀, f xTilde = 0 :=
-  general_radii_polynomial_theorem
-    hr₀ hY₀ hZ₀ hZ₁ hZ₂ hf_diff h_radii h_inj
-
 /-! ### Scalar operator norm bound -/
 
 /-- Scalar operator norm bound for `toScalarCLM`:
@@ -418,7 +396,8 @@ lemma ScalarBlockDiagData.finRangeSum_toScalarCLM_le
         ∑ k : Fin (N + 1), A.finBlock0 n k * lpWeighted.toSeq x k from
       A.toScalarCLM_toSeq_fin (ν := ν) x n]
   simp_rw [hrewrite]
-  exact finiteMatrix_weighted_l1_bound (ν := ν) A.finBlock0 (fun k => lpWeighted.toSeq x k)
+  simpa [l1Weighted.finl1WeightedNorm, Matrix.mulVec, dotProduct] using
+    l1Weighted.finWeightedMatrixNorm_mulVec_le (ν := ν) A.finBlock0 (fun k => lpWeighted.toSeq x k)
 
 /-- Tighter scalar operator norm bound using `max` instead of `+`.
 For block-diagonal operators on `ℓ¹_ν`, the operator norm is the max of column norms

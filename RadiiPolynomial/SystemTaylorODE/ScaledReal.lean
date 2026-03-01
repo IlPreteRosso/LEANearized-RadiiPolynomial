@@ -20,7 +20,11 @@ instance : Coe PosReal ℝ := ⟨Subtype.val⟩
 @[simp] lemma coe_ne_zero (ν : PosReal) : (ν : ℝ) ≠ 0 := ne_of_gt ν.2
 
 /-- Coercion to nonnegative reals. -/
-def toNNReal (ν : PosReal) : ℝ≥0 := ⟨ν.1, le_of_lt ν.2⟩
+@[coe] def toNNReal (ν : PosReal) : ℝ≥0 := ⟨ν.1, le_of_lt ν.2⟩
+
+instance : Coe PosReal ℝ≥0 := ⟨PosReal.toNNReal⟩
+
+@[simp, norm_cast] lemma coe_toNNReal (ν : PosReal) : ((ν : ℝ≥0) : ℝ) = (ν : ℝ) := rfl
 
 end PosReal
 

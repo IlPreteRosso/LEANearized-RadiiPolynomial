@@ -1,4 +1,4 @@
 import RadiiPolynomial.RadiiPolyGeneral
-import RadiiPolynomial.squareRoot
-import RadiiPolynomial.TaylorODE.Example_7_7_Analytic
-import RadiiPolynomial.TaylorODE.Example_7_7_LeanCert_Clean
+import RadiiPolynomial.Example245.Certificate
+import RadiiPolynomial.SystemTaylorODE
+import RadiiPolynomial.Example77.Certificate

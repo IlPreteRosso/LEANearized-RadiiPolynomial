@@ -94,7 +94,7 @@ def mulVecWeightedLinear {ν : PosReal} {N : ℕ}
 lemma mulVecWeightedLinear_norm_le {ν : PosReal} {N : ℕ}
     (A : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) (x : FinWeighted.Space ν N) :
     ‖mulVecWeightedLinear A x‖ ≤ l1Weighted.finWeightedMatrixNorm ν A * ‖x‖ := by
-  rw [FinWeighted.norm_eq_sum, FinWeighted.norm_eq_sum]
+  rw [FinWeighted.norm_eq_finl1WeightedNorm, FinWeighted.norm_eq_finl1WeightedNorm]
   simpa [mulVecWeightedLinear, LinearMap.coe_mk, AddHom.coe_mk,
     ScaledReal.toReal, ScaledReal.ofReal]
     using (l1Weighted.finWeightedMatrixNorm_mulVec_le

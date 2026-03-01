@@ -1,5 +1,5 @@
 import LeanCert
-import RadiiPolynomial.SystemTaylorODE.BlockDiagSystem.Scalar
+import RadiiPolynomial.SystemTaylorODE.BlockDiagSystem
 
 /-!
 # LeanCert Evaluators for Block-Diagonal Witness Verification
@@ -144,6 +144,15 @@ lemma of_point_interval {e c : ℝ}
     (h : ∀ x ∈ Set.Icc (0 : ℝ) 0, e ≤ c) : e ≤ c :=
   h 0 ⟨le_refl _, le_refl _⟩
 
+/-- Strict variant of `of_point_interval` for `fast_bound` on `< 0` goals. -/
+lemma of_point_interval_lt {e c : ℝ}
+    (h : ∀ x ∈ Set.Icc (0 : ℝ) 0, e < c) : e < c :=
+  h 0 ⟨le_refl _, le_refl _⟩
+
+/-- Wrap `e ≤ c` as a singleton sum for `finsum_bound`. -/
+lemma of_singleton_sum {e c : ℝ}
+    (h : ∑ _k ∈ Finset.Icc (0:ℕ) 0, e ≤ c) : e ≤ c := by simpa using h
+
 /-! ## Block-diagonal action bridge (ℝ-general)
 
 Uniform formula for `toSeq(A.toScalarCLM v)[n]` combining finite and tail modes.
@@ -220,6 +229,131 @@ theorem scalarBlockDiagActionEval_correct {N : ℕ}
     simp_rw [show ∀ j : Fin (N + 1), (matCols j).getD n 0 =
         ((matCols_q j).getD n 0 : ℝ) from
       fun j => hmat j ⟨n, Nat.lt_succ_of_le hn⟩, hvec]
+    exact_mod_cast IntervalDyadic.mem_ofIntervalRat
+      (IntervalRat.mem_singleton _) cfg.precision hprec
+  · rw [htail, hvec]
+    exact_mod_cast IntervalDyadic.mem_ofIntervalRat
+      (IntervalRat.mem_singleton _) cfg.precision hprec
+
+/-! ## System-level Z₀ pipeline (general L)
+
+Generalizes `Z₀_le_via_colNorm` from L=1 to arbitrary L.
+Chains: `Z₀_le_of_tailCancel` → `finiteBlockMatrixNorm` → per-block column norms. -/
+
+/-- **System Z₀ pipeline**: Given tail cancellation and per-row defect norm bounds,
+verify `‖I - A.toCLM ∘ B.toCLM‖ ≤ C`.
+
+Chains: `Z₀_le_of_tailCancel` → `finiteBlockMatrixNorm_le_of_blockRowNorm_le`.
+The certificate provides per-row bounds via `finWeightedMatrixNorm_le_via_cols` + `colNormTermEval`. -/
+lemma Z₀_le_via_block_colNorm {L N : ℕ} [NeZero L] {ν : PosReal}
+    (A B : SystemBlockDiagData L N)
+    (htail : ∀ l, ∀ n, N < n → A.tailDiag l n * B.tailDiag l n = 1)
+    (C : ℝ)
+    (hrow : ∀ l : Fin L,
+      blockRowNorm ν (A.defectOfTailCancel B htail).finBlock l ≤ C) :
+    Z₀_norm (A.toCLM (ν := ν)) (B.toCLM (ν := ν)) ≤ C :=
+  (SystemBlockDiagData.Z₀_le_of_tailCancel (ν := ν) A B htail).trans
+    (finiteBlockMatrixNorm_le_of_blockRowNorm_le _ C hrow)
+
+/-- **System ‖A‖ pipeline**: Given per-row block norm bounds and tail bound,
+verify `‖A.toCLM‖ ≤ fin_bnd + tail_bnd`.
+
+Chains: `norm_toCLM_le` → `finiteBlockMatrixNorm_le_of_blockRowNorm_le`. -/
+lemma norm_toCLM_le_via_block_colNorm {L N : ℕ} [NeZero L] {ν : PosReal}
+    (A : SystemBlockDiagData L N)
+    (fin_bnd tail_bnd : ℝ)
+    (hrow : ∀ l : Fin L, blockRowNorm ν A.finBlock l ≤ fin_bnd)
+    (htail : A.tailBound ≤ tail_bnd) :
+    ‖A.toCLM (ν := ν)‖ ≤ fin_bnd + tail_bnd :=
+  (A.norm_toCLM_le (ν := ν)).trans
+    (add_le_add (finiteBlockMatrixNorm_le_of_blockRowNorm_le _ _ hrow) htail)
+
+/-! ## System-level block-diagonal action (general L)
+
+Per-component action formula for `SystemBlockDiagData L N` operating on `XL1 ν L`.
+Generalizes `scalarBlockDiagAction` from L=1 to arbitrary L. For component `l`,
+the action sums over all L blocks in the finite part. -/
+
+/-- Per-component block-diagonal action in ℝ.
+For `n ≤ N`: sums over all L blocks' matrix-vector products.
+For `n > N`: diagonal multiplication on component `l` only. -/
+noncomputable def systemComponentAction {L N : ℕ}
+    (matCols : Fin L → Fin (N + 1) → Array ℝ)
+    (vecs : Fin L → ℕ → ℝ) (tailCoeff : ℝ)
+    (l : Fin L) (n : ℕ) : ℝ :=
+  if n ≤ N then
+    ∑ j : Fin L, ∑ k : Fin (N + 1), (matCols j k).getD n 0 * vecs j k
+  else tailCoeff * vecs l n
+
+/-- Bridge: `toCoeff(A.toCLM v)(l)(n) = systemComponentAction ...`.
+The finite action sums over all L blocks, the tail action uses the per-component diagonal.
+Pure ℝ signature — no ℚ in parameters. -/
+lemma SystemBlockDiagData.toCoeff_toCLM_eq_componentAction
+    {L N : ℕ} [NeZero L] {ν : PosReal}
+    (A : SystemBlockDiagData L N) (v : XL1 ν L)
+    (matCols : Fin L → Fin (N + 1) → Array ℝ)
+    (vecs : Fin L → ℕ → ℝ) (tailCoeff : ℝ)
+    (l : Fin L)
+    (hmat : ∀ j (k : Fin (N + 1)) (i : Fin (N + 1)),
+      A.finBlock l j i k = (matCols j k).getD (i : ℕ) 0)
+    (hvec : ∀ j n, lpWeighted.toSeq (v j) n = vecs j n)
+    (htail : ∀ n, N < n → A.tailDiag l n = tailCoeff)
+    (n : ℕ) :
+    toCoeff (ν := ν) (A.applyX (ν := ν) v) l n =
+      systemComponentAction matCols vecs tailCoeff l n := by
+  simp only [systemComponentAction]
+  rw [show toCoeff (ν := ν) (A.applyX (ν := ν) v) l n =
+    A.action (toCoeff (ν := ν) v) l n from
+    congr_fun (congr_fun (toCoeff_applyX A v) l) n]
+  simp only [SystemBlockDiagData.action, SystemBlockDiagData.actionFinite,
+    SystemBlockDiagData.actionTail]
+  simp only [toCoeff] at *
+  by_cases hn : n ≤ N
+  · simp only [hn, dite_true, ite_true, add_zero]
+    congr 1
+    ext j
+    congr 1
+    ext k
+    rw [hmat, hvec]
+  · push_neg at hn
+    simp only [show ¬(n ≤ N) from not_le.mpr hn, dite_false, ite_false, zero_add,
+      htail n hn, hvec]
+
+/-- Per-term evaluator for system-level `‖A · v‖` norm sums (component `l`).
+ℚ parameters for computable interval arithmetic via `native_decide`. -/
+def systemComponentActionEval {L N : ℕ}
+    (matCols : Fin L → Fin (N + 1) → Array ℚ)
+    (vecs : Fin L → ℕ → ℚ) (tailCoeff : ℚ) (ν : ℚ)
+    (l : Fin L) (n : Nat) (cfg : DyadicConfig) : IntervalDyadic :=
+  let action : ℚ :=
+    if n ≤ N then
+      ∑ j : Fin L, ∑ k : Fin (N + 1), (matCols j k).getD n 0 * vecs j k
+    else tailCoeff * vecs l n
+  IntervalDyadic.ofIntervalRat (IntervalRat.singleton (|action| * ν ^ n)) cfg.precision
+
+/-- Correctness: the ℝ action-norm term lies in the evaluator's interval.
+Certificate-facing: pure ℝ signature. ℚ bridge is internal. -/
+theorem systemComponentActionEval_correct {L N : ℕ}
+    (matCols : Fin L → Fin (N + 1) → Array ℝ)
+    (vecs : Fin L → ℕ → ℝ) (tailCoeff : ℝ) (ν : ℝ)
+    (matCols_q : Fin L → Fin (N + 1) → Array ℚ)
+    (vecs_q : Fin L → ℕ → ℚ) (tailCoeff_q : ℚ) (ν_q : ℚ)
+    (hmat : ∀ j (k : Fin (N + 1)),
+      ∀ i : Fin (N + 1), (matCols j k).getD (i : ℕ) 0 =
+        ((matCols_q j k).getD (i : ℕ) 0 : ℝ))
+    (hvec : ∀ j n, vecs j n = (vecs_q j n : ℝ))
+    (htail : tailCoeff = (tailCoeff_q : ℝ))
+    (hν : ν = (ν_q : ℝ))
+    (l : Fin L) (n : Nat) (cfg : DyadicConfig)
+    (hprec : cfg.precision ≤ 0 := by norm_num) :
+    (|systemComponentAction matCols vecs tailCoeff l n| * ν ^ n : ℝ) ∈
+      systemComponentActionEval matCols_q vecs_q tailCoeff_q ν_q l n cfg := by
+  simp only [systemComponentAction, systemComponentActionEval, hν]
+  split
+  · next hn =>
+    simp_rw [show ∀ j : Fin L, ∀ k : Fin (N + 1),
+        (matCols j k).getD n 0 = ((matCols_q j k).getD n 0 : ℝ) from
+      fun j k => hmat j k ⟨n, Nat.lt_succ_of_le hn⟩, hvec]
     exact_mod_cast IntervalDyadic.mem_ofIntervalRat
       (IntervalRat.mem_singleton _) cfg.precision hprec
   · rw [htail, hvec]

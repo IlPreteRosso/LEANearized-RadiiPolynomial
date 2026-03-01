@@ -1,4 +1,5 @@
 import RadiiPolynomial.SystemTaylorODE.lpWeighted
+import Mathlib.Analysis.Normed.Operator.Mul
 
 /-!
 # `l1Weighted` Banach-Algebra Layer
@@ -202,6 +203,11 @@ instance instNormedRing : NormedRing (l1Weighted ν) where
 /-- Normalized unit element.
 
 Ref: Def. 7.4.1 (unit element). -/
+instance instNormedCommRing : NormedCommRing (l1Weighted ν) where
+  dist_eq := fun _ _ => rfl
+  norm_mul_le := norm_mul_le
+  mul_comm := mul_comm
+
 instance instNormOneClass : NormOneClass (l1Weighted ν) where
   norm_one := norm_one ν
 
@@ -234,6 +240,47 @@ instance instNormedAlgebra : NormedAlgebra ℝ (l1Weighted ν) where
   norm_smul_le := fun r a => by rw [norm_smul]
 
 end CauchyProductBanachAlgebra
+
+/-! ### Left multiplication CLM (alias to Mathlib's `ContinuousLinearMap.mul`)
+
+`leftMul a` is left-multiplication by `a` as a CLM.
+Delegates to `ContinuousLinearMap.mul ℝ (l1Weighted ν)`, which provides:
+- `mul_apply' : leftMul a h = a * h`  (simp)
+- `opNorm_mul_apply_le : ‖leftMul a‖ ≤ ‖a‖`  (simp)
+- `.map_add`, `.map_smul`, `.map_sub` for linearity
+-/
+
+noncomputable abbrev leftMul (a : l1Weighted ν) : l1Weighted ν →L[ℝ] l1Weighted ν :=
+  ContinuousLinearMap.mul ℝ (l1Weighted ν) a
+
+@[simp] lemma leftMul_apply (a h : l1Weighted ν) : leftMul a h = a * h := rfl
+
+lemma norm_leftMul_le (a : l1Weighted ν) : ‖leftMul a‖ ≤ ‖a‖ :=
+  ContinuousLinearMap.opNorm_mul_apply_le _ _ a
+
+lemma leftMul_add (a b : l1Weighted ν) :
+    leftMul (a + b) = leftMul a + leftMul b :=
+  map_add (ContinuousLinearMap.mul ℝ (l1Weighted ν)) a b
+
+lemma leftMul_sub (a b : l1Weighted ν) :
+    leftMul (a - b) = leftMul a - leftMul b :=
+  map_sub (ContinuousLinearMap.mul ℝ (l1Weighted ν)) a b
+
+lemma leftMul_smul (c : ℝ) (a : l1Weighted ν) :
+    leftMul (c • a) = c • leftMul a :=
+  (ContinuousLinearMap.mul ℝ (l1Weighted ν)).map_smul c a
+
+/-- Bridge: Mathlib canonical `a • .id` ↔ `leftMul a`.
+Used by `derive_fderiv` to normalize `(n • a^k) • .id` to `leftMul` form. -/
+lemma smul_id_eq_leftMul (a : l1Weighted ν) :
+    a • ContinuousLinearMap.id ℝ (l1Weighted ν) = leftMul a := by
+  ext h; simp [smul_eq_mul]
+
+/-- Bridge: convert ℕ-smul inside `leftMul` to ℝ-smul.
+Handles arbitrary degree: `leftMul (n • a) = (↑n : ℝ) • leftMul a`. -/
+lemma leftMul_nsmul (n : ℕ) (a : l1Weighted ν) :
+    leftMul (n • a) = (↑n : ℝ) • leftMul a := by
+  rw [← Nat.cast_smul_eq_nsmul ℝ n a, leftMul_smul]
 
 end l1Weighted
 
