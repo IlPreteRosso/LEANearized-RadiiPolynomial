@@ -57,6 +57,21 @@ theorem differentiable_pi_apply (i : ι) :
     Differentiable 𝕜 (fun a : ι → F => a i) :=
   (ContinuousLinearMap.proj i : (ι → F) →L[𝕜] F).differentiable
 
+/-! ## Pi-level Banach algebra bridge
+
+When `auto_poly_fderiv` differentiates `fun a => a i * a j` on a Pi type `ι → l1Weighted ν`,
+the product rule yields `a j • proj i + a i • proj j` (Mathlib canonical form).
+The existing `smul_id_eq_leftMul` only fires for `a • id`. This bridge converts
+`a • proj i → (leftMul a).comp (proj i)` so that the result uses `leftMul` uniformly. -/
+
+@[simp]
+lemma SystemTaylorODE.l1Weighted.smul_proj_eq_leftMul_comp_proj
+    {ν : PosReal} {ι : Type*} [Fintype ι] (a : SystemTaylorODE.l1Weighted ν) (i : ι) :
+    a • (ContinuousLinearMap.proj (R := ℝ) i :
+      (ι → SystemTaylorODE.l1Weighted ν) →L[ℝ] SystemTaylorODE.l1Weighted ν) =
+    (SystemTaylorODE.l1Weighted.leftMul a).comp (ContinuousLinearMap.proj i) := by
+  ext h; simp [SystemTaylorODE.l1Weighted.leftMul_apply, smul_eq_mul]
+
 -- Combined fderiv + iteratedDeriv lemma set with Banach algebra bridge.
 -- Unmatched lemmas are harmless (simp skips them).
 
@@ -93,7 +108,8 @@ macro "auto_poly_fderiv" : tactic => `(tactic| (
       iteratedDeriv_pow, iteratedDeriv_fun_pow_zero,
       -- === Banach algebra bridge (l1Weighted only, harmless for scalar ℝ) ===
       SystemTaylorODE.l1Weighted.smul_id_eq_leftMul,
-      SystemTaylorODE.l1Weighted.leftMul_nsmul
+      SystemTaylorODE.l1Weighted.leftMul_nsmul,
+      SystemTaylorODE.l1Weighted.smul_proj_eq_leftMul_comp_proj
     ]
     <;> try first
       | (ring_nf; try simp)                                  -- fderiv cleanup
@@ -117,6 +133,7 @@ macro "auto_poly_fderiv" "[" extras:simpLemma,* "]" : tactic => `(tactic| (
       iteratedDeriv_pow, iteratedDeriv_fun_pow_zero,
       SystemTaylorODE.l1Weighted.smul_id_eq_leftMul,
       SystemTaylorODE.l1Weighted.leftMul_nsmul,
+      SystemTaylorODE.l1Weighted.smul_proj_eq_leftMul_comp_proj,
       $extras,*
     ]
     <;> try first
@@ -177,6 +194,15 @@ private abbrev proj₃ (i : Fin 3) : (Fin 3 → ℝ) →L[ℝ] ℝ := Continuous
 
 example (a : Fin 3 → ℝ) :
     fderiv ℝ (fun a : Fin 3 → ℝ => a 0 - a 1) a = proj₃ 0 - proj₃ 1 := by
+  auto_poly_fderiv
+
+-- fderiv: Pi bilinear term a_0 * a_2 on l1Weighted (Banach algebra)
+-- Note: fderiv_fun_mul produces c(x)•Dd + d(x)•Dc, so a_0•proj_2 + a_2•proj_0
+open SystemTaylorODE in
+example {ν : PosReal} (a : Fin 3 → l1Weighted ν) :
+    fderiv ℝ (fun a : Fin 3 → l1Weighted ν => a 0 * a 2) a =
+    (l1Weighted.leftMul (a 0)).comp (ContinuousLinearMap.proj 2) +
+    (l1Weighted.leftMul (a 2)).comp (ContinuousLinearMap.proj 0) := by
   auto_poly_fderiv
 
 end tests

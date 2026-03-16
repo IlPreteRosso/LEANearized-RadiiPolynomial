@@ -2,6 +2,8 @@ import RadiiPolynomial.SystemTaylorODE.ScaledReal
 import RadiiPolynomial.SystemTaylorODE.CauchyProduct
 import RadiiPolynomial.SystemTaylorODE.NormHelpers
 import Mathlib.Analysis.Normed.Lp.lpSpace
+import Mathlib.Analysis.Calculus.FDeriv.Linear
+import Mathlib.Analysis.Calculus.FDeriv.Add
 
 /-!
 # Weighted sequence-space infrastructure for `SystemTaylorODE`
@@ -55,6 +57,11 @@ def mk (a : ℕ → ℝ) (ha : Mem ν p a) : lpWeighted ν p :=
 
 @[simp] lemma toSeq_apply (a : lpWeighted ν p) (n : ℕ) : toSeq a n = a n := rfl
 @[simp] lemma mk_apply (a : ℕ → ℝ) (ha : Mem ν p a) (n : ℕ) : toSeq (mk a ha) n = a n := rfl
+
+/-- Bridge: the `lp` coercion of `mk` gives `ScaledReal.ofReal ∘ f` at each index.
+Useful for `simp_rw` when the goal has `↑(mk f hf) n` instead of `toSeq`. -/
+@[simp] lemma mk_val_apply (a : ℕ → ℝ) (ha : Mem ν p a) (n : ℕ) :
+    (mk a ha).val n = ScaledReal.ofReal (a n) := rfl
 @[simp] lemma zero_toSeq (n : ℕ) : toSeq (0 : lpWeighted ν p) n = 0 := rfl
 @[simp] lemma neg_toSeq (a : lpWeighted ν p) (n : ℕ) : toSeq (-a) n = -toSeq a n := rfl
 @[simp] lemma add_toSeq (a b : lpWeighted ν p) (n : ℕ) : toSeq (a + b) n = toSeq a n + toSeq b n := rfl
@@ -106,6 +113,36 @@ lemma mem_iff (a : ℕ → ℝ) :
   simp only [ENNReal.toReal_one, Real.rpow_one] at h
   exact h
 
+/-- Direct summability of weighted terms for `a ∈ ℓ¹_ν`.
+Avoids the `(mem_iff _).mp a.2` pattern and ensures the result uses `toSeq` (not raw `.1`). -/
+lemma summable_weighted (a : l1Weighted ν) :
+    Summable (fun n => |toSeq a n| * (ν : ℝ) ^ n) :=
+  (mem_iff (toSeq a)).mp a.2
+
+/-- Coordinate evaluation `toSeq · n` as a CLM on `l1Weighted ν`.
+`|toSeq a n| ≤ ν⁻ⁿ · ‖a‖` since `|a_n| · ν^n ≤ ‖a‖`. -/
+noncomputable def toSeq_CLM (n : ℕ) : l1Weighted ν →L[ℝ] ℝ :=
+  LinearMap.mkContinuous
+    { toFun := fun a => toSeq a n
+      map_add' := fun a b => by simp
+      map_smul' := fun r a => by simp }
+    ((ν : ℝ) ^ n)⁻¹
+    (fun a => by
+      have hle : |toSeq a n| * (ν : ℝ) ^ n ≤ ‖a‖ := by
+        rw [norm_eq_tsum]
+        exact (summable_weighted a).le_tsum n (fun k _ =>
+          mul_nonneg (abs_nonneg _) (pow_nonneg ν.2.le _))
+      calc |toSeq a n| = |toSeq a n| * (ν : ℝ) ^ n * ((ν : ℝ) ^ n)⁻¹ := by
+            rw [mul_inv_cancel_right₀ (pow_ne_zero _ ν.2.ne')]
+        _ ≤ ‖a‖ * ((ν : ℝ) ^ n)⁻¹ := by
+            exact mul_le_mul_of_nonneg_right hle (inv_nonneg.mpr (pow_nonneg ν.2.le _))
+        _ = ((ν : ℝ) ^ n)⁻¹ * ‖a‖ := mul_comm _ _)
+
+/-- `toSeq · n` is differentiable (it's a CLM). -/
+@[fun_prop]
+lemma differentiable_toSeq (n : ℕ) : Differentiable ℝ (fun a : l1Weighted ν => toSeq a n) :=
+  (toSeq_CLM n).differentiable
+
 /-- Finite weighted prefix bound:
 the first `N+1` weighted terms are bounded by the full `ℓ¹_ν` norm. -/
 lemma finSum_weighted_toSeq_le_norm (a : l1Weighted ν) (N : ℕ) :
@@ -154,6 +191,14 @@ lemma tailTsum_le_norm_of_eq (a b : l1Weighted ν) (k : ℕ)
   linarith [Finset.sum_nonneg (fun n (_ : n ∈ Finset.range k) =>
     mul_nonneg (abs_nonneg (toSeq b n)) (pow_nonneg ν.coe_nonneg n))]
 
+/-- If `a` kills modes below `k` and matches `b` on modes ≥ `k`, then `‖a‖ ≤ ‖b‖`.
+Combines `norm_eq_tailTsum_of_fin_zero` + `tailTsum_le_norm_of_eq`. -/
+lemma norm_le_of_fin_zero_tail_eq (a b : l1Weighted ν) (k : ℕ)
+    (hfin : ∀ n, n < k → toSeq a n = 0)
+    (htail : ∀ n, k ≤ n → toSeq a n = toSeq b n) :
+    ‖a‖ ≤ ‖b‖ :=
+  (norm_eq_tailTsum_of_fin_zero a k hfin).symm ▸ tailTsum_le_norm_of_eq a b k htail
+
 /-- Pointwise-dominated norm bound: if `|f n| ≤ C * |toSeq a n|`,
 then `‖mk f hf‖ ≤ C * ‖a‖`. -/
 lemma norm_mk_le_of_pointwise (f : ℕ → ℝ) (hf : lpWeighted.Mem ν 1 f)
@@ -167,6 +212,29 @@ lemma norm_mk_le_of_pointwise (f : ℕ → ℝ) (hf : lpWeighted.Mem ν 1 f)
       _ = C * (|toSeq a n| * (ν : ℝ) ^ n) := by ring)
     ((mem_iff f).mp hf) (((mem_iff (toSeq a)).mp a.2).mul_left C)
 
+/-- Shifted weighted summability: if `b ∈ ℓ¹_ν`, then `Σ |b(n-1)| · ν^n` is summable.
+Key identity: `Σ_{n≥1} |b_{n-1}| · ν^n = ν · Σ_m |b_m| · ν^m`. -/
+lemma summable_shifted_weighted (b : l1Weighted ν) :
+    Summable (fun n => |toSeq b (n - 1)| * (ν : ℝ) ^ n) := by
+  rw [← summable_nat_add_iff (k := 1)]
+  exact (summable_weighted b).mul_left (ν : ℝ) |>.of_nonneg_of_le
+    (fun n => mul_nonneg (abs_nonneg _) (pow_nonneg ν.2.le _))
+    fun n => le_of_eq (by simp only [Nat.add_sub_cancel, pow_succ]; ring)
+
+/-- Membership via eventual domination with shifted index.
+If `|f(n)| ≤ |a(n)| + |b(n-1)|` for all sufficiently large `n`,
+where `a, b ∈ ℓ¹_ν`, then `f ∈ ℓ¹_ν`. -/
+lemma mem_of_eventually_le_add_shift (f : ℕ → ℝ) (a b : l1Weighted ν) (N : ℕ)
+    (htail : ∀ n, N < n → |f n| ≤ |toSeq a n| + |toSeq b (n - 1)|) :
+    lpWeighted.Mem ν 1 f := by
+  rw [mem_iff]
+  exact Summable.of_norm_bounded_eventually_nat
+    (((summable_weighted a).add (summable_shifted_weighted b)).congr
+      fun n => (add_mul ..).symm)
+    (Filter.eventually_atTop.mpr ⟨N + 1, fun n hn => by
+      rw [Real.norm_eq_abs, abs_mul, abs_abs, abs_of_nonneg (pow_nonneg ν.2.le _)]
+      exact mul_le_mul_of_nonneg_right (htail n (by omega)) (pow_nonneg ν.2.le _)⟩)
+
 /-- Sequence with value `x` at index `n` and zero elsewhere. -/
 def single (n : ℕ) (x : ℝ) : l1Weighted ν :=
   lpWeighted.mk (fun k => if k = n then x else 0) (by
@@ -178,13 +246,14 @@ def single (n : ℕ) (x : ℝ) : l1Weighted ν :=
     rw [h]
     exact summable_of_ne_finset_zero (s := {n}) (fun k hk => by simp at hk; simp [hk]))
 
-@[simp] lemma single_toSeq_self (n : ℕ) (x : ℝ) :
-    toSeq (single n x : l1Weighted ν) n = x := by
-  simp [single, lpWeighted.mk]
+@[simp] lemma single_toSeq (idx n : ℕ) (x : ℝ) :
+    toSeq (single (ν := ν) idx x) n = if n = idx then x else 0 := by
+  simp only [single, lpWeighted.mk_apply]
 
-@[simp] lemma single_toSeq_ne (n k : ℕ) (x : ℝ) (h : k ≠ n) :
-    toSeq (single n x : l1Weighted ν) k = 0 := by
-  simp [single, lpWeighted.mk, h]
+@[simp] lemma single_toSeq_self (n : ℕ) (x : ℝ) :
+    toSeq (single n x : l1Weighted ν) n = x := by simp [single, lpWeighted.mk]
+lemma single_toSeq_ne (n k : ℕ) (x : ℝ) (h : k ≠ n) :
+    toSeq (single n x : l1Weighted ν) k = 0 := by simp [single, lpWeighted.mk, h]
 
 lemma norm_single (n : ℕ) (x : ℝ) :
     ‖(single n x : l1Weighted ν)‖ = |x| * (ν : ℝ) ^ n := by
@@ -194,6 +263,93 @@ lemma norm_single (n : ℕ) (x : ℝ) :
     ext k
     split_ifs with hk <;> simp [hk, single, lpWeighted.mk]
   rw [h, tsum_ite_eq]
+
+/-- `single n` as a CLM: embeds `ℝ` into `ℓ¹_ν` at index `n`. -/
+noncomputable def single_CLM (n : ℕ) : ℝ →L[ℝ] l1Weighted ν :=
+  LinearMap.mkContinuous
+    { toFun := single n
+      map_add' := fun x y => by
+        apply lpWeighted.ext; intro k
+        simp only [single, lpWeighted.mk_apply, lpWeighted.add_toSeq]
+        split_ifs <;> simp
+      map_smul' := fun r x => by
+        apply lpWeighted.ext; intro k
+        simp only [single, lpWeighted.mk_apply, lpWeighted.smul_toSeq, RingHom.id_apply]
+        split_ifs <;> simp [mul_comm] }
+    ((ν : ℝ) ^ n)
+    (fun x => by show ‖single n x‖ ≤ _; rw [norm_single, Real.norm_eq_abs, mul_comm])
+
+/-- `toSeq` distributes over finite sums. -/
+@[simp] lemma toSeq_finset_sum {ι : Type*} (s : Finset ι) (g : ι → l1Weighted ν) (n : ℕ) :
+    toSeq (∑ i ∈ s, g i) n = ∑ i ∈ s, toSeq (g i) n := by
+  induction s using Finset.cons_induction with
+  | empty => simp
+  | cons a s ha ih => simp [Finset.sum_cons]
+
+@[simp] lemma single_CLM_apply (n : ℕ) (x : ℝ) :
+    (single_CLM (ν := ν) n) x = single n x := rfl
+
+@[simp] lemma single_CLM_toSeq_self (n : ℕ) (x : ℝ) :
+    toSeq (single_CLM (ν := ν) n x) n = x := single_toSeq_self n x
+
+@[simp] lemma single_CLM_toSeq_ne (n k : ℕ) (x : ℝ) (h : k ≠ n) :
+    toSeq (single_CLM (ν := ν) n x) k = 0 := single_toSeq_ne n k x h
+
+/-- A finitely-supported function into `l1Weighted ν` is differentiable if each
+coefficient function is differentiable. Decomposes as `Σ_k single_CLM k (f_k(a))`.
+This is the key API for proving differentiability through `lpWeighted.mk`. -/
+lemma differentiable_mk_of_finSupp {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (f : E → ℕ → ℝ) (M : ℕ) (hsupp : ∀ a n, M < n → f a n = 0)
+    (hf : ∀ a, lpWeighted.Mem ν 1 (f a))
+    (hd : ∀ k : Fin (M + 1), Differentiable ℝ (fun a => f a k)) :
+    Differentiable ℝ (fun a => lpWeighted.mk (f a) (hf a)) := by
+  -- mk(f a) = Σ_k single_CLM k (f a k): both agree at each toSeq index.
+  have hsum_eq : ∀ a, lpWeighted.mk (f a) (hf a) =
+      ∑ k : Fin (M + 1), single_CLM (ν := ν) (k : ℕ) (f a k) := by
+    intro a; apply lpWeighted.ext; intro n
+    simp only [lpWeighted.mk_apply, toSeq_finset_sum, single_CLM_apply]
+    simp only [single_toSeq]
+    -- Goal: f a n = ∑ k : Fin (M+1), if n = ↑k then f a ↑k else 0
+    by_cases hn : n ≤ M
+    · -- Exactly one k has ↑k = n: the sum collapses to f a n
+      rw [Finset.sum_eq_single ⟨n, by omega⟩
+        (fun k _ hk => if_neg (by intro h; exact hk (Fin.ext h.symm)))
+        (fun h => absurd (Finset.mem_univ _) h)]
+      simp
+    · -- n > M: no k has ↑k = n, so sum = 0 = f a n
+      rw [hsupp a n (by omega)]
+      exact (Finset.sum_eq_zero fun k _ => if_neg (by intro h; omega)).symm
+  intro a; show DifferentiableAt ℝ (fun a => lpWeighted.mk (f a) (hf a)) a
+  rw [show (fun a => lpWeighted.mk (f a) (hf a)) =
+      fun a => ∑ k : Fin (M + 1), single_CLM (ν := ν) (↑k) (f a ↑k) from funext hsum_eq]
+  exact DifferentiableAt.fun_sum fun (k : Fin (M + 1)) _ =>
+    ((single_CLM (ν := ν) (↑k)).differentiable.comp (hd k)) a
+
+/-- Fderiv of finitely-supported `lpWeighted.mk` vanishes on tail modes.
+If `f a n = 0` for `n > M` and each `f · k` is differentiable, then
+`toSeq((fderiv (mk ∘ f)) x h) n = 0` for `n > M`. -/
+lemma fderiv_mk_of_finSupp_toSeq_tail {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (f : E → ℕ → ℝ) (M : ℕ) (hsupp : ∀ a n, M < n → f a n = 0)
+    (hf : ∀ a, lpWeighted.Mem ν 1 (f a))
+    (hd : ∀ k : Fin (M + 1), Differentiable ℝ (fun a => f a k))
+    (x h : E) (n : ℕ) (hn : M < n) :
+    toSeq ((fderiv ℝ (fun a => lpWeighted.mk (f a) (hf a)) x) h) n = 0 := by
+  -- The function is identically zero at mode n > M (since f a n = 0)
+  -- So the coordinate function `a ↦ toSeq(mk(f a)) n` is constant 0
+  have hzero_fn : (fun a => toSeq (lpWeighted.mk (f a) (hf a)) n) = fun _ => 0 :=
+    funext fun a => by simp [lpWeighted.mk_apply, hsupp a n hn]
+  -- fderiv of constant = 0
+  have hfderiv_zero : (fderiv ℝ (fun a => toSeq (lpWeighted.mk (f a) (hf a)) n) x) h = 0 := by
+    rw [hzero_fn]; simp
+  -- Connect: toSeq((fderiv (mk ∘ f) x) h) n = fderiv(a ↦ toSeq(mk(f a)) n) x h
+  have hchain : toSeq ((fderiv ℝ (fun a => lpWeighted.mk (f a) (hf a)) x) h) n =
+      (fderiv ℝ (fun a => toSeq (lpWeighted.mk (f a) (hf a)) n) x) h := by
+    have : (fun a => toSeq (lpWeighted.mk (f a) (hf a)) n) =
+        ⇑(toSeq_CLM (ν := ν) n) ∘ (fun a => lpWeighted.mk (f a) (hf a)) := rfl
+    rw [this, fderiv_comp x (toSeq_CLM n).differentiableAt
+      (differentiable_mk_of_finSupp f M hsupp hf hd x),
+      ContinuousLinearMap.comp_apply, ContinuousLinearMap.fderiv]; rfl
+  rw [hchain, hfderiv_zero]
 
 section FiniteNorms
 
@@ -343,6 +499,38 @@ def trunc (N : ℕ) (a : l1Weighted ν) : l1Weighted ν :=
 lemma coeff_trunc (N : ℕ) (a : l1Weighted ν) (n : ℕ) :
     lpWeighted.toSeq (trunc N a) n = if n ≤ N then lpWeighted.toSeq a n else 0 := by
   simp [trunc, lpWeighted.mk]
+
+private lemma trunc_add (N : ℕ) (a b : l1Weighted ν) :
+    trunc N (a + b) = trunc N a + trunc N b := by
+  apply lpWeighted.ext; intro n
+  simp only [coeff_trunc, lpWeighted.add_toSeq]
+  split_ifs <;> simp
+
+private lemma trunc_smul (N : ℕ) (c : ℝ) (a : l1Weighted ν) :
+    trunc N (c • a) = c • trunc N a := by
+  apply lpWeighted.ext; intro n
+  simp only [coeff_trunc, lpWeighted.smul_toSeq]
+  split_ifs <;> simp
+
+private lemma trunc_norm_le (N : ℕ) (a : l1Weighted ν) :
+    ‖trunc N a‖ ≤ 1 * ‖a‖ := by
+  rw [one_mul, norm_eq_tsum, norm_eq_tsum]
+  exact ((mem_iff _).mp (trunc N a).2).tsum_le_tsum (fun n => by
+    simp only [coeff_trunc]
+    split_ifs <;> simp [mul_nonneg (abs_nonneg _) (pow_nonneg (PosReal.coe_nonneg ν) _)])
+    ((mem_iff _).mp a.2)
+
+/-- Truncation as a continuous linear map on `ℓ¹_ν`. -/
+noncomputable def trunc_CLM (N : ℕ) : l1Weighted ν →L[ℝ] l1Weighted ν :=
+  LinearMap.mkContinuous
+    { toFun := trunc N
+      map_add' := trunc_add N
+      map_smul' := fun c a => by simp [trunc_smul] }
+    1
+    (trunc_norm_le N)
+
+@[simp] lemma trunc_CLM_apply (N : ℕ) (a : l1Weighted ν) :
+    trunc_CLM N a = trunc N a := rfl
 
 end Truncation
 

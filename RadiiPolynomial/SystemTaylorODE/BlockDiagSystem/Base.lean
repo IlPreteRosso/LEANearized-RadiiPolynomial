@@ -11,7 +11,9 @@ Core structural layer for Section 8.2 operators:
 - component-coupled CLM matrices
 - componentwise diagonal CLMs
 - finite `L×L` block norm aggregation
-- coefficient-level block-diagonal data and composition (incl. `actionFinite_eq_zero_of_coeff_fin_zero`)
+- `BlockDiagOp`: lightweight (finBlock + tailDiag, no tailBound) for unbounded operators (e.g. IVP A†)
+- `SystemBlockDiagData`: full (+ tailBound) for bounded operators (A, defect)
+- coefficient-level block-diagonal data and composition
 -/
 
 open scoped Topology
@@ -165,6 +167,16 @@ variable {L N : ℕ}
 /-- Coefficient representation of an `L`-component sequence object. -/
 abbrev SystemCoeff (L : ℕ) := Fin L → ℕ → ℝ
 
+/-- Lightweight block-diagonal operator data (no tail bound requirement).
+Used for operators like A† in the IVP case where the tail diagonal `k·δ_{j,j'}`
+is unbounded. Carries only the algebraic data needed for composition and
+defect computation. -/
+structure BlockDiagOp (L N : ℕ) where
+  /-- Finite coupled block matrix (`L×L` blocks, each `(N+1)×(N+1)`). -/
+  finBlock : FiniteBlockMatrix L N
+  /-- Tail diagonal by component and mode. -/
+  tailDiag : Fin L → ℕ → ℝ
+
 /-- 8.2-style block operator data for Eq. (8.21):
 - finite coupled `L×L` block on modes `0..N` (`A_N π_N`)
 - componentwise diagonal tail on modes `N+1..∞` (`A_∞ π_{N,∞}`). -/
@@ -177,6 +189,19 @@ structure SystemBlockDiagData (L N : ℕ) where
   tailBound : ℝ
   /-- Tail bound certificate. -/
   tailBound_spec : ∀ l n, N < n → |tailDiag l n| ≤ tailBound
+
+/-- Forget the tail bound, keeping only algebraic data. -/
+def SystemBlockDiagData.toBlockDiagOp (A : SystemBlockDiagData L N) : BlockDiagOp L N :=
+  ⟨A.finBlock, A.tailDiag⟩
+
+instance : Coe (SystemBlockDiagData L N) (BlockDiagOp L N) :=
+  ⟨SystemBlockDiagData.toBlockDiagOp⟩
+
+@[simp] lemma SystemBlockDiagData.toBlockDiagOp_finBlock (A : SystemBlockDiagData L N) :
+    (A : BlockDiagOp L N).finBlock = A.finBlock := rfl
+
+@[simp] lemma SystemBlockDiagData.toBlockDiagOp_tailDiag (A : SystemBlockDiagData L N) :
+    (A : BlockDiagOp L N).tailDiag = A.tailDiag := rfl
 
 /-- Finite-mode part (`A_N π_N b`) at coefficient level. -/
 def SystemBlockDiagData.actionFinite
@@ -263,12 +288,117 @@ lemma SystemBlockDiagData.action_fin
     A.action b l n = ∑ j : Fin L, ∑ k : Fin (N + 1), A.finBlock l j n k * b j k := by
   simp [SystemBlockDiagData.action, SystemBlockDiagData.actionFinite, Fin.is_le]
 
+/-! ### mulVec bridge for finite-mode action
+
+Expresses the finite-mode block action via `Matrix.mulVec`, enabling
+`Matrix.mulVec_mulVec` for block-matrix associativity. -/
+
+/-- Finite-mode action as sum of per-block `mulVec`.
+`A.action b l n = ∑_j (A.finBlock l j *ᵥ b_j) n` for `n ≤ N`. -/
+lemma SystemBlockDiagData.action_fin_eq_sum_mulVec
+    (A : SystemBlockDiagData L N) (b : SystemCoeff L)
+    (l : Fin L) (n : Fin (N + 1)) :
+    A.action b l n = ∑ j : Fin L, (A.finBlock l j).mulVec (fun k => b j k) n := by
+  simp [SystemBlockDiagData.action_fin, Matrix.mulVec, dotProduct]
+
+/-- Block-matrix associativity: `∑_j A_{l,j}.mulVec (∑_m B_{j,m}.mulVec x_m) =
+∑_m (∑_j A_{l,j} * B_{j,m}).mulVec x_m`. -/
+lemma blockFinite_mulVec_assoc {L N : ℕ}
+    (A B : Fin L → Fin L → Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
+    (x : Fin L → Fin (N + 1) → ℝ) (l : Fin L) :
+    (∑ j, (A l j).mulVec (∑ m, (B j m).mulVec (x m))) =
+    (∑ m, (∑ j, A l j * B j m).mulVec (x m)) := by
+  -- Both sides are 4-fold sums of A*B*x in different index orders.
+  -- Proof: expand via mulVec/dotProduct, reorder sums, ring.
+  ext n
+  simp only [Matrix.mulVec, dotProduct, Finset.sum_apply, Finset.mul_sum,
+    Matrix.sum_apply, Matrix.mul_apply, Finset.sum_mul]
+  -- LHS: ∑(k:N+1) ∑(j:L) ∑(m:L) ∑(p:N+1) A[l,j,n,k]*B[j,m,k,p]*x[m,p]
+  -- RHS: ∑(m:L) ∑(p:N+1) ∑(j:L) ∑(k:N+1) A[l,j,n,k]*B[j,m,k,p]*x[m,p]
+  -- Reorder (k,j,m,p) → (j,k,m,p) → (m,j,k,p) → (m,p,j,k)
+  conv_lhs =>
+    rw [Finset.sum_comm (s := Finset.univ) (t := Finset.univ)]           -- (k,j) → (j,k)
+    arg 2; ext j
+    rw [Finset.sum_comm (s := Finset.univ) (t := Finset.univ)]           -- (k,m) → (m,k)
+    arg 2; ext m
+    rw [Finset.sum_comm (s := Finset.univ) (t := Finset.univ)]           -- (k,p) → (p,k)
+  -- Now LHS: ∑_j ∑_m ∑_p ∑_k ... , need ∑_m ∑_p ∑_j ∑_k
+  conv_lhs =>
+    rw [Finset.sum_comm (s := Finset.univ) (t := Finset.univ)]           -- (j,m) → (m,j)
+    arg 2; ext m
+    rw [Finset.sum_comm (s := Finset.univ) (t := Finset.univ)]           -- (j,p) → (p,j)
+  -- Now LHS: ∑_m ∑_p ∑_k ∑_j ..., need ∑_m ∑_p ∑_j ∑_k
+  apply Finset.sum_congr rfl; intro m _
+  apply Finset.sum_congr rfl; intro p _
+  rw [Finset.sum_comm (s := Finset.univ) (t := Finset.univ)]
+  apply Finset.sum_congr rfl; intro j _
+  apply Finset.sum_congr rfl; intro k _; ring
+
 /-! ### Coefficient-level decomposition and composition helpers -/
 
 /-- Split form of the coefficient action into finite and tail parts. -/
 lemma SystemBlockDiagData.action_eq_actionFinite_add_actionTail
     (A : SystemBlockDiagData L N) (b : SystemCoeff L) :
     A.action b = fun l n => A.actionFinite b l n + A.actionTail b l n := rfl
+
+/-- `actionFinite` at a finite mode is differentiable when each coefficient `b(a) j k`
+is differentiable. Reduces to `Differentiable.fun_sum` of `const * differentiable`. -/
+lemma SystemBlockDiagData.differentiable_actionFinite {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (A : SystemBlockDiagData L N) (b : E → SystemCoeff L)
+    (hb : ∀ j : Fin L, ∀ k : Fin (N + 1), Differentiable ℝ (fun a => b a j k))
+    (l : Fin L) (n : ℕ) (hn : n ≤ N) :
+    Differentiable ℝ (fun a => A.actionFinite (b a) l n) := by
+  simp_rw [show ∀ a, A.actionFinite (b a) l n =
+    ∑ j, ∑ k, A.finBlock l j ⟨n, Nat.lt_succ_of_le hn⟩ k * b a j k
+    from fun a => A.actionFinite_finite (b a) l n hn]
+  apply Differentiable.fun_sum; intro j _; apply Differentiable.fun_sum; intro k _
+  exact (differentiable_const _).mul (hb j k)
+
+/-- `action` at a finite mode is differentiable (actionTail vanishes for n ≤ N). -/
+lemma SystemBlockDiagData.differentiable_action_fin {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (A : SystemBlockDiagData L N) (b : E → SystemCoeff L)
+    (hb : ∀ j : Fin L, ∀ k : Fin (N + 1), Differentiable ℝ (fun a => b a j k))
+    (l : Fin L) (n : ℕ) (hn : n ≤ N) :
+    Differentiable ℝ (fun a => A.action (b a) l n) := by
+  have : (fun a => A.action (b a) l n) = (fun a => A.actionFinite (b a) l n) := by
+    ext a; simp [SystemBlockDiagData.action_eq_actionFinite_add_actionTail,
+      SystemBlockDiagData.actionTail_finite _ _ _ _ hn]
+  rw [this]; exact A.differentiable_actionFinite b hb l n hn
+
+/-- Fderiv of the action at a finite mode: linear in the coefficient fderiv.
+When `b(a)` is a differentiable family of coefficients and `n ≤ N`, the fderiv of
+`a ↦ A.action(b a) l n` equals `A.action` applied to the pointwise fderivs. -/
+lemma SystemBlockDiagData.fderiv_action_fin {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (A : SystemBlockDiagData L N) (b : E → SystemCoeff L)
+    (hb : ∀ j : Fin L, ∀ k : Fin (N + 1), Differentiable ℝ (fun a => b a j k))
+    (l : Fin L) (n : ℕ) (hn : n ≤ N) (x h : E) :
+    (fderiv ℝ (fun a => A.action (b a) l n) x) h =
+      A.action (fun j k => (fderiv ℝ (fun a => b a j k) x) h) l n := by
+  -- action = actionFinite on finite modes
+  have hact : ∀ v, A.action v l n = A.actionFinite v l n := fun v => by
+    simp [SystemBlockDiagData.action_eq_actionFinite_add_actionTail,
+      SystemBlockDiagData.actionTail_finite _ _ _ _ hn]
+  have hfn : (fun a => A.action (b a) l n) = fun a =>
+      ∑ j, ∑ k : Fin (N + 1),
+        A.finBlock l j ⟨n, Nat.lt_succ_of_le hn⟩ k * b a j k :=
+    funext fun a => (hact (b a)).trans (A.actionFinite_finite (b a) l n hn)
+  -- HasFDerivAt via sum of const*differentiable
+  have hfderiv : HasFDerivAt (fun a => A.action (b a) l n)
+      (∑ j : Fin L, ∑ k : Fin (N + 1),
+        A.finBlock l j ⟨n, Nat.lt_succ_of_le hn⟩ k •
+          fderiv ℝ (fun a => b a j k) x) x := by
+    rw [hfn]
+    have := HasFDerivAt.sum fun j (_ : j ∈ Finset.univ) =>
+      HasFDerivAt.sum fun k (_ : k ∈ Finset.univ) =>
+        (hb j k x).hasFDerivAt.const_mul
+          (A.finBlock l j ⟨n, Nat.lt_succ_of_le hn⟩ k)
+    convert this using 1 <;> (ext a; simp [Finset.sum_apply])
+  rw [hfderiv.fderiv]
+  simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
+  symm; exact (hact _).trans (A.actionFinite_finite _ l n hn)
 
 /-- Pointwise nonnegativity witness for the uniform tail bound. -/
 lemma SystemBlockDiagData.tailBound_nonneg_at
@@ -351,7 +481,7 @@ lemma SystemBlockDiagData.comp_action_eq_action_comp_finite
     (A.comp B).action b l n = A.action (B.action b) l n := by
   rw [SystemBlockDiagData.comp_action_finite (A := A) (B := B) (b := b) (l := l) (n := n) hn]
   rw [SystemBlockDiagData.action_comp_finite (A := A) (B := B) (b := b) (l := l) (n := n) hn]
-  simp [SystemBlockDiagData.action_fin, Matrix.sum_apply, Matrix.mul_apply,
+  simp only [SystemBlockDiagData.action_fin, Matrix.sum_apply, Matrix.mul_apply,
     Finset.mul_sum, mul_left_comm, mul_comm]
   let f : Fin L → Fin (N + 1) → Fin L → Fin (N + 1) → ℝ :=
     fun x x₁ x₂ x₃ => b x x₁ * (A.finBlock l x₂ ⟨n, Nat.lt_succ_of_le hn⟩ x₃ * B.finBlock x₂ x x₃ x₁)

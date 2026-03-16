@@ -1,4 +1,7 @@
-import Mathlib
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Data.Real.Basic
 
 /-!
 # Finite Norm Inequality Helpers for `SystemTaylorODE`

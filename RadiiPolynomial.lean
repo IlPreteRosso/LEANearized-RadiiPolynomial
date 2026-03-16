@@ -2,3 +2,4 @@ import RadiiPolynomial.RadiiPolyGeneral
 import RadiiPolynomial.Example245.Certificate
 import RadiiPolynomial.SystemTaylorODE
 import RadiiPolynomial.Example77.Certificate
+import RadiiPolynomial.Example83.Certificate

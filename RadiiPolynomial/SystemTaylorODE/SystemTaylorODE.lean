@@ -8,4 +8,5 @@ import RadiiPolynomial.SystemTaylorODE.NormHelpers
 import RadiiPolynomial.SystemTaylorODE.Core
 import RadiiPolynomial.SystemTaylorODE.BlockDiagSystem
 import RadiiPolynomial.SystemTaylorODE.WitnessSpec
+import RadiiPolynomial.SystemTaylorODE.OmegaWeighted
 

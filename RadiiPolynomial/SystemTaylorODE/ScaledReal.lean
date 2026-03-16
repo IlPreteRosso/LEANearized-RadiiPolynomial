@@ -13,7 +13,10 @@ abbrev PosReal := {x : ℝ // 0 < x}
 
 namespace PosReal
 
-instance : Coe PosReal ℝ := ⟨Subtype.val⟩
+/-- Coercion to real numbers. -/
+@[coe] def toReal (ν : PosReal) : ℝ := ν.1
+
+instance : Coe PosReal ℝ := ⟨PosReal.toReal⟩
 
 @[simp] lemma coe_pos (ν : PosReal) : (0 : ℝ) < ν := ν.2
 @[simp] lemma coe_nonneg (ν : PosReal) : (0 : ℝ) ≤ ν := le_of_lt ν.2
@@ -123,6 +126,16 @@ def ofReal : ℝ ≃+ ScaledReal ν n := AddEquiv.refl ℝ
 @[simp] lemma coe_sub (x y : ScaledReal ν n) : ((x - y : ScaledReal ν n) : ℝ) = x - y := rfl
 @[simp] lemma coe_neg (x : ScaledReal ν n) : ((-x : ScaledReal ν n) : ℝ) = -x := rfl
 @[simp] lemma coe_mul (x y : ScaledReal ν n) : ((x * y : ScaledReal ν n) : ℝ) = x * y := rfl
+@[simp] lemma coe_abs (x : ScaledReal ν n) : ((|x| : ScaledReal ν n) : ℝ) = |↑x| := rfl
+
+/-- Coercion to nonnegative reals via the scaled norm. -/
+@[coe] def toNNReal (x : ScaledReal ν n) : ℝ≥0 :=
+  ⟨‖x‖, norm_nonneg' x⟩
+
+instance : CoeOut (ScaledReal ν n) ℝ≥0 := ⟨ScaledReal.toNNReal⟩
+
+@[simp, norm_cast] lemma coe_toNNReal (x : ScaledReal ν n) :
+    ((toNNReal x : ℝ≥0) : ℝ) = ‖x‖ := rfl
 
 end ScaledReal
 

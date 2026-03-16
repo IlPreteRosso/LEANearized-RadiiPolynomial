@@ -4,11 +4,13 @@ import RadiiPolynomial.SystemTaylorODE.BlockDiagSystem.Base
 # BlockDiagSystem Concrete
 
 Concrete `l1Weighted` realization of `SystemBlockDiagData`:
-- coefficient extraction/reconstruction
+- coefficient extraction/reconstruction (`toCoeff`, `ofCoeff`)
 - linearity and summability helpers
-- `toLinearMap` / `toCLM` with explicit norm bound
-- residual and `Z₀` bridge lemmas
-- Section 9: Z₁ infrastructure for general L (composition norm bounds when the inner operator kills finite modes)
+- `toLinearMap` / `toCLM` with explicit norm bound (`finiteBlockMatrixNorm + tailBound`)
+- residual and `Z₀` bridge lemmas (`defectOfTailCancel`, `Z₀_le_of_tailCancel`)
+- `defectOfBlockDiagOp`: defect from bounded A + unbounded B (for IVP case)
+- Z₁ infrastructure: `norm_comp_of_fin_kill`, `Z₁_le_of_fin_kill_tail_dom`
+- injectivity: `injective_toCLM_of_finite_part_injective`
 -/
 
 open scoped Topology
@@ -308,6 +310,47 @@ lemma SystemBlockDiagData.actionFinite_component_norm_le_row
     (ha := fun j => blockEntryNorm_nonneg (ν := ν) A.finBlock l j)
     (hb := hcoeff)).trans_eq (by simp [blockRowNorm])
 
+/-- Restricted finite block norm: when components outside `active` vanish, the finite
+block norm sum can be restricted to active components only. -/
+lemma SystemBlockDiagData.actionFinite_component_norm_le_restricted
+    (A : SystemBlockDiagData L N) (x : XL1 ν L) (l : Fin L)
+    (active : Finset (Fin L)) (hzero : ∀ j, j ∉ active → x j = 0) :
+    ‖lpWeighted.mk (A.actionFinite (toCoeff (ν := ν) x) l)
+      (A.actionFinite_mem (ν := ν) (toCoeff (ν := ν) x) l)‖ ≤
+      (∑ j ∈ active, blockEntryNorm ν A.finBlock l j) * ‖x‖ := by
+  rw [A.norm_mk_actionFinite_eq (ν := ν)]
+  refine (weighted_sum_abs_sum_le (fun n => (ν : ℝ) ^ (n : ℕ))
+    (fun _ => pow_nonneg ν.coe_nonneg _)
+    (fun j n => ∑ k, A.finBlock l j n k * toCoeff (ν := ν) x j k)).trans ?_
+  refine (Finset.sum_le_sum fun j _ => by
+    simpa [blockEntryNorm, l1Weighted.finl1WeightedNorm, Matrix.mulVec, dotProduct] using
+      l1Weighted.finWeightedMatrixNorm_mulVec_le (ν := ν) (A := A.finBlock l j)
+        (v := fun k => toCoeff (ν := ν) x j k)).trans ?_
+  -- Bound each term: inactive j have x j = 0, so their contribution is 0
+  have hterm : ∀ j : Fin L,
+      blockEntryNorm ν A.finBlock l j *
+        (∑ k : Fin (N + 1), |toCoeff (ν := ν) x j k| * (ν : ℝ) ^ (k : ℕ)) ≤
+      if j ∈ active then blockEntryNorm ν A.finBlock l j * ‖x‖ else 0 := by
+    intro j; split
+    · exact mul_le_mul_of_nonneg_left
+        ((by simpa [toCoeff, l1Weighted.toSeq] using
+          l1Weighted.finSum_weighted_toSeq_le_norm (ν := ν) (a := x j) (N := N) :
+          ∑ k : Fin (N + 1), |toCoeff (ν := ν) x j k| * (ν : ℝ) ^ (k : ℕ) ≤ ‖x j‖).trans
+          (norm_le_pi_norm x j))
+        (blockEntryNorm_nonneg (ν := ν) A.finBlock l j)
+    · have := hzero j ‹_›
+      simp only [toCoeff, this, lpWeighted.zero_toSeq, abs_zero, zero_mul,
+        Finset.sum_const_zero, mul_zero, le_refl]
+  calc ∑ j, blockEntryNorm ν A.finBlock l j *
+        (∑ k : Fin (N + 1), |toCoeff (ν := ν) x j k| * (ν : ℝ) ^ (k : ℕ))
+      ≤ ∑ j, if j ∈ active then blockEntryNorm ν A.finBlock l j * ‖x‖ else 0 :=
+        Finset.sum_le_sum fun j _ => hterm j
+    _ = ∑ j ∈ active, blockEntryNorm ν A.finBlock l j * ‖x‖ := by
+        rw [← Finset.sum_filter]
+        exact Finset.sum_congr (by ext; simp) fun _ _ => rfl
+    _ = (∑ j ∈ active, blockEntryNorm ν A.finBlock l j) * ‖x‖ :=
+        (Finset.sum_mul ..).symm
+
 lemma SystemBlockDiagData.actionTail_component_norm_le
     (A : SystemBlockDiagData L N) (x : XL1 ν L) (l : Fin L) :
     ‖lpWeighted.mk (A.actionTail (toCoeff (ν := ν) x) l)
@@ -330,9 +373,7 @@ lemma SystemBlockDiagData.applyX_component_eq_finite_add_tail
         (A.actionTail_mem_of_mem (ν := ν) (toCoeff (ν := ν) x) l (toCoeff_mem (ν := ν) x l)) := by
   apply lpWeighted.ext
   intro n
-  change A.action (toCoeff (ν := ν) x) l n =
-      A.actionFinite (toCoeff (ν := ν) x) l n + A.actionTail (toCoeff (ν := ν) x) l n
-  simp [SystemBlockDiagData.action_eq_actionFinite_add_actionTail]
+  exact congr_fun (congr_fun (A.action_eq_actionFinite_add_actionTail (toCoeff (ν := ν) x)) l) n
 
 lemma SystemBlockDiagData.applyX_component_norm_le
     (A : SystemBlockDiagData L N) (x : XL1 ν L) (l : Fin L) :
@@ -343,13 +384,13 @@ lemma SystemBlockDiagData.applyX_component_norm_le
   let tailPart : l1Weighted ν :=
     lpWeighted.mk (A.actionTail (toCoeff (ν := ν) x) l)
       (A.actionTail_mem_of_mem (ν := ν) (toCoeff (ν := ν) x) l (toCoeff_mem (ν := ν) x l))
-  have hdecomp : A.applyX (ν := ν) x l = finPart + tailPart := by
-    simpa [finPart, tailPart] using A.applyX_component_eq_finite_add_tail (ν := ν) x l
-  have hfin : ‖finPart‖ ≤ blockRowNorm ν A.finBlock l * ‖x‖ := by
-    simpa [finPart] using A.actionFinite_component_norm_le_row (ν := ν) x l
+  have hdecomp : A.applyX (ν := ν) x l = finPart + tailPart :=
+    A.applyX_component_eq_finite_add_tail (ν := ν) x l
+  have hfin : ‖finPart‖ ≤ blockRowNorm ν A.finBlock l * ‖x‖ :=
+    A.actionFinite_component_norm_le_row (ν := ν) x l
   have hC_nonneg : 0 ≤ A.tailBound := A.tailBound_nonneg_at l
-  have htail_component : ‖tailPart‖ ≤ A.tailBound * ‖x l‖ := by
-    simpa [tailPart] using A.actionTail_component_norm_le (ν := ν) x l
+  have htail_component : ‖tailPart‖ ≤ A.tailBound * ‖x l‖ :=
+    A.actionTail_component_norm_le (ν := ν) x l
   have htail : ‖tailPart‖ ≤ A.tailBound * ‖x‖ := by
     exact htail_component.trans (mul_le_mul_of_nonneg_left (norm_le_pi_norm x l) hC_nonneg)
   have h₁ : ‖A.applyX (ν := ν) x l‖ ≤ ‖finPart‖ + ‖tailPart‖ := by
@@ -406,6 +447,34 @@ lemma SystemBlockDiagData.toCLM_apply [NeZero L]
     (A : SystemBlockDiagData L N) (x : XL1 ν L) :
     A.toCLM (ν := ν) x = A.applyX (ν := ν) x := by
   simp [SystemBlockDiagData.toCLM, SystemBlockDiagData.toLinearMap]
+
+/-- Per-component norm of `A.toCLM(w)` with active set restriction.
+When `w j = 0` for `j ∉ active`, the finite block sum restricts to `active` and the
+tail contribution vanishes for `l ∉ active`. Composes `applyX_component_eq_finite_add_tail`,
+`actionFinite_component_norm_le_restricted`, and `actionTail_component_norm_le`. -/
+lemma SystemBlockDiagData.norm_toCLM_component_le_restricted [NeZero L]
+    (A : SystemBlockDiagData L N) (w : XL1 ν L) (l : Fin L)
+    (active : Finset (Fin L)) (hzero : ∀ j, j ∉ active → w j = 0) :
+    ‖A.toCLM (ν := ν) w l‖ ≤
+      ((∑ j ∈ active, blockEntryNorm ν A.finBlock l j) +
+        if l ∈ active then A.tailBound else 0) * ‖w‖ := by
+  rw [SystemBlockDiagData.toCLM_apply, A.applyX_component_eq_finite_add_tail (ν := ν) w l]
+  have hfin := A.actionFinite_component_norm_le_restricted (ν := ν) w l active hzero
+  have htail := A.actionTail_component_norm_le (ν := ν) w l
+  have htail_restricted : A.tailBound * ‖w l‖ ≤
+      (if l ∈ active then A.tailBound else 0) * ‖w‖ := by
+    by_cases hl : l ∈ active
+    · rw [if_pos hl]
+      exact mul_le_mul_of_nonneg_left (norm_le_pi_norm w l) (A.tailBound_nonneg_at l)
+    · rw [if_neg hl, zero_mul]
+      exact le_of_eq (by rw [hzero l hl, norm_zero, mul_zero])
+  calc ‖_ + _‖ ≤ ‖_‖ + ‖_‖ := norm_add_le _ _
+    _ ≤ (∑ j ∈ active, blockEntryNorm ν A.finBlock l j) * ‖w‖ +
+        A.tailBound * ‖w l‖ := add_le_add hfin htail
+    _ ≤ (∑ j ∈ active, blockEntryNorm ν A.finBlock l j) * ‖w‖ +
+        (if l ∈ active then A.tailBound else 0) * ‖w‖ :=
+      add_le_add le_rfl htail_restricted
+    _ = _ := by ring
 
 @[simp]
 lemma SystemBlockDiagData.toCoeff_toCLM [NeZero L]
@@ -634,6 +703,159 @@ lemma SystemBlockDiagData.Z₀_le_of_tailCancel [NeZero L]
   have htb : (A.defectOfTailCancel B htail).tailBound = 0 := rfl
   rwa [htb, add_zero] at h
 
+/-- Defect construction for A (bounded `SystemBlockDiagData`) composed with B (`BlockDiagOp`,
+possibly unbounded tail). The finite block is `δ_{l,j}·I - ∑_m A_{l,m} B_{m,j}` and
+the tail is zero (assuming tail cancellation). Used for the IVP case where A† has
+unbounded tail diagonal `k·δ_{j,j'}`.
+
+The caller must separately prove that `I - A.toCLM ∘ DF_CLM = defect.toCLM` by showing
+the Fréchet derivative has the block-diagonal structure matching B. -/
+def defectOfBlockDiagOp [NeZero L]
+    (A : SystemBlockDiagData L N) (B : BlockDiagOp L N) :
+    SystemBlockDiagData L N where
+  finBlock := fun l j =>
+    (if l = j then (1 : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ) else 0) -
+      ∑ m, A.finBlock l m * B.finBlock m j
+  tailDiag := fun _ _ => 0
+  tailBound := 0
+  tailBound_spec := by intro l n _; simp
+
+/-! ## 8b. Z₀ Bridge For defectOfBlockDiagOp (IVP Case)
+
+When A is a bounded `SystemBlockDiagData` and B is an unbounded `BlockDiagOp`,
+the defect `I - A∘B` is constructed by `defectOfBlockDiagOp` with zero tail.
+The bridge below identifies `I - A.toCLM ∘ DF_CLM = defect.toCLM` when the caller
+provides a CLM (typically `fderiv ℝ f x̄`) that matches B on both finite and tail modes.
+
+This is the key lemma for IVP problems where A† has unbounded tail diagonal. -/
+
+/-- Coefficient-level identity for `(I - A∘DF)(x)` on finite modes (n ≤ N):
+equals the defect block action when DF matches B's finite blocks. -/
+private lemma defectOfBlockDiagOp_coeff_finite [NeZero L]
+    (A : SystemBlockDiagData L N) (B : BlockDiagOp L N)
+    (c_df c_x : SystemCoeff L)
+    (hfin : ∀ l : Fin L, ∀ n : Fin (N + 1),
+      c_df l n = ∑ j : Fin L, ∑ k : Fin (N + 1), B.finBlock l j n k * c_x j k)
+    (l : Fin L) (n : ℕ) (hn : n ≤ N) :
+    c_x l n - A.action c_df l n =
+      (defectOfBlockDiagOp A B).action c_x l n := by
+  set n' : Fin (N + 1) := ⟨n, Nat.lt_succ_of_le hn⟩
+  rw [SystemBlockDiagData.action_fin_eq_sum_mulVec A c_df l n',
+      SystemBlockDiagData.action_fin_eq_sum_mulVec (defectOfBlockDiagOp A B) c_x l n']
+  -- c_df_j = ∑_m B_{j,m}.mulVec(c_x_m) from hfin
+  have hdf : ∀ j : Fin L, (fun k : Fin (N + 1) => c_df j k) =
+      ∑ m, (B.finBlock j m).mulVec (fun k => c_x m k) := by
+    intro j; ext k; simp [hfin j k, Matrix.mulVec, dotProduct]
+  -- Substitute hdf, apply block-matrix associativity at n'
+  conv_lhs => arg 2; arg 2; ext j; rw [hdf j]
+  have hassoc := congr_fun
+    (blockFinite_mulVec_assoc A.finBlock B.finBlock (fun m k => c_x m k) l) n'
+  simp only [Finset.sum_apply] at hassoc ⊢
+  rw [hassoc]
+  simp only [defectOfBlockDiagOp, Matrix.mulVec, dotProduct,
+    Matrix.sub_apply, sub_mul, Finset.sum_sub_distrib]
+  linarith [block_identity_action c_x l n']
+
+/-- Coefficient-level identity for `(I - A∘DF)(x)` on tail modes (N < n):
+equals the defect tail action (= 0) when tails cancel. -/
+private lemma defectOfBlockDiagOp_coeff_tail [NeZero L]
+    (A : SystemBlockDiagData L N) (B : BlockDiagOp L N)
+    (c_df c_x : SystemCoeff L) (l : Fin L) (n : ℕ)
+    (htail_df : c_df l n = B.tailDiag l n * c_x l n)
+    (hcancel : A.tailDiag l n * B.tailDiag l n = 1)
+    (hlt : N < n) :
+    c_x l n - A.action c_df l n =
+      (defectOfBlockDiagOp A B).action c_x l n := by
+  rw [SystemBlockDiagData.action_tail A c_df l n hlt, htail_df,
+      SystemBlockDiagData.action_tail (defectOfBlockDiagOp A B) c_x l n hlt]
+  show c_x l n - A.tailDiag l n * (B.tailDiag l n * c_x l n) =
+      (defectOfBlockDiagOp A B).tailDiag l n * c_x l n
+  simp only [defectOfBlockDiagOp]
+  rw [show A.tailDiag l n * (B.tailDiag l n * c_x l n) =
+    (A.tailDiag l n * B.tailDiag l n) * c_x l n from by ring,
+    hcancel, one_mul, sub_self, zero_mul]
+
+/-- CLM-level identity: `I - A.toCLM ∘ DF_CLM = (defectOfBlockDiagOp A B).toCLM`
+when `DF_CLM` matches `B` on both finite modes (via `finBlock`) and tail modes
+(via `tailDiag`), and the tail diagonals of A and B cancel to 1. -/
+lemma defectOfBlockDiagOp_toCLM_eq [NeZero L]
+    (A : SystemBlockDiagData L N) (B : BlockDiagOp L N)
+    (DF_CLM : XL1 ν L →L[ℝ] XL1 ν L)
+    (hfin : ∀ x : XL1 ν L, ∀ l : Fin L, ∀ n : Fin (N + 1),
+      toCoeff (ν := ν) (DF_CLM x) l n =
+        ∑ j : Fin L, ∑ k : Fin (N + 1), B.finBlock l j n k * toCoeff (ν := ν) x j k)
+    (htail : ∀ x : XL1 ν L, ∀ l : Fin L, ∀ n : ℕ, N < n →
+      toCoeff (ν := ν) (DF_CLM x) l n = B.tailDiag l n * toCoeff (ν := ν) x l n)
+    (hcancel : ∀ l : Fin L, ∀ n : ℕ, N < n → A.tailDiag l n * B.tailDiag l n = 1) :
+    ContinuousLinearMap.id ℝ (XL1 ν L) -
+      (A.toCLM (ν := ν)).comp DF_CLM =
+    (defectOfBlockDiagOp A B).toCLM (ν := ν) := by
+  apply toCLM_ext_of_toCoeff_eq; intro x l n
+  -- Reduce to coefficient-level: c_x l n - A.action(c_df) l n = defect.action(c_x) l n
+  -- where c_x = toCoeff x and c_df = toCoeff (DF_CLM x)
+  -- Rewrite LHS to coefficient form: x_{l,n} - A.action(toCoeff(DF x))_{l,n}
+  -- Expand LHS: toCoeff((I - A∘DF)(x)) = toCoeff(x) - toCoeff(A(DF(x)))
+  --           = toCoeff(x) - A.action(toCoeff(DF(x)))
+  -- Expand RHS: toCoeff(defect.toCLM(x)) = defect.action(toCoeff(x))
+  simp only [ContinuousLinearMap.sub_apply, ContinuousLinearMap.coe_id', id_eq,
+    ContinuousLinearMap.comp_apply, SystemBlockDiagData.toCoeff_toCLM]
+  show toCoeff (ν := ν) x l n - A.action (toCoeff (ν := ν) (DF_CLM x)) l n =
+    (defectOfBlockDiagOp A B).action (toCoeff (ν := ν) x) l n
+  by_cases hn : n ≤ N
+  · exact defectOfBlockDiagOp_coeff_finite A B _ _ (hfin x) l n hn
+  · exact defectOfBlockDiagOp_coeff_tail A B _ _ l n
+      (htail x l n (Nat.lt_of_not_ge hn)) (hcancel l n (Nat.lt_of_not_ge hn))
+      (Nat.lt_of_not_ge hn)
+
+/-! ## 8c. Z₀ Bridge For Composed CLM (IVP Case)
+
+When `A†` has unbounded tail (e.g., tail diagonal = `n`), no `DF_CLM : XL1 →L[ℝ] XL1`
+with matching structure exists. Instead, the certificate provides the *composed*
+`G_CLM = fderiv ℝ (A ∘ F) x̄ : XL1 →L[ℝ] XL1` whose coefficients match `A·B`
+algebraically (finite block = `∑_m A_{l,m}*B_{m,j}`, tail = `A.tailDiag*B.tailDiag`).
+
+This variant avoids materializing the intermediate unbounded operator. -/
+
+/-- CLM-level identity for the *composed* derivative (IVP pattern):
+`I - G_CLM = (defectOfBlockDiagOp A B).toCLM` when `G_CLM`'s coefficients match
+the algebraic product `A·B` on both finite and tail modes. -/
+lemma defect_of_composed_toCLM_eq [NeZero L]
+    (A : SystemBlockDiagData L N) (B : BlockDiagOp L N)
+    (G_CLM : XL1 ν L →L[ℝ] XL1 ν L)
+    (hfin : ∀ x : XL1 ν L, ∀ l : Fin L, ∀ n : Fin (N + 1),
+      toCoeff (ν := ν) (G_CLM x) l n =
+        ∑ j : Fin L, ∑ k : Fin (N + 1),
+          (∑ m : Fin L, A.finBlock l m * B.finBlock m j) n k *
+            toCoeff (ν := ν) x j k)
+    (htail : ∀ x : XL1 ν L, ∀ l : Fin L, ∀ n : ℕ, N < n →
+      toCoeff (ν := ν) (G_CLM x) l n =
+        (A.tailDiag l n * B.tailDiag l n) * toCoeff (ν := ν) x l n)
+    (hcancel : ∀ l : Fin L, ∀ n : ℕ, N < n →
+      A.tailDiag l n * B.tailDiag l n = 1) :
+    ContinuousLinearMap.id ℝ (XL1 ν L) - G_CLM =
+    (defectOfBlockDiagOp A B).toCLM (ν := ν) := by
+  apply toCLM_ext_of_toCoeff_eq; intro x l n
+  simp only [ContinuousLinearMap.sub_apply, ContinuousLinearMap.coe_id', id_eq,
+    SystemBlockDiagData.toCoeff_toCLM]
+  show toCoeff (ν := ν) x l n - toCoeff (ν := ν) (G_CLM x) l n =
+    (defectOfBlockDiagOp A B).action (toCoeff (ν := ν) x) l n
+  by_cases hn : n ≤ N
+  · -- Finite modes: defect.action = (δI - ∑A*B) applied to toCoeff(x)
+    set n' : Fin (N + 1) := ⟨n, Nat.lt_succ_of_le hn⟩
+    rw [hfin x l n',
+      SystemBlockDiagData.action_fin_eq_sum_mulVec (defectOfBlockDiagOp A B) _ l n']
+    simp only [defectOfBlockDiagOp, Matrix.mulVec, dotProduct,
+      Matrix.sub_apply, sub_mul, Finset.sum_sub_distrib]
+    linarith [block_identity_action (toCoeff (ν := ν) x) l n']
+  · -- Tail modes: A.tailDiag * B.tailDiag = 1 implies G_CLM(x) = x, so defect = 0
+    rw [htail x l n (Nat.lt_of_not_ge hn),
+      SystemBlockDiagData.action_tail (defectOfBlockDiagOp A B) _ l n (Nat.lt_of_not_ge hn)]
+    show toCoeff (ν := ν) x l n -
+      (A.tailDiag l n * B.tailDiag l n) * toCoeff (ν := ν) x l n =
+      (defectOfBlockDiagOp A B).tailDiag l n * toCoeff (ν := ν) x l n
+    simp only [defectOfBlockDiagOp, hcancel l n (Nat.lt_of_not_ge hn), one_mul, sub_self,
+      zero_mul]
+
 /-! ## 9. Z₁ Infrastructure (General L)
 
 Composition norm bounds when the inner operator kills finite modes.
@@ -711,6 +933,73 @@ lemma SystemBlockDiagData.Z₁_le_of_fin_kill_tail_dom [NeZero L] (N : ℕ)
   (A.norm_comp_of_fin_kill T hfin).trans
     ((mul_le_mul_of_nonneg_left (XL1.opNorm_le_of_fin_kill_tail_eq N T E hfin htail)
       A.tailBound_nonneg).trans hC)
+
+/-! ## 9b. Direct Tail Weighted Norm Bound
+
+When `T` kills finite modes and the tail contributions satisfy a per-component
+weighted sum bound, the operator norm is bounded directly. This pattern arises
+in IVP tail errors (shiftDivN structure) and manifold tail errors (eigenvalue decay).
+
+The general lemma `norm_le_of_fin_kill_tail_weighted` reduces the operator norm
+to a componentwise tail tsum bound. The helper `ivp_shiftDivN_tail_sum_le`
+provides the IVP-specific bound: `1/n ≤ 1/(N+1)` yields `ν/(N+1) · ‖D(h)‖`. -/
+
+/-- Direct operator norm bound from per-component bounds.
+If each component of `T h` satisfies `‖(T h) l‖ ≤ C * ‖h‖`, then `‖T‖ ≤ C`.
+Essentially `opNorm_le_bound` + `pi_norm_le_iff`. -/
+lemma norm_le_of_pi_component_bound [NeZero L]
+    (T : XL1 ν L →L[ℝ] XL1 ν L)
+    {C : ℝ} (hC : 0 ≤ C)
+    (hcomp : ∀ h, ∀ l : Fin L,
+      ‖(T h) l‖ ≤ C * ‖h‖) :
+    ‖T‖ ≤ C := by
+  apply ContinuousLinearMap.opNorm_le_bound _ hC
+  intro h
+  refine (pi_norm_le_iff_of_nonneg (mul_nonneg hC (norm_nonneg h))).2 ?_
+  exact fun l => hcomp h l
+
+/-! ## 10. Z₀ Triangle Combiner (IVP Case)
+
+When the true Fréchet derivative differs from the block-diagonal A† on tail modes,
+`‖I - A∘DF‖` decomposes as `‖D.toCLM + A.toCLM∘T‖ ≤ ‖D.toCLM‖ + ‖A.toCLM∘T‖`
+where D is the finite defect and T is the tail linearization error. -/
+
+/-- Triangle-inequality combiner for Z₀ when `I - A∘DF = D + A∘T`. -/
+lemma Z₀_norm_le_of_defect_plus_tail_error [NeZero L]
+    {ν : PosReal} {A : SystemBlockDiagData L N}
+    {DF_CLM : XL1 ν L →L[ℝ] XL1 ν L}
+    {D : SystemBlockDiagData L N}
+    {T : XL1 ν L →L[ℝ] XL1 ν L}
+    (hdecomp : ContinuousLinearMap.id ℝ (XL1 ν L) -
+        (A.toCLM (ν := ν)).comp DF_CLM = D.toCLM (ν := ν) + (A.toCLM (ν := ν)).comp T)
+    {Z₀_bnd Z₁_bnd : ℝ}
+    (hZ₀ : ‖D.toCLM (ν := ν)‖ ≤ Z₀_bnd)
+    (hZ₁ : ‖(A.toCLM (ν := ν)).comp T‖ ≤ Z₁_bnd) :
+    Z₀_norm (A.toCLM (ν := ν)) DF_CLM ≤ Z₀_bnd + Z₁_bnd := by
+  show ‖_‖ ≤ _; rw [hdecomp]
+  exact (norm_add_le _ _).trans (add_le_add hZ₀ hZ₁)
+
+/-! ## 11. Finite Block Injectivity From Defect Norm < 1
+
+If `‖I - A·B‖ < 1` as a block matrix norm, then the block product `A·B` is close to
+the identity, so `A` is injective on finite modes. This bridges the numerical defect
+bound to the `h_fin` hypothesis of `injective_toCLM_of_finite_part_injective`. -/
+
+/-- If the finite-block defect `‖δI - ∑ A*B‖ < 1`, then `A` is injective on finite
+coefficients: `∀ d, (∀ l n, ∑ A*d = 0) → (∀ l n, d = 0)`.
+
+Proof strategy: the block product `M = ∑_m A_{l,m} * B_{m,j}` satisfies `‖I - M‖ < 1`
+as a linear map on `(Fin L × Fin (N+1) → ℝ)`, hence `M` is a unit, hence injective,
+and `A·d = 0` implies `M·d = 0` implies `d = 0`. -/
+lemma finite_block_injective_of_defect_norm_lt_one [NeZero L]
+    {ν : PosReal}
+    (A : SystemBlockDiagData L N) (B : BlockDiagOp L N)
+    (hlt : finiteBlockMatrixNorm ν (defectOfBlockDiagOp A B).finBlock < 1) :
+    ∀ d : SystemCoeff L,
+      (∀ l : Fin L, ∀ n : Fin (N + 1),
+        (∑ j : Fin L, ∑ k : Fin (N + 1), A.finBlock l j n k * d j k) = 0) →
+      (∀ l : Fin L, ∀ n : Fin (N + 1), d l n = 0) := by
+  sorry -- TODO: Neumann series argument on finite-dimensional block matrix
 
 end SystemBlockDiagConcrete
 

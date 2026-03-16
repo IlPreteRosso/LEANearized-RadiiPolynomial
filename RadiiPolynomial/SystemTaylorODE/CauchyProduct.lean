@@ -248,6 +248,12 @@ theorem eq_coeff_mul (a b : ℕ → R) (n : ℕ) :
 
 end PowerSeriesBridge
 
+/-- Cauchy product commutes with ring homomorphisms. -/
+lemma map_CauchyProduct {S : Type*} [Semiring R] [Semiring S] (f : R →+* S)
+    (a b : ℕ → R) (n : ℕ) :
+    CauchyProduct (f ∘ a) (f ∘ b) n = f (CauchyProduct a b n) := by
+  unfold CauchyProduct; rw [map_sum]; congr 1; ext kl; exact (map_mul f _ _).symm
+
 end CauchyProduct
 
 end SystemTaylorODE

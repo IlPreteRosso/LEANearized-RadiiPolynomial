@@ -62,6 +62,30 @@ lemma SystemBlockDiagData.norm_toCLM_component_eq_Icc_sum [NeZero L]
       |lpWeighted.toSeq ((A.toCLM (ν := ν) v) l) n| * (ν : ℝ) ^ n :=
   l1Weighted.norm_eq_Icc_sum_of_support _ M (A.toCLM_support v M hMN hsupp l)
 
+/-- **Y₀ pipeline (general L)**: bound `‖A.toCLM(v)‖` via per-component finite sums.
+
+For finitely-supported `v` with support ≤ M ≥ N, the per-component norm of `A.toCLM v`
+equals a finite sum of `|A.action(toCoeff v) l n| * ν^n`. The caller bounds each component
+sum (typically via `finsum_bound using systemBlockDiagActionEval`).
+
+This mirrors the operator norm definition: `‖A.toCLM v‖ = max_l ‖(A.toCLM v) l‖`,
+reduced to evaluable finite sums by the block-diagonal support structure. -/
+lemma SystemBlockDiagData.norm_toCLM_apply_le [NeZero L]
+    (A : SystemBlockDiagData L N) (v : XL1 ν L)
+    (M : ℕ) (hMN : N ≤ M)
+    (hsupp : ∀ l, ∀ n, M < n → toCoeff (ν := ν) v l n = 0)
+    {C : ℝ} (hC : 0 ≤ C)
+    (hcomp : ∀ l : Fin L,
+      ∑ n ∈ Finset.Icc 0 M,
+        |A.action (toCoeff (ν := ν) v) l n| * (ν : ℝ) ^ n ≤ C) :
+    ‖A.toCLM (ν := ν) v‖ ≤ C := by
+  refine (pi_norm_le_iff_of_nonneg hC).mpr fun l => ?_
+  rw [A.norm_toCLM_component_eq_Icc_sum v M hMN hsupp l]
+  simp_rw [show ∀ n, lpWeighted.toSeq ((A.toCLM (ν := ν) v) l) n =
+    A.action (toCoeff (ν := ν) v) l n from fun n =>
+      A.toCoeff_toCLM (ν := ν) v l n]
+  exact hcomp l
+
 end GeneralL
 
 /-! ## 2. Support Bound and Norm Reduction (L = 1 Specialization) -/
