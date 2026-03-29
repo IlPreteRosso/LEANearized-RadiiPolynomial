@@ -1,5 +1,7 @@
 <img src="assets/lean_logo-grey.svg" alt="LEAN"> 
 
+# Latest development moved to https://github.com/IlPreteRosso/RadiiPolynomial.git
+
 # Formalized Radii Polynomial 
 
 **Live blueprint:** https://IlPreteRosso.github.io/LEANearized-RadiiPolynomial
